@@ -6,7 +6,7 @@ export const ui = {
 
     showToast(message, type = 'info') {
         const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
+        toast.className = `toast toast--${type}`;
         toast.textContent = message;
         
         const container = document.getElementById('toastContainer');
@@ -14,7 +14,7 @@ export const ui = {
         
         // Auto-remove after 3 seconds
         setTimeout(() => {
-            toast.classList.add('fade-out');
+            toast.classList.add('toast--fade-out');
             setTimeout(() => toast.remove(), 300);
         }, 3000);
     },
@@ -35,41 +35,64 @@ export const ui = {
         userList.innerHTML = '';
 
         if (users.length === 0) {
-            userList.innerHTML = '<p class="no-users">No users found</p>';
+            userList.innerHTML = '<p class="text-center">No users found</p>';
             return;
         }
-
+        
         users.forEach(user => {
             const userCard = document.createElement('div');
             userCard.className = 'user-card';
+            
+            // Create a safe stringified version of the user object
+            const safeUserData = JSON.stringify(user).replace(/"/g, '&quot;');
+            
             userCard.innerHTML = `
-                <div class="user-header">
-                    <div class="user-title">
-                        <h3>${user.name}</h3>
-                        <span class="user-id">ID: ${user.id}</span>
+                <div class="user-card__header">
+                    <div class="user-card__title">
+                        <h3 class="user-card__name">${user.name}</h3>
+                        <span class="user-card__id">ID: ${user.id}</span>
                     </div>
-                    <span class="user-role ${user.role.toLowerCase()}">${user.role}</span>
+                    <span class="user-card__role user-card__role--${user.role.toLowerCase()}">${user.role}</span>
                 </div>
-                <div class="user-details" id="details-${user.id}" style="display: none;">
+                <div class="user-card__details hidden" id="details-${user.id}">
                     <p><strong>ID:</strong> ${user.id}</p>
                     <p><strong>Email:</strong> ${user.email}</p>
                     <p><strong>Role:</strong> ${user.role}</p>
-                    <p><strong>Created:</strong> ${new Date(user.createdAt).toLocaleString()}</p>
-                    <p><strong>Last Updated:</strong> ${new Date(user.updatedAt).toLocaleString()}</p>
+                    <p><strong>Created:</strong> ${this.formatDate(user.createdAt)}</p>
+                    <p><strong>Last Updated:</strong> ${this.formatDate(user.updatedAt)}</p>
                     <div class="action-buttons">
-                        <button class="button edit" onclick="userUI.startEdit(${JSON.stringify(user)})">Edit</button>
-                        <button class="button delete" onclick="userUI.deleteUser('${user.id}')">Delete</button>
+                        <button class="button button--edit" data-user='${safeUserData}'>Edit</button>
+                        <button class="button button--delete" data-user-id="${user.id}">Delete</button>
                     </div>
                 </div>
             `;
 
+            // Add click handler for the card
             userCard.addEventListener('click', (e) => {
                 // Don't toggle if clicking on action buttons
                 if (e.target.closest('.action-buttons')) return;
                 
                 const details = document.getElementById(`details-${user.id}`);
                 if (details) {
-                    details.style.display = details.style.display === 'none' ? 'block' : 'none';
+                    details.classList.toggle('hidden');
+                }
+            });
+
+            // Add click handlers for the buttons
+            const editButton = userCard.querySelector('.button--edit');
+            const deleteButton = userCard.querySelector('.button--delete');
+
+            editButton.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent card click
+                const userData = JSON.parse(editButton.dataset.user);
+                this.showEditMode(userData);
+            });
+
+            deleteButton.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent card click
+                const userId = deleteButton.dataset.userId;
+                if (window.userUI && window.userUI.deleteUser) {
+                    window.userUI.deleteUser(userId);
                 }
             });
 
@@ -83,21 +106,21 @@ export const ui = {
             form.reset();
             document.getElementById('userId').value = '';
             document.getElementById('submitButton').textContent = 'Create User';
-            document.getElementById('cancelEdit').style.display = 'none';
-            form.classList.remove('edit-mode');
+            document.getElementById('cancelEdit').classList.remove('visible');
+            form.classList.remove('form--edit-mode');
         }
     },
 
     showEditMode(user) {
         const form = document.getElementById('userForm');
         if (form) {
-            form.classList.add('edit-mode');
+            form.classList.add('form--edit-mode');
             document.getElementById('userId').value = user.id;
             document.getElementById('name').value = user.name;
             document.getElementById('email').value = user.email;
             document.getElementById('role').value = user.role;
             document.getElementById('submitButton').textContent = 'Update User';
-            document.getElementById('cancelEdit').style.display = 'inline-block';
+            document.getElementById('cancelEdit').classList.add('visible');
         }
     }
 };

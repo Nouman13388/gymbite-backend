@@ -73,135 +73,68 @@ const debugLogger = {
 window.debugLogger = debugLogger;
 
 // API Service
-class UserApiService {
+class ApiService {
     constructor() {
-        this.requestCount = 0;
-        debugLogger.log('API Service initialized');
-    }
-
-    generateRequestId() {
-        return `req_${++this.requestCount}_${Date.now()}`;
-    }
-
-    async request(endpoint, options = {}) {
-        const requestId = this.generateRequestId();
-        const startTime = performance.now();
-
-        debugLogger.log(`Starting request ${requestId}`, {
-            endpoint,
-            method: options.method || 'GET',
-            headers: options.headers,
-            body: options.body ? JSON.parse(options.body) : undefined
-        });
-
-        try {
-            const response = await fetch(endpoint, {
-                ...options,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-Request-ID': requestId,
-                    ...options.headers
-                }
-            });
-
-            const responseTime = performance.now() - startTime;
-            debugLogger.log(`Response received for request ${requestId}`, {
-                status: response.status,
-                statusText: response.statusText,
-                responseTime: `${responseTime.toFixed(2)}ms`
-            });
-
-            // Handle 204 No Content responses
-            if (response.status === 204) {
-                debugLogger.success(`Request ${requestId} completed successfully (No Content)`);
-                return null;
-            }
-
-            const data = await response.json();
-            debugLogger.log(`Response data for request ${requestId}`, data);
-
-            if (!response.ok) {
-                let errorMessage;
-                if (response.status === 500 && data.error?.includes('Unique constraint failed')) {
-                    errorMessage = 'This email address is already registered. Please use a different email.';
-                } else {
-                    errorMessage = `API Error: ${response.status} ${JSON.stringify(data)}`;
-                }
-
-                debugLogger.error(`Request ${requestId} failed`, {
-                    status: response.status,
-                    error: data,
-                    message: errorMessage
-                });
-
-                throw new Error(errorMessage);
-            }
-
-            debugLogger.success(`Request ${requestId} completed successfully`);
-            return data;
-        } catch (error) {
-            debugLogger.error(`Request ${requestId} failed with exception`, error);
-            throw error;
-        }
+        this.baseUrl = '/api/users';
     }
 
     async getUsers() {
-        debugLogger.log('Fetching all users');
-        try {
-            const users = await this.request(API_BASE);
-            debugLogger.success('Users fetched successfully', users);
-            return users;
-        } catch (error) {
-            debugLogger.error('Failed to fetch users', error);
-            throw error;
+        const response = await fetch(this.baseUrl);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch users: ${response.statusText}`);
         }
+        return response.json();
     }
 
     async createUser(userData) {
-        debugLogger.log('Creating new user', userData);
-        try {
-            const newUser = await this.request(API_BASE, {
-                method: 'POST',
-                body: JSON.stringify(userData)
-            });
-            debugLogger.success('User created successfully', newUser);
-            return newUser;
-        } catch (error) {
-            debugLogger.error('Failed to create user', error);
-            throw error;
+        const response = await fetch(this.baseUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to create user: ${response.statusText}`);
         }
+
+        return response.json();
     }
 
-    async updateUser(id, userData) {
-        debugLogger.log('Updating user', { id, userData });
-        try {
-            const updatedUser = await this.request(`${API_BASE}/${id}`, {
-                method: 'PUT',
-                body: JSON.stringify(userData)
-            });
-            debugLogger.success('User updated successfully', updatedUser);
-            return updatedUser;
-        } catch (error) {
-            debugLogger.error('Failed to update user', error);
-            throw error;
+    async updateUser(userId, userData) {
+        const response = await fetch(`${this.baseUrl}/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to update user: ${response.statusText}`);
         }
+
+        return response.json();
     }
 
-    async deleteUser(id) {
-        debugLogger.log('Deleting user', { id });
-        try {
-            await this.request(`${API_BASE}/${id}`, {
-                method: 'DELETE'
-            });
-            debugLogger.success('User deleted successfully');
-            return true;
-        } catch (error) {
-            debugLogger.error('Failed to delete user', error);
-            throw error;
+    async deleteUser(userId) {
+        const response = await fetch(`${this.baseUrl}/${userId}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to delete user: ${response.statusText}`);
         }
+
+        // For DELETE requests that return 204 No Content
+        if (response.status === 204) {
+            return null;
+        }
+
+        return response.json();
     }
 }
 
-// Export the service
-export const userApi = new UserApiService(); 
+// Create and export a single instance
+export const api = new ApiService(); 
