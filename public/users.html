@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User API Test Interface</title>
+    <style>
+        #debugLog {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .error { color: red; }
+        .success { color: green; }
+        .info { color: blue; }
+        .user-card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .user-card:hover {
+            background-color: #f9f9f9;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .user-details-expanded {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-top: 1px solid #ddd;
+            position: relative;
+            z-index: 1;
+        }
+        .user-details-expanded p {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 4px;
+            pointer-events: none; /* Prevent click events on text */
+        }
+        .user-details-expanded p:hover {
+            background-color: #e9ecef;
+        }
+        .user-details-expanded strong {
+            display: inline-block;
+            width: 120px;
+            color: #495057;
+        }
+        .action-buttons {
+            margin-top: 10px;
+            display: flex;
+            gap: 5px;
+            position: relative;
+            z-index: 2;
+        }
+        .button {
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .button.edit {
+            background-color: #007bff;
+            color: white;
+        }
+        .button.edit:hover {
+            background-color: #0056b3;
+        }
+        .button.delete {
+            background-color: #dc3545;
+            color: white;
+        }
+        .button.delete:hover {
+            background-color: #c82333;
+        }
+        .edit-mode {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #2196f3;
+            margin: 20px 0;
+        }
+        .form-group {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .form-group label {
+            display: inline-block;
+            width: 100px;
+            font-weight: 500;
+        }
+        .form-group input,
+        .form-group select {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #2196f3;
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+        }
+        #submitButton {
+            background-color: #2196f3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        #submitButton:hover {
+            background-color: #1976d2;
+        }
+        #cancelEdit {
+            background-color: #f44336;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        #cancelEdit:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Debug Log Styles */
+        #debugLog {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+        }
+
+        .debug-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .debug-entry.error {
+            color: #d32f2f;
+            background-color: #ffebee;
+        }
+
+        .debug-entry.success {
+            color: #388e3c;
+            background-color: #e8f5e9;
+        }
+
+        .debug-entry.info {
+            color: #1976d2;
+            background-color: #e3f2fd;
+        }
+
+        .debug-timestamp {
+            color: #666;
+            font-size: 0.8em;
+        }
+
+        .debug-message {
+            margin-left: 10px;
+        }
+
+        .debug-data {
+            margin-left: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        #clearDebugLog {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #clearDebugLog:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <h1>User Management</h1>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- User Form -->
+    <form id="userForm">
+        <input type="hidden" id="userId">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+        </div>
+        <div class="form-group">
+            <label for="role">Role:</label>
+            <select id="role" required>
+                <option value="CLIENT">Client</option>
+                <option value="TRAINER">Trainer</option>
+            </select>
+            <small style="display: block; color: #666; margin-top: 5px;">
+                Note: Admin accounts should be created through secure administrative channels only.
+            </small>
+        </div>
+        <button type="submit" id="submitButton">Create User</button>
+        <button type="button" onclick="resetForm()">Reset</button>
+        <button type="button" id="cancelEdit" style="display: none;">Cancel Edit</button>
+    </form>
+
+    <!-- User List -->
+    <h2>Users</h2>
+    <button onclick="loadUsers()">Refresh List</button>
+    <div id="userList"></div>
+
+    <!-- Debug Log Section -->
+    <h3>Debug Log</h3>
+    <div id="debugLog"></div>
+    <button id="clearDebugLog" onclick="window.debugLogger.clear()">Clear Debug Log</button>
+
+    <!-- Load JavaScript modules -->
+    <script type="module" src="js/api.js"></script>
+    <script type="module" src="js/validation.js"></script>
+    <script type="module" src="js/ui.js"></script>
+    <script type="module" src="js/app.js"></script>
+</body>
+</html> 

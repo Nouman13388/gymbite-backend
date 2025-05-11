@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { dirname, join } from 'path';
 import userRoutes from './routes/userRoutes.js';
 
 // Load environment variables
@@ -18,6 +18,9 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from the public directory
+app.use(express.static(join(__dirname, '..', 'public')));
 
 // Routes
 app.use('/api/users', userRoutes);
