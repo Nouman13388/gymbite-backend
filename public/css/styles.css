@@ -1,0 +1,404 @@
+/* Base styles */
+:root {
+    /* Colors */
+    --color-primary: #2196f3;
+    --color-primary-dark: #1976d2;
+    --color-success: #4caf50;
+    --color-success-dark: #2e7d32;
+    --color-error: #f44336;
+    --color-error-dark: #d32f2f;
+    --color-text: #333;
+    --color-text-light: #666;
+    --color-border: #e0e0e0;
+    --color-background: #f5f5f5;
+    --color-white: #fff;
+    --color-secondary: #757575;
+    --color-secondary-dark: #616161;
+    --color-info: #1976d2;
+    --color-info-bg: #e3f2fd;
+    --color-success-bg: #e8f5e9;
+    --color-error-bg: #ffebee;
+
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 8px rgba(0,0,0,0.1);
+
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+/* Toast Component */
+.toast {
+    position: fixed;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-sm);
+    color: var(--color-white);
+    font-weight: 500;
+    z-index: 1000;
+    animation: slideIn 0.3s ease-out;
+}
+
+.toast--info {
+    background-color: var(--color-primary);
+}
+
+.toast--success {
+    background-color: var(--color-success);
+}
+
+.toast--error {
+    background-color: var(--color-error);
+}
+
+.toast--fade-out {
+    animation: fadeOut 0.3s ease-out forwards;
+}
+
+/* User Card Component */
+.user-card {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin: var(--spacing-sm) 0;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+    cursor: pointer;
+}
+
+.user-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    background-color: #f9f9f9;
+}
+
+.user-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-sm);
+}
+
+.user-card__title {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.user-card__name {
+    margin: 0;
+    color: var(--color-text);
+}
+
+.user-card__id {
+    font-size: 0.8em;
+    color: var(--color-text-light);
+    font-family: monospace;
+}
+
+.user-card__role {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-lg);
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+.user-card__role--client {
+    background-color: var(--color-info-bg);
+    color: var(--color-primary-dark);
+}
+
+.user-card__role--trainer {
+    background-color: var(--color-success-bg);
+    color: var(--color-success-dark);
+}
+
+.user-card__details {
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-md);
+    background-color: #f8f9fa;
+    border-radius: var(--radius-sm);
+    border-top: 1px solid var(--color-border);
+}
+
+.user-card__details p {
+    margin: var(--spacing-xs) 0;
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-light);
+    pointer-events: none;
+}
+
+.user-card__details p:hover {
+    background-color: #e9ecef;
+}
+
+.user-card__details strong {
+    display: inline-block;
+    width: 120px;
+    color: var(--color-text);
+}
+
+/* Button Component */
+.button {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+}
+
+.button--edit {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.button--edit:hover {
+    background-color: var(--color-primary-dark);
+}
+
+.button--delete {
+    background-color: var(--color-error);
+    color: var(--color-white);
+}
+
+.button--delete:hover {
+    background-color: var(--color-error-dark);
+}
+
+.button--secondary {
+    background-color: var(--color-secondary);
+    color: var(--color-white);
+}
+
+.button--secondary:hover {
+    background-color: var(--color-secondary-dark);
+}
+
+.button--cancel {
+    background-color: var(--color-error);
+    color: var(--color-white);
+    display: none;
+}
+
+.button--cancel:hover {
+    background-color: var(--color-error-dark);
+}
+
+.button--cancel.visible {
+    display: inline-block;
+}
+
+/* Form Component */
+.form {
+    background-color: var(--color-white);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.form--edit-mode {
+    background-color: var(--color-info-bg);
+    border: 2px solid var(--color-primary);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    margin: var(--spacing-md) 0;
+}
+
+.form__group {
+    position: relative;
+    margin-bottom: 1rem;
+    margin: var(--spacing-sm) 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.form__label {
+    display: inline-block;
+    width: 100px;
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.form__input,
+.form__select {
+    flex: 1;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+}
+
+.form__input:focus,
+.form__select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.form__note {
+    display: block;
+    color: var(--color-text-light);
+    margin-top: var(--spacing-xs);
+    font-size: 0.9em;
+}
+
+/* Debug Log */
+#debugLog {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    max-height: 300px;
+    overflow-y: auto;
+    font-family: monospace;
+}
+
+.debug-entry {
+    margin: var(--spacing-xs) 0;
+    padding: var(--spacing-xs);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.debug-entry.error {
+    color: var(--color-error-dark);
+    background-color: var(--color-error-bg);
+}
+
+.debug-entry.success {
+    color: var(--color-success-dark);
+    background-color: var(--color-success-bg);
+}
+
+.debug-entry.info {
+    color: var(--color-info);
+    background-color: var(--color-info-bg);
+}
+
+.debug-timestamp {
+    color: var(--color-text-light);
+    font-size: 0.8em;
+}
+
+.debug-message {
+    margin-left: var(--spacing-sm);
+}
+
+.debug-data {
+    margin-left: var(--spacing-md);
+    color: var(--color-text-light);
+    font-size: 0.9em;
+}
+
+/* Utility Classes */
+.text-center {
+    text-align: center;
+}
+
+.mt-md {
+    margin-top: var(--spacing-md);
+}
+
+.mb-md {
+    margin-bottom: var(--spacing-md);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.visible {
+    display: block !important;
+}
+
+/* Animations */
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+/* Add these styles to your existing CSS */
+
+.input--error {
+    border-color: #f44336 !important;
+    background-color: #ffebee !important;
+}
+
+.error-message {
+    color: #f44336;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    padding: 0.25rem 0;
+}
+
+/* Animation for error messages */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.input--error {
+    animation: shake 0.3s ease-in-out;
+}
+
+/* Success state */
+.input--success {
+    border-color: #4caf50 !important;
+    background-color: #e8f5e9 !important;
+}
+
+/* Loading state */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Toast improvements */
+.toast {
+    animation: slideIn 0.3s ease-out;
+}
+
+.toast--fade-out {
+    animation: fadeOut 0.3s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+} 
