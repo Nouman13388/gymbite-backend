@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import userRoutes from './routes/userRoutes.js';
+import trainerRoutes from './routes/trainerRoutes.js';
+import clientRoutes from './routes/clientRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -24,6 +26,8 @@ app.use(express.static(join(__dirname, '..', 'public')));
 
 // Routes
 app.use('/api/users', userRoutes);
+app.use('/api/trainers', trainerRoutes);
+app.use('/api/clients', clientRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
@@ -41,4 +45,4 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 }).on('error', (err) => {
   console.error('Server failed to start:', err);
-}); 
+});
