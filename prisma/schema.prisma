@@ -1,0 +1,154 @@
+// This is your Prisma schema file, defining the database structure and relationships.
+
+// Generator block specifies the Prisma Client generation.
+generator client {
+  provider = "prisma-client-js" // Specifies the Prisma Client for JavaScript/TypeScript.
+}
+
+// Datasource block specifies the database connection.
+datasource db {
+  provider = "postgresql" // Specifies PostgreSQL as the database provider.
+  url      = env("DATABASE_URL") // Uses an environment variable for the database connection URL.
+}
+
+// Enum for user roles.
+enum Role {
+  CLIENT  // Represents a client role.
+  TRAINER // Represents a trainer role.
+  ADMIN   // Represents an admin role.
+}
+
+// User model represents the users in the system.
+model User {
+  id        Int      @id @default(autoincrement()) // Primary key with auto-increment.
+  name      String   @db.VarChar(255)             // User's name with a max length of 255 characters.
+  email     String   @unique                      // Unique email address.
+  password  String   @db.VarChar(255)             // Encrypted password.
+  role      Role     @default(CLIENT)             // User role with a default value of CLIENT.
+  createdAt DateTime @default(now())              // Timestamp for when the user was created.
+  updatedAt DateTime @updatedAt                   // Timestamp for when the user was last updated.
+  trainers        Trainer[]                       // One-to-many relationship with Trainer.
+  clients         Client[]                        // One-to-many relationship with Client.
+  workoutPlans    WorkoutPlan[]                   // One-to-many relationship with WorkoutPlan.
+  mealPlans       MealPlan[]                      // One-to-many relationship with MealPlan.
+  feedbacks       Feedback[]                      // One-to-many relationship with Feedback.
+  notifications   Notification[]                  // One-to-many relationship with Notification.
+}
+
+// Trainer model represents trainers in the system.
+model Trainer {
+  id              Int      @id @default(autoincrement()) // Primary key with auto-increment.
+  userId          Int      @unique                      // Foreign key referencing User.
+  specialty       String   @db.VarChar(255)             // Trainer's specialty.
+  experienceYears Int                                   // Number of years of experience.
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to User with cascade deletion.
+  consultations   Consultation[]                       // One-to-many relationship with Consultation.
+  appointments    Appointment[]                        // One-to-many relationship with Appointment.
+  feedbacks       Feedback[]                           // One-to-many relationship with Feedback.
+}
+
+// Client model represents clients in the system.
+model Client {
+  id                 Int      @id @default(autoincrement()) // Primary key with auto-increment.
+  userId             Int      @unique                      // Foreign key referencing User.
+  weight             Decimal                               // Client's weight.
+  height             Decimal                               // Client's height.
+  BMI                Decimal                               // Client's Body Mass Index.
+  fitnessGoals       String?                               // Optional fitness goals.
+  dietaryPreferences String?                               // Optional dietary preferences.
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to User with cascade deletion.
+  consultations      Consultation[]                       // One-to-many relationship with Consultation.
+  appointments       Appointment[]                        // One-to-many relationship with Appointment.
+  progress           Progress[]                           // One-to-many relationship with Progress.
+}
+
+// Consultation model represents consultations between clients and trainers.
+model Consultation {
+  id         Int      @id @default(autoincrement()) // Primary key with auto-increment.
+  clientId   Int                                   // Foreign key referencing Client.
+  trainerId  Int                                   // Foreign key referencing Trainer.
+  scheduledAt DateTime                            // Scheduled date and time for the consultation.
+  status     String   @db.VarChar(255)            // Status of the consultation.
+  notes      String?                              // Optional notes for the consultation.
+  createdAt  DateTime @default(now())             // Timestamp for when the consultation was created.
+  updatedAt  DateTime @updatedAt                  // Timestamp for when the consultation was last updated.
+  client     Client   @relation(fields: [clientId], references: [id], onDelete: Cascade) // Relation to Client with cascade deletion.
+  trainer    Trainer  @relation(fields: [trainerId], references: [id], onDelete: Cascade) // Relation to Trainer with cascade deletion.
+}
+
+// Appointment model represents appointments between clients and trainers.
+model Appointment {
+  id              Int      @id @default(autoincrement()) // Primary key with auto-increment.
+  clientId        Int                                   // Foreign key referencing Client.
+  trainerId       Int                                   // Foreign key referencing Trainer.
+  appointmentTime DateTime                              // Scheduled date and time for the appointment.
+  status          String   @db.VarChar(255)            // Status of the appointment.
+  notes           String?                              // Optional notes for the appointment.
+  createdAt       DateTime @default(now())             // Timestamp for when the appointment was created.
+  client          Client   @relation(fields: [clientId], references: [id], onDelete: Cascade) // Relation to Client with cascade deletion.
+  trainer         Trainer  @relation(fields: [trainerId], references: [id], onDelete: Cascade) // Relation to Trainer with cascade deletion.
+}
+
+// WorkoutPlan model represents workout plans for users.
+model WorkoutPlan {
+  id        Int      @id @default(autoincrement()) // Primary key with auto-increment.
+  userId    Int                                   // Foreign key referencing User.
+  name      String   @db.VarChar(255)            // Name of the workout plan.
+  exercises String                              // Exercises included in the plan.
+  sets      Int                                  // Number of sets.
+  reps      Int                                  // Number of repetitions.
+  createdAt DateTime @default(now())             // Timestamp for when the workout plan was created.
+  updatedAt DateTime @updatedAt                  // Timestamp for when the workout plan was last updated.
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to User with cascade deletion.
+}
+
+// MealPlan model represents meal plans for users.
+model MealPlan {
+  id        Int      @id @default(autoincrement()) // Primary key with auto-increment.
+  userId    Int                                   // Foreign key referencing User.
+  name      String   @db.VarChar(255)            // Name of the meal plan.
+  description String?                            // Optional description of the meal plan.
+  calories  Int                                  // Total calories in the meal plan.
+  protein   Decimal                              // Amount of protein in the meal plan.
+  fat       Decimal                              // Amount of fat in the meal plan.
+  carbs     Decimal                              // Amount of carbohydrates in the meal plan.
+  createdAt DateTime @default(now())             // Timestamp for when the meal plan was created.
+  updatedAt DateTime @updatedAt                  // Timestamp for when the meal plan was last updated.
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to User with cascade deletion.
+}
+
+// Feedback model represents feedback from users to trainers.
+model Feedback {
+  id        Int      @id @default(autoincrement()) // Primary key with auto-increment.
+  userId    Int                                   // Foreign key referencing User.
+  trainerId Int                                   // Foreign key referencing Trainer.
+  rating    Int                                   // Rating given by the user.
+  comments  String?                              // Optional comments for the feedback.
+  createdAt DateTime @default(now())             // Timestamp for when the feedback was created.
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to User with cascade deletion.
+  trainer   Trainer  @relation(fields: [trainerId], references: [id], onDelete: Cascade) // Relation to Trainer with cascade deletion.
+}
+
+// Notification model represents notifications for users.
+model Notification {
+  id              Int      @id @default(autoincrement()) // Primary key with auto-increment.
+  userId          Int                                   // Foreign key referencing User.
+  message         String                                // Notification message.
+  notificationType String   @db.VarChar(255)            // Type of notification.
+  status          String   @db.VarChar(255)            // Status of the notification.
+  createdAt       DateTime @default(now())             // Timestamp for when the notification was created.
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to User with cascade deletion.
+}
+
+// Progress model represents progress tracking for clients.
+model Progress {
+  id                 Int      @id @default(autoincrement()) // Primary key with auto-increment.
+  clientId           Int                                   // Foreign key referencing Client.
+  weight             Decimal                               // Client's weight.
+  BMI                Decimal                               // Client's Body Mass Index.
+  progressDate       DateTime                              // Date of progress tracking.
+  workoutPerformance String?                              // Optional notes on workout performance.
+  mealPlanCompliance String?                              // Optional notes on meal plan compliance.
+  createdAt          DateTime @default(now())             // Timestamp for when the progress was created.
+  client             Client   @relation(fields: [clientId], references: [id], onDelete: Cascade) // Relation to Client with cascade deletion.
+}
