@@ -65,42 +65,32 @@ npm run build
 
 ## Step 3: PM2 Configuration
 
-1. Create PM2 ecosystem file:
+1. Start the application:
 ```bash
-nano ecosystem.config.js
+pm2 start dist/index.js --name "gymbite-backend"
 ```
 
-Add the following configuration:
-```javascript
-module.exports = {
-  apps: [{
-    name: "gymbite-backend",
-    script: "./dist/index.js",
-    interpreter: "node",
-    env: {
-      NODE_ENV: "production",
-      PORT: 3000
-    },
-    watch: false,
-    instances: 1,
-    exec_mode: "fork"
-  }]
-}
-```
-
-2. Start the application:
-```bash
-pm2 start ecosystem.config.js
-```
-
-3. Save the process list:
+2. Save the process list:
 ```bash
 pm2 save
 ```
 
-4. Generate startup script:
+3. Generate startup script:
 ```bash
 sudo pm2 startup
+```
+
+4. Verify the application is running:
+```bash
+pm2 list
+```
+
+You should see output similar to:
+```
+┌────┬────────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name              │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼────────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 0  │ gymbite-backend   │ default     │ 1.0.0   │ fork    │ 1502     │ 0s     │ 0    │ online    │ 0%       │ 33.1mb   │ ubuntu   │ disabled │
 ```
 
 ## Step 4: Security Configuration
@@ -303,4 +293,4 @@ pm2 install pm2-logrotate
 - Full system audit
 - Performance optimization
 - Security review
-- Backup verification 
+- Backup verification
