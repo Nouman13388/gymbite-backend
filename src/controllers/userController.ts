@@ -9,7 +9,15 @@ const userValidationSchema = Joi.object({
   email: Joi.string().email().required(),
   name: Joi.string().min(3).max(255).required(),
   role: Joi.string().valid(...Object.values(Role)),
-  password: Joi.string().min(8).max(255).required(),
+  firebaseUid: Joi.string().required(),
+});
+
+// Define update validation schema
+const userUpdateValidationSchema = Joi.object({
+  email: Joi.string().email().required(),
+  name: Joi.string().min(3).max(255).required(),
+  role: Joi.string().valid(...Object.values(Role)),
+  firebaseUid: Joi.string().optional(),
 });
 
 // Get all users
@@ -38,31 +46,53 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
+// Get user by Firebase UID
+export const getUserByFirebaseUid = async (req: Request, res: Response, next: NextFunction) => {
+  const { firebaseUid } = req.params;
+  try {
+    const user = await prisma.user.findFirst({
+      where: { firebaseUid } as any,
+    });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Create a new user
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
-  const { email, name, role = 'CLIENT', password } = req.body;
+  const { email, name, role = 'CLIENT', firebaseUid } = req.body;
   try {
     // Validate request body
-    const { error } = userValidationSchema.validate({ email, name, role, password });
+    const { error } = userValidationSchema.validate({ email, name, role, firebaseUid });
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Check if user with Firebase UID already exists
+    const existingUser = await prisma.user.findFirst({
+      where: { firebaseUid } as any,
+    });
+    if (existingUser) {
+      return res.status(400).json({ error: 'User with this Firebase UID already exists' });
+    }
 
     const user = await prisma.user.create({
       data: {
         email,
         name,
         role: role as Role,
-        password: hashedPassword,
-      },
+        firebaseUid,
+        password: '', // Empty password since authentication is handled by Firebase
+      } as any,
     });
     res.status(201).json(user);
   } catch (error: any) {
-    if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
-      return res.status(400).json({ error: 'Email already exists' });
+    if (error.code === 'P2002') {
+      return res.status(400).json({ error: 'Email or Firebase UID already exists' });
     }
     next(error);
   }
@@ -71,7 +101,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 // Update a user
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
-  const { email, name, role, password } = req.body;
+  const { email, name, role, firebaseUid } = req.body;
   try {
     // Validate ID
     const userId = parseInt(id);
@@ -79,14 +109,27 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
       return res.status(400).json({ error: 'Invalid user ID' });
     }
 
-    // Validate request body
-    const { error } = userValidationSchema.validate({ email, name, role, password });
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    }) as { firebaseUid: string | null } & { email: string; name: string; role: Role; id: number; password: string; createdAt: Date; updatedAt: Date; };
+    
+    if (!existingUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Prevent firebaseUid updates unless explicitly allowed
+    if (firebaseUid && firebaseUid !== existingUser.firebaseUid) {
+      return res.status(400).json({ 
+        error: 'Firebase UID cannot be updated. Please contact support if this is necessary.' 
+      });
+    }
+
+    // Validate request body using update schema
+    const { error } = userUpdateValidationSchema.validate({ email, name, role, firebaseUid });
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-
-    // Hash password if provided
-    const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
 
     const user = await prisma.user.update({
       where: { id: userId },
@@ -94,13 +137,14 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
         email,
         name,
         role: role as Role,
-        ...(hashedPassword && { password: hashedPassword }),
-      },
+        // Only update firebaseUid if it's the same as existing
+        ...(firebaseUid === existingUser.firebaseUid ? { firebaseUid } : {}),
+      } as any,
     });
     res.json(user);
   } catch (error: any) {
-    if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
-      return res.status(400).json({ error: 'Email already exists' });
+    if (error.code === 'P2002') {
+      return res.status(400).json({ error: 'Email or Firebase UID already exists' });
     }
     next(error);
   }

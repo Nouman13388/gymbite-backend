@@ -6,7 +6,7 @@ http://localhost:3000/api
 ```
 
 ## Authentication
-Currently, the API does not implement authentication. All endpoints are publicly accessible.
+The API uses Firebase Authentication. All endpoints require a valid Firebase UID.
 
 ## Error Handling
 The API uses standard HTTP status codes and returns errors in the following format:
@@ -31,47 +31,79 @@ For validation errors:
 
 ## Quick Reference
 
+### User Endpoints
+```bash
+# Get user by Firebase UID
+GET http://localhost:3000/api/users/firebase/:firebaseUid
+
+# Create new user
+POST http://localhost:3000/api/users
+{
+  "firebaseUid": "firebase-uid-from-firebase",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "role": "TRAINER"
+}
+
+# Get all users
+GET http://localhost:3000/api/users
+
+# Get specific user
+GET http://localhost:3000/api/users/4
+
+# Update user
+PUT http://localhost:3000/api/users/4
+{
+  "name": "John Doe Updated",
+  "email": "john.doe.updated@example.com",
+  "role": "TRAINER"
+}
+
+# Delete user
+DELETE http://localhost:3000/api/users/4
+```
+
 ### Client Endpoints
 ```bash
 # Get complete client profile
-GET http://localhost:3000/api/clients/3/complete
+GET http://localhost:3000/api/clients/1/complete
 
 # Get client's plans
-GET http://localhost:3000/api/clients/3/plans
+GET http://localhost:3000/api/clients/1/plans
 
 # Get client's progress
-GET http://localhost:3000/api/clients/3/progress
+GET http://localhost:3000/api/clients/1/progress
 
 # Get client's activities
-GET http://localhost:3000/api/clients/3/activities
+GET http://localhost:3000/api/clients/1/activities
 
 # Get all clients
 GET http://localhost:3000/api/clients
 
 # Get specific client
-GET http://localhost:3000/api/clients/3
+GET http://localhost:3000/api/clients/1
 
 # Create new client
 POST http://localhost:3000/api/clients
 {
-  "userId": 1,
-  "weight": 75.5,
-  "height": 180.0,
-  "BMI": 23.3,
-  "fitnessGoals": "Weight loss",
-  "dietaryPreferences": "Vegetarian"
+  "userId": 5,
+  "weight": 65.0,
+  "height": 170.0,
+  "BMI": 22.5,
+  "fitnessGoals": "Build muscle",
+  "dietaryPreferences": "Balanced"
 }
 
 # Update client
-PUT http://localhost:3000/api/clients/3
+PUT http://localhost:3000/api/clients/1
 {
-  "weight": 74.0,
-  "BMI": 22.8,
+  "weight": 64.0,
+  "BMI": 22.2,
   "fitnessGoals": "Muscle gain"
 }
 
 # Delete client
-DELETE http://localhost:3000/api/clients/3
+DELETE http://localhost:3000/api/clients/1
 ```
 
 ### Trainer Endpoints
@@ -97,8 +129,8 @@ GET http://localhost:3000/api/trainers/1
 # Create new trainer
 POST http://localhost:3000/api/trainers
 {
-  "userId": 2,
-  "specialty": "Strength Training",
+  "userId": 4,
+  "specialty": "Weight Training",
   "experienceYears": 5
 }
 
@@ -111,6 +143,94 @@ PUT http://localhost:3000/api/trainers/1
 
 # Delete trainer
 DELETE http://localhost:3000/api/trainers/1
+```
+
+## User Endpoints
+
+### 1. Get User by Firebase UID
+```http
+GET /users/firebase/:firebaseUid
+```
+Parameters:
+- `firebaseUid` (path parameter): Firebase Authentication UID
+
+Response:
+```json
+{
+  "id": 4,
+  "firebaseUid": "firebase-uid-trainer",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "role": "TRAINER",
+  "createdAt": "2025-05-13T21:00:46.896Z",
+  "updatedAt": "2025-05-13T21:00:46.896Z"
+}
+```
+
+### 2. Create User
+```http
+POST /users
+```
+Request Body:
+```json
+{
+  "firebaseUid": "firebase-uid-from-firebase",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "role": "TRAINER"
+}
+```
+Validation Rules:
+- `firebaseUid`: Required string, must be unique
+- `name`: Required string, min length 3
+- `email`: Required string, must be valid email format
+- `role`: Required string, must be one of ["CLIENT", "TRAINER", "ADMIN"]
+
+Response (201 Created):
+```json
+{
+  "id": 4,
+  "firebaseUid": "firebase-uid-trainer",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "role": "TRAINER",
+  "createdAt": "2025-05-13T21:00:46.896Z",
+  "updatedAt": "2025-05-13T21:00:46.896Z"
+}
+```
+
+### 3. Update User
+```http
+PUT /users/:id
+```
+Parameters:
+- `id` (path parameter): User ID (positive integer)
+
+Request Body:
+```json
+{
+  "name": "John Doe Updated",
+  "email": "john.doe.updated@example.com",
+  "role": "TRAINER"
+}
+```
+Validation Rules:
+- `name`: Required string, min length 3
+- `email`: Required string, must be valid email format
+- `role`: Required string, must be one of ["CLIENT", "TRAINER", "ADMIN"]
+- `firebaseUid`: Optional string, cannot be changed after creation
+
+Response:
+```json
+{
+  "id": 4,
+  "firebaseUid": "firebase-uid-trainer",
+  "name": "John Doe Updated",
+  "email": "john.doe.updated@example.com",
+  "role": "TRAINER",
+  "createdAt": "2025-05-13T21:00:46.896Z",
+  "updatedAt": "2025-05-13T21:00:46.896Z"
+}
 ```
 
 ## Client Endpoints
@@ -387,127 +507,50 @@ Response:
 
 ## Test Cases
 
-### 1. Invalid Client ID
+### 1. Invalid Firebase UID
 ```http
-GET /clients/abc
-```
-Expected Response (400 Bad Request):
-```json
-{
-  "errors": [
-    {
-      "msg": "Client ID must be a positive integer",
-      "param": "id",
-      "location": "params"
-    }
-  ]
-}
-```
-
-### 2. Invalid Create Client Data
-```http
-POST /clients
-{
-  "userId": "abc",
-  "weight": -10,
-  "height": 0,
-  "BMI": "invalid"
-}
-```
-Expected Response (400 Bad Request):
-```json
-{
-  "errors": [
-    {
-      "msg": "User ID must be a positive integer",
-      "param": "userId",
-      "location": "body"
-    },
-    {
-      "msg": "Weight must be a positive number",
-      "param": "weight",
-      "location": "body"
-    },
-    {
-      "msg": "Height must be a positive number",
-      "param": "height",
-      "location": "body"
-    },
-    {
-      "msg": "BMI must be a positive number",
-      "param": "BMI",
-      "location": "body"
-    }
-  ]
-}
-```
-
-### 3. Non-existent Client
-```http
-GET /clients/999
+GET /users/firebase/invalid-uid
 ```
 Expected Response (404 Not Found):
 ```json
 {
-  "error": "Client not found"
+  "error": "User not found"
 }
 ```
 
-### 4. Duplicate Client Creation
+### 2. Duplicate Firebase UID
 ```http
-POST /clients
+POST /users
 {
-  "userId": 1,
-  "weight": 75.5,
-  "height": 180.0,
-  "BMI": 23.3
+  "firebaseUid": "existing-uid",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "role": "TRAINER"
 }
 ```
 Expected Response (400 Bad Request):
 ```json
 {
-  "error": "A client profile already exists for this user"
+  "error": "User with this Firebase UID already exists"
 }
 ```
 
-## Setup Instructions
-
-1. Install dependencies:
-```bash
-npm install
+### 3. Attempt to Update Firebase UID
+```http
+PUT /users/1
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "role": "TRAINER",
+  "firebaseUid": "new-firebase-uid"
+}
+```
+Expected Response (400 Bad Request):
+```json
+{
+  "error": "Firebase UID cannot be updated. Please contact support if this is necessary."
+}
 ```
 
-2. Set up environment variables:
-Create a `.env` file with:
+### 4. Invalid Client ID
 ```
-DATABASE_URL="postgresql://username:password@localhost:5432/gymbite"
-```
-
-3. Run database migrations:
-```bash
-npx prisma migrate dev
-```
-
-4. Start the server:
-```bash
-npm start
-```
-
-## Development
-
-1. Run in development mode:
-```bash
-npm run dev
-```
-
-2. Run tests:
-```bash
-npm test
-```
-
-## Notes
-- All timestamps are in ISO 8601 format
-- All numeric values (weight, height, BMI) should be positive numbers
-- User IDs must exist in the users table before creating a client
-- The API implements proper error handling and input validation
-- All endpoints return appropriate HTTP status codes 

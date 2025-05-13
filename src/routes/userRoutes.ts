@@ -1,21 +1,31 @@
-import express from 'express';
-import { getUsers, getUserById, createUser, updateUser, deleteUser } from '../controllers/userController.js';
+import express from "express";
+import {
+  getUsers,
+  getUserById,
+  createUser,
+  updateUser,
+  deleteUser,
+  getUserByFirebaseUid,
+} from "../controllers/userController.js";
 
 const router = express.Router();
 
 // GET all users
-router.get('/', getUsers);
+router.get("/", getUsers);
 
 // GET a single user by ID
-router.get('/:id', getUserById);
+router.get("/:id", getUserById);
+
+// GET user by Firebase UID
+router.get("/firebase/:firebaseUid", getUserByFirebaseUid);
 
 // POST create a new user
-router.post('/', createUser);
+router.post("/", createUser);
 
 // PUT update a user
-router.put('/:id', updateUser);
+router.put("/:id", updateUser);
 
 // DELETE a user
-router.delete('/:id', deleteUser);
+router.delete("/:id", deleteUser);
 
-export default router; 
+export default router;

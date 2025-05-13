@@ -20,13 +20,14 @@ enum Role {
 
 // User model represents the users in the system.
 model User {
-  id        Int      @id @default(autoincrement()) // Primary key with auto-increment.
-  name      String   @db.VarChar(255)             // User's name with a max length of 255 characters.
-  email     String   @unique                      // Unique email address.
-  password  String   @db.VarChar(255)             // Encrypted password.
-  role      Role     @default(CLIENT)             // User role with a default value of CLIENT.
-  createdAt DateTime @default(now())              // Timestamp for when the user was created.
-  updatedAt DateTime @updatedAt                   // Timestamp for when the user was last updated.
+  id          Int      @id @default(autoincrement()) // Primary key with auto-increment.
+  firebaseUid String?  @unique                      // Firebase Authentication UID (nullable)
+  name        String   @db.VarChar(255)             // User's name with a max length of 255 characters.
+  email       String   @unique                      // Unique email address.
+  password    String   @db.VarChar(255)             // Encrypted password.
+  role        Role     @default(CLIENT)             // User role with a default value of CLIENT.
+  createdAt   DateTime @default(now())              // Timestamp for when the user was created.
+  updatedAt   DateTime @updatedAt                   // Timestamp for when the user was last updated.
   trainers        Trainer[]                       // One-to-many relationship with Trainer.
   clients         Client[]                        // One-to-many relationship with Client.
   workoutPlans    WorkoutPlan[]                   // One-to-many relationship with WorkoutPlan.
