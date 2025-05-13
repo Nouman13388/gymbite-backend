@@ -5,6 +5,10 @@ import {
   createTrainer,
   updateTrainer,
   deleteTrainer,
+  getTrainerCompleteProfile,
+  getTrainerClients,
+  getTrainerSchedule,
+  getTrainerMetrics
 } from '../controllers/trainerController.js';
 
 const router = express.Router();
@@ -23,5 +27,11 @@ router.put('/:id', updateTrainer);
 
 // DELETE a trainer
 router.delete('/:id', deleteTrainer);
+
+// Enhanced routes
+router.get('/:id/complete', getTrainerCompleteProfile);
+router.get('/:id/clients', getTrainerClients);
+router.get('/:id/schedule', getTrainerSchedule);
+router.get('/:id/metrics', getTrainerMetrics);
 
 export default router;

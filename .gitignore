@@ -12,6 +12,7 @@ yarn-error.log
 # Build output
 dist/
 build/
+generated/
 
 # IDE and editor files
 .idea/
@@ -22,6 +23,3 @@ build/
 # OS files
 .DS_Store
 Thumbs.db
-
-PORT=3000
-NODE_ENV=development

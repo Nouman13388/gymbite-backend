@@ -77,3 +77,180 @@ export const deleteTrainer = async (req: Request, res: Response, next: NextFunct
     next(error);
   }
 };
+
+// Get trainer's complete profile with related data
+export const getTrainerCompleteProfile = async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  try {
+    const trainer = await prisma.trainer.findUnique({
+      where: { id: parseInt(id) },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true
+          }
+        },
+        consultations: true,
+        appointments: true,
+        feedbacks: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true
+              }
+            }
+          }
+        }
+      }
+    });
+    
+    if (!trainer) {
+      return res.status(404).json({ error: 'Trainer not found' });
+    }
+    
+    res.json(trainer);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get trainer's client list
+export const getTrainerClients = async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  try {
+    const clients = await prisma.client.findMany({
+      where: {
+        consultations: {
+          some: {
+            trainerId: parseInt(id)
+          }
+        }
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true
+          }
+        }
+      }
+    });
+    
+    res.json(clients);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get trainer's schedule
+export const getTrainerSchedule = async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  try {
+    const [consultations, appointments] = await Promise.all([
+      prisma.consultation.findMany({
+        where: { 
+          trainerId: parseInt(id),
+          status: 'Scheduled'
+        },
+        include: {
+          client: {
+            include: {
+              user: {
+                select: {
+                  name: true,
+                  email: true
+                }
+              }
+            }
+          }
+        },
+        orderBy: { scheduledAt: 'asc' }
+      }),
+      prisma.appointment.findMany({
+        where: { 
+          trainerId: parseInt(id),
+          status: 'Scheduled'
+        },
+        include: {
+          client: {
+            include: {
+              user: {
+                select: {
+                  name: true,
+                  email: true
+                }
+              }
+            }
+          }
+        },
+        orderBy: { appointmentTime: 'asc' }
+      })
+    ]);
+    
+    res.json({
+      consultations,
+      appointments
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get trainer's performance metrics
+export const getTrainerMetrics = async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  try {
+    const [
+      clientCount,
+      feedbacks,
+      activeAppointments,
+      completedConsultations
+    ] = await Promise.all([
+      prisma.client.count({
+        where: {
+          consultations: {
+            some: {
+              trainerId: parseInt(id)
+            }
+          }
+        }
+      }),
+      prisma.feedback.findMany({
+        where: { trainerId: parseInt(id) }
+      }),
+      prisma.appointment.count({
+        where: { 
+          trainerId: parseInt(id),
+          status: 'Scheduled'
+        }
+      }),
+      prisma.consultation.count({
+        where: { 
+          trainerId: parseInt(id),
+          status: 'Completed'
+        }
+      })
+    ]);
+    
+    const averageRating = feedbacks.length > 0
+      ? feedbacks.reduce((acc, curr) => acc + curr.rating, 0) / feedbacks.length
+      : 0;
+    
+    res.json({
+      clientCount,
+      averageRating,
+      activeAppointments,
+      completedConsultations,
+      totalFeedbacks: feedbacks.length
+    });
+  } catch (error) {
+    next(error);
+  }
+};

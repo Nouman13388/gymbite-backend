@@ -6,6 +6,13 @@ import { dirname, join } from 'path';
 import userRoutes from './routes/userRoutes.js';
 import trainerRoutes from './routes/trainerRoutes.js';
 import clientRoutes from './routes/clientRoutes.js';
+import workoutPlanRoutes from './routes/workoutPlanRoutes.js';
+import mealPlanRoutes from './routes/mealPlanRoutes.js';
+import progressRoutes from './routes/progressRoutes.js';
+import feedbackRoutes from './routes/feedbackRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
+import consultationRoutes from './routes/consultationRoutes.js';
+import appointmentRoutes from './routes/appointmentRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -28,6 +35,13 @@ app.use(express.static(join(__dirname, '..', 'public')));
 app.use('/api/users', userRoutes);
 app.use('/api/trainers', trainerRoutes);
 app.use('/api/clients', clientRoutes);
+app.use('/api/workout-plans', workoutPlanRoutes);
+app.use('/api/meal-plans', mealPlanRoutes);
+app.use('/api/progress', progressRoutes);
+app.use('/api/feedbacks', feedbackRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/consultations', consultationRoutes);
+app.use('/api/appointments', appointmentRoutes);
 
 // Basic route
 app.get('/', (req, res) => {

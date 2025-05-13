@@ -5,7 +5,17 @@ import {
   createClient,
   updateClient,
   deleteClient,
+  getClientCompleteProfile,
+  getClientPlans,
+  getClientProgress,
+  getClientActivities,
+  errorHandler
 } from '../controllers/clientController.js';
+import {
+  validateClientId,
+  validateCreateClient,
+  validateUpdateClient
+} from '../middleware/validation.js';
 
 const router = express.Router();
 
@@ -13,15 +23,24 @@ const router = express.Router();
 router.get('/', getClients);
 
 // GET a single client by ID
-router.get('/:id', getClientById);
+router.get('/:id', validateClientId, getClientById);
 
 // POST create a new client
-router.post('/', createClient);
+router.post('/', validateCreateClient, createClient);
 
 // PUT update a client
-router.put('/:id', updateClient);
+router.put('/:id', validateUpdateClient, updateClient);
 
 // DELETE a client
-router.delete('/:id', deleteClient);
+router.delete('/:id', validateClientId, deleteClient);
+
+// Enhanced routes
+router.get('/:id/complete', validateClientId, getClientCompleteProfile);
+router.get('/:id/plans', validateClientId, getClientPlans);
+router.get('/:id/progress', validateClientId, getClientProgress);
+router.get('/:id/activities', validateClientId, getClientActivities);
+
+// Error handling middleware
+router.use(errorHandler);
 
 export default router;
