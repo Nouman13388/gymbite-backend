@@ -6,6 +6,7 @@ import {
   updateUser,
   deleteUser,
   getUserByFirebaseUid,
+  getUserByEmail,
 } from "../controllers/userController.js";
 
 const router = express.Router();
@@ -18,6 +19,9 @@ router.get("/:id", getUserById);
 
 // GET user by Firebase UID
 router.get("/firebase/:firebaseUid", getUserByFirebaseUid);
+
+// GET user by email
+router.get("/email/:email", getUserByEmail);
 
 // POST create a new user
 router.post("/", createUser);
