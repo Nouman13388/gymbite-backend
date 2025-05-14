@@ -62,6 +62,22 @@ export const getUserByFirebaseUid = async (req: Request, res: Response, next: Ne
   }
 };
 
+// Get user by email
+export const getUserByEmail = async (req: Request, res: Response, next: NextFunction) => {
+  const { email } = req.params;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Create a new user
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   const { email, name, role = 'CLIENT', firebaseUid } = req.body;
