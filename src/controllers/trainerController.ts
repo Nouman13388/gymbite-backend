@@ -1,6 +1,27 @@
 import { Request, Response, NextFunction } from 'express';
 import prisma from '../database/prisma.js';
 
+// Get trainer by user ID
+export const getTrainerByUserId = async (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req.params;
+  
+  try {
+    const trainer = await prisma.trainer.findFirst({
+      where: { userId: parseInt(userId) },
+      include: { user: true },
+    });
+
+    if (!trainer) {
+      return res.status(404).json({ error: 'Trainer not found for this user ID' });
+    }
+
+    res.json(trainer);
+  } catch (error) {
+    console.error('Error fetching trainer by user ID:', error);
+    next(error);
+  }
+};
+
 // Get all trainers
 export const getTrainers = async (req: Request, res: Response, next: NextFunction) => {
   try {

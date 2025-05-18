@@ -53,6 +53,27 @@ export const getClientById = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+// Get client by user ID
+export const getClientByUserId = async (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req.params;
+  
+  try {
+    const client = await prisma.client.findFirst({
+      where: { userId: parseInt(userId) },
+      include: { user: true },
+    });
+
+    if (!client) {
+      return res.status(404).json({ error: 'Client not found for this user ID' });
+    }
+
+    res.json(client);
+  } catch (error) {
+    console.error('Error fetching client by user ID:', error);
+    next(new ApiError(500, 'Failed to fetch client by user ID'));
+  }
+};
+
 // Create a new client
 export const createClient = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
