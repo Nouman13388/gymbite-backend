@@ -63,24 +63,29 @@ PORT=3000
 npm run build
 ```
 
-## Step 3: PM2 Configuration
+## Step 3: Application Start with npm and PM2
 
-1. Start the application:
+1. Start the application using npm:
 ```bash
-pm2 start dist/index.js --name "gymbite-backend"
+npm run dev
 ```
 
-2. Save the process list:
+2. Alternatively, start the application using PM2 with npm:
+```bash
+pm2 start npm --name "gymbite-backend" -- run dev
+```
+
+3. Save the PM2 process list:
 ```bash
 pm2 save
 ```
 
-3. Generate startup script:
+4. Generate startup script for PM2:
 ```bash
 sudo pm2 startup
 ```
 
-4. Verify the application is running:
+5. Verify the application is running:
 ```bash
 pm2 list
 ```

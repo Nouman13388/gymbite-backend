@@ -8,13 +8,17 @@ import {
   getTrainerCompleteProfile,
   getTrainerClients,
   getTrainerSchedule,
-  getTrainerMetrics
+  getTrainerMetrics,
+  getTrainerByUserId
 } from '../controllers/trainerController.js';
 
 const router = express.Router();
 
 // GET all trainers
 router.get('/', getTrainers);
+
+// GET trainer by user ID
+router.get('/user/:userId', getTrainerByUserId);
 
 // GET a single trainer by ID
 router.get('/:id', getTrainerById);

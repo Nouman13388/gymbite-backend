@@ -9,6 +9,7 @@ import {
   getClientPlans,
   getClientProgress,
   getClientActivities,
+  getClientByUserId,
   errorHandler
 } from '../controllers/clientController.js';
 import {
@@ -21,6 +22,9 @@ const router = express.Router();
 
 // GET all clients
 router.get('/', getClients);
+
+// GET client by user ID
+router.get('/user/:userId', getClientByUserId);
 
 // GET a single client by ID
 router.get('/:id', validateClientId, getClientById);
@@ -39,6 +43,7 @@ router.get('/:id/complete', validateClientId, getClientCompleteProfile);
 router.get('/:id/plans', validateClientId, getClientPlans);
 router.get('/:id/progress', validateClientId, getClientProgress);
 router.get('/:id/activities', validateClientId, getClientActivities);
+router.get('/user/:userId', getClientByUserId);
 
 // Error handling middleware
 router.use(errorHandler);
