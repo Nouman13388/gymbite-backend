@@ -65,6 +65,9 @@ DELETE http://localhost:3000/api/users/4
 
 ### Client Endpoints
 ```bash
+# Get client by user ID
+GET http://localhost:3000/api/clients/user/5
+
 # Get complete client profile
 GET http://localhost:3000/api/clients/1/complete
 
@@ -108,6 +111,9 @@ DELETE http://localhost:3000/api/clients/1
 
 ### Trainer Endpoints
 ```bash
+# Get trainer by user ID
+GET http://localhost:3000/api/trainers/user/4
+
 # Get complete trainer profile
 GET http://localhost:3000/api/trainers/1/complete
 
@@ -143,6 +149,76 @@ PUT http://localhost:3000/api/trainers/1
 
 # Delete trainer
 DELETE http://localhost:3000/api/trainers/1
+```
+
+## Trainer Endpoints
+
+### 1. Get All Trainers
+```http
+GET /trainers
+```
+Response:
+```json
+[
+  {
+    "id": 1,
+    "userId": 4,
+    "specialty": "Weight Training",
+    "experienceYears": 5,
+    "user": {
+      "id": 4,
+      "name": "Jane Smith",
+      "email": "jane@example.com",
+      "role": "TRAINER"
+    }
+  }
+]
+```
+
+### 2. Get Trainer by User ID
+```http
+GET /trainers/user/:userId
+```
+Parameters:
+- `userId` (path parameter): User ID (positive integer)
+
+Response:
+```json
+{
+  "id": 1,
+  "userId": 4,
+  "specialty": "Weight Training",
+  "experienceYears": 5,
+  "user": {
+    "id": 4,
+    "name": "Jane Smith",
+    "email": "jane@example.com",
+    "role": "TRAINER"
+  }
+}
+```
+
+### 3. Get Trainer by ID
+```http
+GET /trainers/:id
+```
+Parameters:
+- `id` (path parameter): Trainer ID (positive integer)
+
+Response:
+```json
+{
+  "id": 1,
+  "userId": 4,
+  "specialty": "Weight Training",
+  "experienceYears": 5,
+  "user": {
+    "id": 4,
+    "name": "Jane Smith",
+    "email": "jane@example.com",
+    "role": "TRAINER"
+  }
+}
 ```
 
 ## User Endpoints
@@ -260,7 +336,33 @@ Response:
 ]
 ```
 
-### 2. Get Client by ID
+### 2. Get Client by User ID
+```http
+GET /clients/user/:userId
+```
+Parameters:
+- `userId` (path parameter): User ID (positive integer)
+
+Response:
+```json
+{
+  "id": 1,
+  "userId": 5,
+  "weight": 75.5,
+  "height": 180.0,
+  "BMI": 23.3,
+  "fitnessGoals": "Weight loss",
+  "dietaryPreferences": "Vegetarian",
+  "user": {
+    "id": 5,
+    "name": "John Doe",
+    "email": "john@example.com",
+    "role": "CLIENT"
+  }
+}
+```
+
+### 3. Get Client by ID
 ```http
 GET /clients/:id
 ```
@@ -286,7 +388,7 @@ Response:
 }
 ```
 
-### 3. Create Client
+### 4. Create Client
 ```http
 POST /clients
 ```
@@ -322,7 +424,7 @@ Response (201 Created):
 }
 ```
 
-### 4. Update Client
+### 5. Update Client
 ```http
 PUT /clients/:id
 ```
@@ -354,7 +456,7 @@ Response:
 }
 ```
 
-### 5. Delete Client
+### 6. Delete Client
 ```http
 DELETE /clients/:id
 ```
@@ -363,7 +465,7 @@ Parameters:
 
 Response: 204 No Content
 
-### 6. Get Client Complete Profile
+### 7. Get Client Complete Profile
 ```http
 GET /clients/:id/complete
 ```
@@ -392,7 +494,7 @@ Response:
 }
 ```
 
-### 7. Get Client Plans
+### 8. Get Client Plans
 ```http
 GET /clients/:id/plans
 ```
@@ -431,7 +533,7 @@ Response:
 }
 ```
 
-### 8. Get Client Progress
+### 9. Get Client Progress
 ```http
 GET /clients/:id/progress
 ```
@@ -454,7 +556,7 @@ Response:
 ]
 ```
 
-### 9. Get Client Activities
+### 10. Get Client Activities
 ```http
 GET /clients/:id/activities
 ```
@@ -553,4 +655,3 @@ Expected Response (400 Bad Request):
 ```
 
 ### 4. Invalid Client ID
-```
