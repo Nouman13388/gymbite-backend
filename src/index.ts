@@ -13,6 +13,7 @@ import feedbackRoutes from './routes/feedbackRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import consultationRoutes from './routes/consultationRoutes.js';
 import appointmentRoutes from './routes/appointmentRoutes.js';
+import healthRoutes from './routes/healthRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -24,9 +25,17 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? process.env.CORS_ORIGIN?.split(',') || false 
+    : true,
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Serve static files from the public directory
 app.use(express.static(join(__dirname, '..', 'public')));
@@ -42,6 +51,9 @@ app.use('/api/feedbacks', feedbackRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/consultations', consultationRoutes);
 app.use('/api/appointments', appointmentRoutes);
+
+// Health check routes
+app.use('/api', healthRoutes);
 
 // Basic route
 app.get('/', (req, res) => {

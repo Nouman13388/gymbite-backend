@@ -157,9 +157,43 @@ pm2 start dist/index.js --name "gymbite-backend"
 
 Use tools like Postman or curl to test the APIs. Comprehensive testing is recommended to ensure all endpoints work as expected.
 
+## Production Deployment
+
+### Deploy to Vercel (Recommended)
+
+1. **Set up a production database:**
+   - Vercel Postgres (recommended): Go to Vercel Dashboard → Storage → Create Database → Postgres
+   - Or use external providers: Railway, Supabase, DigitalOcean, AWS RDS
+
+2. **Configure environment variables in Vercel:**
+   ```env
+   DATABASE_URL=your_production_database_url
+   NODE_ENV=production
+   PORT=3000
+   ```
+
+3. **Deploy:**
+   ```bash
+   # Connect GitHub repo to Vercel or deploy manually:
+   npx vercel --prod
+   ```
+
+4. **Verify deployment:**
+   ```bash
+   curl https://your-app.vercel.app/api/health
+   curl https://your-app.vercel.app/api/users
+   ```
+
+### Health Monitoring
+
+The application includes built-in health check endpoints:
+- `GET /api/health` - Comprehensive system health status
+- `GET /api/ready` - Database connectivity check for load balancers
+- `GET /api/alive` - Basic liveness check
+
 ## Documentation
 
-API documentation is pending. Once generated, it will be available in `API_DOCUMENTATION.md`.
+Complete API documentation is available in [`API_DOCUMENTATION.md`](./API_DOCUMENTATION.md) with detailed endpoint descriptions, examples, and test cases.
 
 ## Contributing
 
