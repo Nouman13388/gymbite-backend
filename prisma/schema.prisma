@@ -3,7 +3,6 @@
 // Generator block specifies the Prisma Client generation.
 generator client {
   provider = "prisma-client-js" // Specifies the Prisma Client for JavaScript/TypeScript.
-  output   = "./generated/client"
 }
 
 // Datasource block specifies the database connection.
