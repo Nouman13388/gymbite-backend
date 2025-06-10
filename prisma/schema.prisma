@@ -9,7 +9,7 @@ generator client {
 // Datasource block specifies the database connection.
 datasource db {
   provider = "postgresql" // Specifies PostgreSQL as the database provider.
-  url      = env("DATABASE_URL") // Uses an environment variable for the database connection URL.
+  url      = env("POSTGRES_URL") // Uses an environment variable for the database connection URL.
 }
 
 // Enum for user roles.
