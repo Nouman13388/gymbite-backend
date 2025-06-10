@@ -259,9 +259,8 @@ export const getTrainerMetrics = async (req: Request, res: Response, next: NextF
         }
       })
     ]);
-    
-    const averageRating = feedbacks.length > 0
-      ? feedbacks.reduce((acc, curr) => acc + curr.rating, 0) / feedbacks.length
+      const averageRating = feedbacks.length > 0
+      ? feedbacks.reduce((acc: number, curr: any) => acc + curr.rating, 0) / feedbacks.length
       : 0;
     
     res.json({

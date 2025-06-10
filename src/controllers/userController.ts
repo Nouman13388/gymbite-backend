@@ -8,7 +8,7 @@ import Joi from 'joi';
 const userValidationSchema = Joi.object({
   email: Joi.string().email().required(),
   name: Joi.string().min(3).max(255).required(),
-  role: Joi.string().valid(...Object.values(Role)),
+  role: Joi.string().valid('CLIENT', 'TRAINER', 'ADMIN'),
   firebaseUid: Joi.string().required(),
 });
 
