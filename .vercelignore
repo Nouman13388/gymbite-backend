@@ -1,0 +1,10 @@
+# Vercel ignore file
+.env
+.env.local
+.env.production
+.env.staging
+node_modules
+.git
+.gitignore
+README.md
+*.log

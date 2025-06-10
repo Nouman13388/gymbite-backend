@@ -42,11 +42,10 @@ export const healthCheck = async (req: Request, res: Response): Promise<void> =>
   // Get memory usage
   const memUsage = process.memoryUsage();
   const totalMemory = memUsage.heapTotal;
-  const usedMemory = memUsage.heapUsed;
-  const memoryPercentage = ((usedMemory / totalMemory) * 100).toFixed(2);
+  const usedMemory = memUsage.heapUsed;  const memoryPercentage = ((usedMemory / totalMemory) * 100).toFixed(2);
 
   // Get package version
-  const packageJson = await import('../../package.json', { assert: { type: 'json' } });
+  const packageJson = await import('../../package.json', { with: { type: 'json' } });
 
   const healthStatus: HealthStatus = {
     status: dbStatus === 'connected' ? 'healthy' : 'unhealthy',
