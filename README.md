@@ -8,7 +8,9 @@ A comprehensive fitness platform backend built with Node.js, Express, TypeScript
 
 - **Backend**: Node.js + Express + TypeScript
 - **Database**: PostgreSQL with Prisma ORM
-- **Frontend**: React + TypeScript + Vite (Dashboard)
+- **Frontend**: React + TypeScript + Tailwind CSS v4 + React Router (Dashboard)
+- **Authentication**: React Context API with localStorage persistence
+- **Styling**: Tailwind CSS v4 with CSS-based configuration
 - **Development**: Root-controlled workspace with npm workspaces
 - **Security**: Helmet, CORS, rate limiting, compression
 - **Deployment**: Vercel-ready with health checks
@@ -89,11 +91,26 @@ gymbite-backend/
 │   ├── 📁 database/           # Database connection
 │   ├── 📁 types/              # TypeScript definitions
 │   └── 📄 index.ts            # Application entry point
-├── 📁 dashboard/                 # React dashboard
-│   ├── 📁 src/                # React components
+├── 📁 dashboard/              # React admin dashboard
+│   ├── 📁 src/                # React source code
+│   │   ├── 📁 components/     # Reusable components
+│   │   │   ├── 📁 ui/         # UI components
+│   │   │   └── 📁 layout/     # Layout components
+│   │   ├── 📁 pages/          # Page components
+│   │   │   ├── 📁 auth/       # Authentication pages
+│   │   │   └── Dashboard.tsx  # Main dashboard
+│   │   ├── 📁 context/        # React contexts (auth)
+│   │   ├── 📁 hooks/          # Custom hooks
+│   │   ├── 📁 services/       # API services
+│   │   ├── 📁 types/          # TypeScript definitions
+│   │   ├── 📁 utils/          # Utility functions
+│   │   ├── 📄 App.tsx         # Root component
+│   │   ├── 📄 routes.tsx      # Route configuration
+│   │   └── 📄 index.css       # Tailwind CSS + theme
 │   ├── 📁 public/             # Static assets
 │   ├── 📄 vite.config.ts      # Vite configuration
-│   └── 📄 package.json        # Client dependencies
+│   ├── 📄 postcss.config.js   # PostCSS + Tailwind config
+│   └── 📄 package.json        # Dashboard dependencies
 ├── 📁 prisma/                 # Database schema & migrations
 │   ├── 📄 schema.prisma       # Database schema
 │   └── 📁 migrations/         # Migration history
@@ -112,12 +129,13 @@ The project uses **npm workspaces** for centralized dependency management:
 
 ```json
 {
-  "workspaces": ["client"],
+  "workspaces": ["dashboard"],
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "tsx watch src/index.ts",
-    "dev:client": "npm --workspace=client run dev",
-    "build": "npm run build:client && npm run build:server"
+    "dev:client": "npm --workspace=dashboard run dev",
+    "build": "npm run build:client && npm run build:server",
+    "vercel-build": "prisma generate && npm run build:client && npm run build:server"
   }
 }
 ```
@@ -129,6 +147,56 @@ The project uses **npm workspaces** for centralized dependency management:
 - **🔗 API Proxy**: `/api` requests proxy from `:5173` → `:3000`
 - **📦 Workspace Management**: Single `npm install` for everything
 - **🏗️ Build Pipeline**: Client → `public/`, Server → `dist/`
+
+## 🎨 Dashboard Architecture
+
+### Authentication System
+
+The dashboard uses React Context API for authentication management:
+
+```typescript
+// AuthContext provides:
+interface AuthContextType {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: (credentials: {
+    username: string;
+    password: string;
+  }) => Promise<boolean>;
+  logout: () => void;
+}
+```
+
+### Routing & Navigation
+
+- **React Router v6** with centralized route configuration
+- **Protected Routes** with authentication guards
+- **Type-safe routing** with TypeScript constants
+
+```typescript
+// Route structure
+/login          // Public - AdminLogin component
+/dashboard      // Protected - Main dashboard
+/*              // Fallback - 404 page
+```
+
+### Styling System
+
+- **Tailwind CSS v4** with CSS-based configuration
+- **Custom theme** with dark mode colors
+- **Material Icons** integration
+- **Inter font** for typography
+
+```css
+@theme {
+  --color-primary-blue: #1173d4;
+  --color-dark-bg: #111418;
+  --color-dark-card: #181c22;
+  --color-dark-input: #283039;
+  --font-family-inter: Inter, "Noto Sans", sans-serif;
+}
+```
 
 ## 📚 API Reference
 
@@ -314,12 +382,13 @@ CORS_ORIGIN=https://your-dashboard.vercel.app
 #### Dashboard
 
 ```bash
-# Deploy dashboard separately
-cd client
+# Deploy dashboard separately (if needed)
+cd dashboard
 npx vercel --prod
 
-# Set environment variables:
-VITE_API_URL=https://your-api.vercel.app/api
+# Or use unified build (dashboard served from backend)
+npm run build
+npx vercel --prod
 ```
 
 ### Option 2: Unified Server
@@ -400,7 +469,7 @@ node dist/index.js
 
 #### Proxy Not Working
 
-Verify `client/vite.config.ts` proxy configuration:
+Verify `dashboard/vite.config.ts` proxy configuration:
 
 ```typescript
 proxy: {
@@ -409,6 +478,30 @@ proxy: {
     changeOrigin: true,
     secure: false
   }
+}
+```
+
+#### Tailwind CSS Not Working
+
+For Tailwind v4, ensure proper configuration:
+
+```javascript
+// postcss.config.js
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {},
+    autoprefixer: {},
+  },
+};
+```
+
+```css
+/* index.css */
+@import "tailwindcss";
+
+@theme {
+  --color-primary-blue: #1173d4;
+  /* other custom properties */
 }
 ```
 
@@ -440,4 +533,4 @@ This project is licensed under the MIT License.
 
 ---
 
-**Built with ❤️ using Node.js, React, TypeScript, and PostgreSQL**
+Built with ❤️ using Node.js, React, TypeScript, Tailwind CSS, and PostgreSQL
