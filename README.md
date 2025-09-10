@@ -89,7 +89,7 @@ gymbite-backend/
 │   ├── 📁 database/           # Database connection
 │   ├── 📁 types/              # TypeScript definitions
 │   └── 📄 index.ts            # Application entry point
-├── 📁 client/                 # React dashboard
+├── 📁 dashboard/                 # React dashboard
 │   ├── 📁 src/                # React components
 │   ├── 📁 public/             # Static assets
 │   ├── 📄 vite.config.ts      # Vite configuration
@@ -219,14 +219,6 @@ Authorization: Bearer <firebase-id-token>
 | `GET`  | `/api/appointments`  | List appointments  |
 | `GET`  | `/api/feedback`      | List feedback      |
 | `GET`  | `/api/notifications` | List notifications |
-
-### 🏥 Health Checks
-
-| Endpoint      | Purpose                     |
-| ------------- | --------------------------- |
-| `/api/health` | Comprehensive system status |
-| `/api/ready`  | Database connectivity       |
-| `/api/alive`  | Basic liveness check        |
 
 ### 📝 Request/Response Examples
 
