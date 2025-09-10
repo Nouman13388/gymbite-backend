@@ -1,208 +1,443 @@
-# Gymbite Backend
+# Gymbite
 
-A Node.js backend application for the Gymbite platform, built with Express, TypeScript, and PostgreSQL.
+A comprehensive fitness platform backend built with Node.js, Express, TypeScript, and PostgreSQL. Features a React dashboard for administration and includes complete API endpoints for user management, trainer-client relationships, workout plans, meal plans, and progress tracking.
 
-## Features
+## ✨ Features
 
-- User management (CRUD operations)
-- Trainer, Client, Consultation, Appointment, Workout Plan, Meal Plan, Feedback, Notification, and Progress management (CRUD operations)
-- PostgreSQL database with Prisma ORM
-- TypeScript support
-- Environment variable configuration
-- CORS enabled
-- RESTful API design
-- Error handling middleware
-- Input validation middleware
+### 🏗️ Architecture & Tech Stack
 
-## Prerequisites
+- **Backend**: Node.js + Express + TypeScript
+- **Database**: PostgreSQL with Prisma ORM
+- **Frontend**: React + TypeScript + Vite (Dashboard)
+- **Development**: Root-controlled workspace with npm workspaces
+- **Security**: Helmet, CORS, rate limiting, compression
+- **Deployment**: Vercel-ready with health checks
 
-- Node.js (v14 or higher)
-- PostgreSQL database
-- npm or yarn package manager
+### 🚀 Core Functionality
 
-## Installation
+- **User Management**: Complete CRUD with Firebase Auth integration
+- **Trainer-Client System**: Profile management and relationship tracking
+- **Fitness Features**: Workout plans, meal plans, progress tracking
+- **Communication**: Consultations, appointments, feedback, notifications
+- **Admin Dashboard**: React-based management interface
+- **API Documentation**: Comprehensive REST API with validation
 
-1. Clone the repository:
+## 📋 Prerequisites
+
+- **Node.js** v20.19.0+ (required for Vite)
+- **PostgreSQL** database
+- **npm** package manager
+- **Firebase** project (for authentication)
+
+## 🚀 Quick Start
+
+### 1. Clone & Install
+
 ```bash
 git clone https://github.com/yourusername/gymbite-backend.git
 cd gymbite-backend
-```
 
-2. Install dependencies:
-```bash
+# Install dependencies (workspace-aware)
 npm install
+
+# Generate Prisma client
+npx prisma generate
 ```
 
-3. Create a `.env` file in the root directory with the following variables:
+### 2. Environment Setup
+
+Create `.env` in the root directory:
+
 ```env
 DATABASE_URL="postgresql://username:password@localhost:5432/gymbite?schema=public"
 PORT=3000
+NODE_ENV=development
+CORS_ORIGIN=http://localhost:5173
 ```
 
-4. Run database migrations:
+### 3. Database Setup
+
 ```bash
+# Run migrations
 npx prisma migrate dev
+
+# Optional: Seed with sample data
+node populate-data.js
 ```
 
-## Development
+### 4. Development
 
-Start the development server:
 ```bash
+# Start both backend (3000) and dashboard (5173)
 npm run dev
+
+# Backend only
+npm run dev:server
+
+# Dashboard only
+npm run dev:client
 ```
 
-## API Endpoints
-
-### Users
-
-- `GET /api/users` - Get all users
-- `GET /api/users/:id` - Get user by ID
-- `POST /api/users` - Create a new user
-- `PUT /api/users/:id` - Update a user
-- `DELETE /api/users/:id` - Delete a user
-
-### Trainers
-
-- `GET /api/trainers` - Get all trainers
-- `GET /api/trainers/:id` - Get trainer by ID
-- `POST /api/trainers` - Create a new trainer
-- `PUT /api/trainers/:id` - Update a trainer
-- `DELETE /api/trainers/:id` - Delete a trainer
-
-### Clients
-
-- `GET /api/clients` - Get all clients
-- `GET /api/clients/:id` - Get client by ID
-- `POST /api/clients` - Create a new client
-- `PUT /api/clients/:id` - Update a client
-- `DELETE /api/clients/:id` - Delete a client
-
-### Consultations
-
-- `GET /api/consultations` - Get all consultations
-- `GET /api/consultations/:id` - Get consultation by ID
-- `POST /api/consultations` - Create a new consultation
-- `PUT /api/consultations/:id` - Update a consultation
-- `DELETE /api/consultations/:id` - Delete a consultation
-
-### Appointments
-
-- `GET /api/appointments` - Get all appointments
-- `GET /api/appointments/:id` - Get appointment by ID
-- `POST /api/appointments` - Create a new appointment
-- `PUT /api/appointments/:id` - Update an appointment
-- `DELETE /api/appointments/:id` - Delete an appointment
-
-### Workout Plans
-
-- `GET /api/workout-plans` - Get all workout plans
-- `GET /api/workout-plans/:id` - Get workout plan by ID
-- `POST /api/workout-plans` - Create a new workout plan
-- `PUT /api/workout-plans/:id` - Update a workout plan
-- `DELETE /api/workout-plans/:id` - Delete a workout plan
-
-### Meal Plans
-
-- `GET /api/meal-plans` - Get all meal plans
-- `GET /api/meal-plans/:id` - Get meal plan by ID
-- `POST /api/meal-plans` - Create a new meal plan
-- `PUT /api/meal-plans/:id` - Update a meal plan
-- `DELETE /api/meal-plans/:id` - Delete a meal plan
-
-### Feedback
-
-- `GET /api/feedback` - Get all feedback
-- `GET /api/feedback/:id` - Get feedback by ID
-- `POST /api/feedback` - Create new feedback
-- `PUT /api/feedback/:id` - Update feedback
-- `DELETE /api/feedback/:id` - Delete feedback
-
-### Notifications
-
-- `GET /api/notifications` - Get all notifications
-- `GET /api/notifications/:id` - Get notification by ID
-- `POST /api/notifications` - Create a new notification
-- `PUT /api/notifications/:id` - Update a notification
-- `DELETE /api/notifications/:id` - Delete a notification
-
-### Progress
-
-- `GET /api/progress` - Get all progress records
-- `GET /api/progress/:id` - Get progress record by ID
-- `POST /api/progress` - Create a new progress record
-- `PUT /api/progress/:id` - Update a progress record
-- `DELETE /api/progress/:id` - Delete a progress record
-
-## Project Structure
+## 🏗️ Project Structure
 
 ```
-src/
-├── controllers/    # Route controllers
-├── routes/         # API routes
-├── models/         # Database models
-├── middleware/     # Custom middleware
-├── types/          # TypeScript type definitions
-├── utils/          # Utility functions
-└── index.ts        # Application entry point
+gymbite-backend/
+├── 📁 src/                    # Backend source code
+│   ├── 📁 controllers/        # Route controllers
+│   ├── 📁 routes/             # API routes
+│   ├── 📁 middleware/         # Custom middleware
+│   ├── 📁 database/           # Database connection
+│   ├── 📁 types/              # TypeScript definitions
+│   └── 📄 index.ts            # Application entry point
+├── 📁 dashboard/                 # React dashboard
+│   ├── 📁 src/                # React components
+│   ├── 📁 public/             # Static assets
+│   ├── 📄 vite.config.ts      # Vite configuration
+│   └── 📄 package.json        # Client dependencies
+├── 📁 prisma/                 # Database schema & migrations
+│   ├── 📄 schema.prisma       # Database schema
+│   └── 📁 migrations/         # Migration history
+├── 📁 public/                 # Built dashboard (production)
+├── 📁 dist/                   # Compiled backend (production)
+├── 📄 package.json            # Root package & scripts
+├── 📄 tsconfig.json           # TypeScript config
+└── 📄 populate-data.js        # Sample data script
 ```
 
-## Deployment
+## 🛠️ Development Workflow
 
-To deploy the application using PM2:
+### Root-Controlled Architecture
+
+The project uses **npm workspaces** for centralized dependency management:
+
+```json
+{
+  "workspaces": ["client"],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "tsx watch src/index.ts",
+    "dev:client": "npm --workspace=client run dev",
+    "build": "npm run build:client && npm run build:server"
+  }
+}
+```
+
+### Development Features
+
+- **🔄 Hot Reload**: Backend auto-restart with `tsx watch`
+- **⚡ HMR**: Frontend hot module replacement via Vite
+- **🔗 API Proxy**: `/api` requests proxy from `:5173` → `:3000`
+- **📦 Workspace Management**: Single `npm install` for everything
+- **🏗️ Build Pipeline**: Client → `public/`, Server → `dist/`
+
+## 📚 API Reference
+
+### 🔗 Base URLs
+
+- **Development**: `http://localhost:3000/api`
+- **Production**: `https://your-app.vercel.app/api`
+
+### 🔐 Authentication
+
+Firebase Authentication with Bearer tokens:
+
+```http
+Authorization: Bearer <firebase-id-token>
+```
+
+### 📊 Core Endpoints
+
+#### Users
+
+| Method   | Endpoint                           | Description              |
+| -------- | ---------------------------------- | ------------------------ |
+| `GET`    | `/api/users`                       | List all users           |
+| `GET`    | `/api/users/:id`                   | Get user by ID           |
+| `GET`    | `/api/users/firebase/:firebaseUid` | Get user by Firebase UID |
+| `POST`   | `/api/users`                       | Create new user          |
+| `PUT`    | `/api/users/:id`                   | Update user              |
+| `DELETE` | `/api/users/:id`                   | Delete user              |
+
+#### Trainers
+
+| Method   | Endpoint                     | Description               |
+| -------- | ---------------------------- | ------------------------- |
+| `GET`    | `/api/trainers`              | List all trainers         |
+| `GET`    | `/api/trainers/:id`          | Get trainer profile       |
+| `GET`    | `/api/trainers/:id/complete` | Get complete trainer info |
+| `GET`    | `/api/trainers/:id/clients`  | Get trainer's clients     |
+| `POST`   | `/api/trainers`              | Create trainer profile    |
+| `PUT`    | `/api/trainers/:id`          | Update trainer            |
+| `DELETE` | `/api/trainers/:id`          | Delete trainer            |
+
+#### Clients
+
+| Method   | Endpoint                    | Description              |
+| -------- | --------------------------- | ------------------------ |
+| `GET`    | `/api/clients`              | List all clients         |
+| `GET`    | `/api/clients/:id`          | Get client profile       |
+| `GET`    | `/api/clients/:id/complete` | Get complete client info |
+| `POST`   | `/api/clients`              | Create client profile    |
+| `PUT`    | `/api/clients/:id`          | Update client            |
+| `DELETE` | `/api/clients/:id`          | Delete client            |
+
+#### Workout Plans
+
+| Method   | Endpoint                 | Description         |
+| -------- | ------------------------ | ------------------- |
+| `GET`    | `/api/workout-plans`     | List workout plans  |
+| `GET`    | `/api/workout-plans/:id` | Get workout plan    |
+| `POST`   | `/api/workout-plans`     | Create workout plan |
+| `PUT`    | `/api/workout-plans/:id` | Update workout plan |
+| `DELETE` | `/api/workout-plans/:id` | Delete workout plan |
+
+#### Meal Plans
+
+| Method   | Endpoint              | Description      |
+| -------- | --------------------- | ---------------- |
+| `GET`    | `/api/meal-plans`     | List meal plans  |
+| `GET`    | `/api/meal-plans/:id` | Get meal plan    |
+| `POST`   | `/api/meal-plans`     | Create meal plan |
+| `PUT`    | `/api/meal-plans/:id` | Update meal plan |
+| `DELETE` | `/api/meal-plans/:id` | Delete meal plan |
+
+#### Progress Tracking
+
+| Method   | Endpoint            | Description           |
+| -------- | ------------------- | --------------------- |
+| `GET`    | `/api/progress`     | List progress records |
+| `GET`    | `/api/progress/:id` | Get progress record   |
+| `POST`   | `/api/progress`     | Log progress          |
+| `PUT`    | `/api/progress/:id` | Update progress       |
+| `DELETE` | `/api/progress/:id` | Delete progress       |
+
+#### Communication
+
+| Method | Endpoint             | Description        |
+| ------ | -------------------- | ------------------ |
+| `GET`  | `/api/consultations` | List consultations |
+| `GET`  | `/api/appointments`  | List appointments  |
+| `GET`  | `/api/feedback`      | List feedback      |
+| `GET`  | `/api/notifications` | List notifications |
+
+### 📝 Request/Response Examples
+
+#### Create User
+
 ```bash
-pm2 start dist/index.js --name "gymbite-backend"
+curl -X POST http://localhost:3000/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firebaseUid": "user123",
+    "email": "user@example.com",
+    "displayName": "John Doe",
+    "role": "CLIENT"
+  }'
 ```
 
-## Testing
+#### Response
 
-Use tools like Postman or curl to test the APIs. Comprehensive testing is recommended to ensure all endpoints work as expected.
+```json
+{
+  "id": 1,
+  "firebaseUid": "user123",
+  "email": "user@example.com",
+  "displayName": "John Doe",
+  "role": "CLIENT",
+  "createdAt": "2025-09-10T14:30:00.000Z"
+}
+```
 
-## Production Deployment
+### ❌ Error Handling
 
-### Deploy to Vercel (Recommended)
+```json
+{
+  "error": "User not found"
+}
+```
 
-1. **Set up a production database:**
-   - Vercel Postgres (recommended): Go to Vercel Dashboard → Storage → Create Database → Postgres
-   - Or use external providers: Railway, Supabase, DigitalOcean, AWS RDS
+Validation errors:
 
-2. **Configure environment variables in Vercel:**
-   ```env
-   DATABASE_URL=your_production_database_url
-   NODE_ENV=production
-   PORT=3000
-   ```
+```json
+{
+  "errors": [
+    {
+      "msg": "Email is required",
+      "param": "email",
+      "location": "body"
+    }
+  ]
+}
+```
 
-3. **Deploy:**
-   ```bash
-   # Connect GitHub repo to Vercel or deploy manually:
-   npx vercel --prod
-   ```
+## 📦 Sample Data
 
-4. **Verify deployment:**
-   ```bash
-   curl https://your-app.vercel.app/api/health
-   curl https://your-app.vercel.app/api/users
-   ```
+The project includes a data population script with realistic test data:
 
-### Health Monitoring
+### 👥 Sample Users
 
-The application includes built-in health check endpoints:
-- `GET /api/health` - Comprehensive system health status
-- `GET /api/ready` - Database connectivity check for load balancers
-- `GET /api/alive` - Basic liveness check
+- **John Doe** (Client): Vegetarian seeking weight loss and muscle building
+- **Sarah Smith** (Trainer): 5 years experience in strength training
 
-## Documentation
+### 📋 Included Data
 
-Complete API documentation is available in [`API_DOCUMENTATION.md`](./API_DOCUMENTATION.md) with detailed endpoint descriptions, examples, and test cases.
+- ✅ User profiles with Firebase UIDs
+- ✅ Trainer/Client profiles with preferences
+- ✅ Workout plan (Beginner Strength Training)
+- ✅ Meal plan (Vegetarian Weight Loss - 1800 cal)
+- ✅ Scheduled appointments and consultations
+- ✅ Progress tracking records
+- ✅ Feedback and notifications
 
-## Contributing
+### 🎯 Load Sample Data
+
+```bash
+node populate-data.js
+```
+
+## 🚀 Production Deployment
+
+### Option 1: Vercel (Recommended)
+
+#### Backend API
+
+```bash
+# Deploy backend to Vercel
+npx vercel --prod
+
+# Set environment variables in Vercel dashboard:
+DATABASE_URL=your_production_db_url
+NODE_ENV=production
+CORS_ORIGIN=https://your-dashboard.vercel.app
+```
+
+#### Dashboard
+
+```bash
+# Deploy dashboard separately
+cd client
+npx vercel --prod
+
+# Set environment variables:
+VITE_API_URL=https://your-api.vercel.app/api
+```
+
+### Option 2: Unified Server
+
+```bash
+# Build for production
+npm run build
+
+# Start production server
+NODE_ENV=production node dist/index.js
+
+# Dashboard served from http://localhost:3000
+```
+
+### 🔒 Production Checklist
+
+- ✅ Set secure `DATABASE_URL`
+- ✅ Configure `CORS_ORIGIN`
+- ✅ Enable rate limiting
+- ✅ Set up monitoring/logging
+- ✅ Database backups
+- ✅ SSL/TLS certificates
+
+## 🧪 Testing
+
+### API Testing
+
+```bash
+# Health check
+curl http://localhost:3000/api/health
+
+# List users
+curl http://localhost:3000/api/users
+
+# Create user
+curl -X POST http://localhost:3000/api/users \
+  -H "Content-Type: application/json" \
+  -d '{"firebaseUid":"test","email":"test@example.com","displayName":"Test User","role":"CLIENT"}'
+```
+
+### Dashboard Testing
+
+1. Open `http://localhost:5173`
+2. Verify API proxy works (`/api` calls)
+3. Test production build: `npm run build` → serve from `:3000`
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+#### EBADENGINE Warnings
+
+```bash
+# Upgrade Node.js to >= 20.19.0
+node -v  # should show 20.19.0+
+```
+
+#### Prisma EPERM Errors
+
+```bash
+# Clean and regenerate
+rm -rf node_modules/.prisma
+npm cache clean --force
+npm install
+npx prisma generate
+```
+
+#### Server Won't Start
+
+```bash
+# Check TypeScript compilation
+npx tsc --noEmit
+
+# Build and run compiled version
+npm run build:server
+node dist/index.js
+```
+
+#### Proxy Not Working
+
+Verify `client/vite.config.ts` proxy configuration:
+
+```typescript
+proxy: {
+  "/api": {
+    target: "http://localhost:3000",
+    changeOrigin: true,
+    secure: false
+  }
+}
+```
+
+## 🤝 Development
+
+### Scripts Reference
+
+```bash
+npm run dev              # Start both servers
+npm run dev:server       # Backend only (tsx watch)
+npm run dev:client       # Dashboard only (vite dev)
+npm run build            # Build both for production
+npm run build:server     # Compile TypeScript
+npm run build:client     # Build React app → public/
+npm start                # Run production server
+```
+
+### Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create feature branch: `git checkout -b feature-name`
+3. Commit changes: `git commit -m 'Add feature'`
+4. Push branch: `git push origin feature-name`
+5. Submit pull request
 
-## License
+## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License.
+
+---
+
+**Built with ❤️ using Node.js, React, TypeScript, and PostgreSQL**
