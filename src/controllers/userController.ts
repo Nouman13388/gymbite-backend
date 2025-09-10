@@ -93,7 +93,9 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     });
     if (existingUser) {
       return res.status(400).json({ error: 'User with this Firebase UID already exists' });
-    }    const user = await prisma.user.create({
+    }    
+    
+    const user = await prisma.user.create({
       data: {
         email,
         name,
