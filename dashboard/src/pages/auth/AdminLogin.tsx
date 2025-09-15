@@ -1,9 +1,8 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-// import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 import { ROUTES } from "../../types/routes";
-// import false from './../../../../client/node_modules/vite/misc/false';
 
 const AdminLogin = () => {
   // States for username, password, errors, and loading
@@ -12,7 +11,7 @@ const AdminLogin = () => {
   const [errors, setErrors] = useState<{ username: string; password: string }>({ username: "", password: "" });
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
 
-  const { login, isLoading } = { login: async (creds: { username: string; password: string }): Promise<boolean> => { void creds; return true; }, isLoading: false };
+  const { login, isLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -44,17 +43,19 @@ const AdminLogin = () => {
 
     if (validateForm()) {
       try {
+        setIsSuccess(null); // Reset success state
+
         const success = await login({ username, password });
 
         if (success) {
           setIsSuccess(true);
-          // Navigate to the intended page after successful login
           navigate(from, { replace: true });
         } else {
           setIsSuccess(false);
-          setErrors({ username: "", password: "Invalid credentials" });
+          setErrors({ username: "", password: "Invalid credentials or not an ADMIN user" });
         }
-      } catch {
+      } catch (error) {
+        console.error("💥 Login error caught in component:", error);
         setIsSuccess(false);
         setErrors({ username: "", password: "Login failed. Please try again." });
       }
@@ -65,6 +66,7 @@ const AdminLogin = () => {
 
   return (
     <div className="relative flex size-full min-h-screen flex-col bg-dark-bg dark group/design-root overflow-x-hidden font-inter">
+
       <div className="flex h-full grow flex-col">
         <header className="flex items-center justify-center whitespace-nowrap px-10 py-6">
           <div className="flex items-center gap-3 text-white">
@@ -161,7 +163,7 @@ const AdminLogin = () => {
                 {/* Submit Button */}
                 <div>
                   <button
-                    className="flex w-full justify-center rounded-md bg-primary-blue px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-blue transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex w-full justify-center rounded-md bg-primary-blue px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-blue transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     type="submit"
                     disabled={isLoading}
                   >

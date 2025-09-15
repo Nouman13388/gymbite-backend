@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-// import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { ROUTES } from '../types/routes';
 
 interface ProtectedRouteProps {
@@ -12,8 +12,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     children,
     requiresAuth = true
 }) => {
-    // const { isAuthenticated, isLoading } = useAuth();
-    const { isAuthenticated, isLoading } = { isAuthenticated: true, isLoading: false };
+    const { user, isAuthenticated, isLoading } = useAuth();
     const location = useLocation();
 
     if (isLoading) {
@@ -24,13 +23,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         );
     }
 
-    if (requiresAuth && !isAuthenticated) {
+    if (requiresAuth && (!isAuthenticated || !user || user.role !== 'ADMIN')) {
         // Redirect to login page with return url
         return <Navigate to={ROUTES.LOGIN} state={{ from: location }} replace />;
     }
 
-    if (!requiresAuth && isAuthenticated) {
-        // Redirect authenticated users away from login page
+    if (!requiresAuth && isAuthenticated && user && user.role === 'ADMIN') {
+        // Redirect authenticated ADMIN users away from login page
         return <Navigate to={ROUTES.DASHBOARD} replace />;
     }
 

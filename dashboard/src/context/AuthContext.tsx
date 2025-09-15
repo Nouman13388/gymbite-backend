@@ -1,110 +1,119 @@
-// import React, { createContext, useContext, useState, useEffect } from 'react';
-// import type { ReactNode } from 'react';
+import { useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
+import { auth } from '../utils/firebase';
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { AuthContext, type AuthContextType, type User } from './AuthContext';
 
-// interface User {
-//     id: string;
-//     email: string;
-//     role: string;
-//     displayName: string;
-// }
+// Re-export for convenience
+export { AuthContext, type AuthContextType, type User };
 
-// interface AuthContextType {
-//     user: User | null;
-//     isAuthenticated: boolean;
-//     isLoading: boolean;
-//     login: (credentials: { username: string; password: string }) => Promise<boolean>;
-//     logout: () => void;
-// }
+interface AuthProviderProps {
+    children: ReactNode;
+}
 
-// const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+    console.log("🏗️ AuthProvider initializing...");
+    const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const isAuthenticated = !!user;
 
-// interface AuthProviderProps {
-//     children: ReactNode;
-// }
+    useEffect(() => {
+        console.log("🔧 Setting up Firebase auth state listener...");
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            console.log("🔄 Firebase auth state changed:", firebaseUser ? "User logged in" : "User logged out");
+            console.log("👤 Firebase user:", firebaseUser ? { uid: firebaseUser.uid, email: firebaseUser.email } : null);
 
-// export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-//     const [user, setUser] = useState<User | null>(null);
-//     const [isLoading, setIsLoading] = useState(true);
+            setIsLoading(true);
+            if (firebaseUser) {
+                try {
+                    console.log("📡 Fetching user data from backend API...");
+                    const response = await fetch(`/api/users/firebase/${firebaseUser.uid}`);
+                    console.log("📊 API Response status:", response.status);
 
-//     const isAuthenticated = !!user;
+                    if (response.ok) {
+                        const userData = await response.json();
+                        console.log("📦 User data received:", userData);
 
-//     useEffect(() => {
-//         // Check for existing auth token on mount
-//         const checkAuth = async () => {
-//             try {
-//                 const token = localStorage.getItem('authToken');
-//                 if (token) {
-//                     // In a real app, you'd verify the token with your API
-//                     // For now, we'll simulate a successful auth check
-//                     const userData = localStorage.getItem('userData');
-//                     if (userData) {
-//                         setUser(JSON.parse(userData));
-//                     }
-//                 }
-//             } catch (error) {
-//                 console.error('Auth check failed:', error);
-//                 localStorage.removeItem('authToken');
-//                 localStorage.removeItem('userData');
-//             } finally {
-//                 setIsLoading(false);
-//             }
-//         };
+                        if (userData.role === 'ADMIN') {
+                            console.log("✅ User is ADMIN, setting user state");
+                            setUser({
+                                id: userData.id,
+                                email: userData.email,
+                                role: userData.role,
+                                displayName: userData.name,
+                                firebaseUid: userData.firebaseUid
+                            });
+                        } else {
+                            console.log("❌ User is not ADMIN, role:", userData.role);
+                            setUser(null);
+                        }
+                    } else {
+                        console.log("❌ Failed to fetch user data, status:", response.status);
+                        setUser(null);
+                    }
+                } catch (error) {
+                    console.error('💥 Failed to fetch user data:', error);
+                    setUser(null);
+                }
+            } else {
+                console.log("🚪 No Firebase user, setting user state to null");
+                setUser(null);
+            }
+            setIsLoading(false);
+            console.log("✅ Auth state update complete");
+        });
 
-//         checkAuth();
-//     }, []);
+        return () => {
+            console.log("🧹 Cleaning up Firebase auth listener");
+            unsubscribe();
+        };
+    }, []);
 
-//     const login = async (credentials: { username: string; password: string }): Promise<boolean> => {
-//         setIsLoading(true);
-//         try {
-//             // Simulate API call - replace with real authentication
-//             await new Promise(resolve => setTimeout(resolve, 1000));
+    const login = async (credentials: { username: string; password: string }): Promise<boolean> => {
+        console.log("🔐 Login function called with:", {
+            username: credentials.username,
+            password: credentials.password ? "[PASSWORD PROVIDED]" : "[NO PASSWORD]"
+        });
 
-//             // For demo purposes, accept any credentials
-//             const mockUser: User = {
-//                 id: '1',
-//                 email: credentials.username,
-//                 role: 'ADMIN',
-//                 displayName: 'Admin User'
-//             };
+        try {
+            console.log("🔥 Attempting Firebase signInWithEmailAndPassword...");
+            const userCredential = await signInWithEmailAndPassword(auth, credentials.username, credentials.password);
+            console.log("✅ Firebase login successful!", {
+                uid: userCredential.user.uid,
+                email: userCredential.user.email
+            });
+            return true;
+        } catch (error: unknown) {
+            const firebaseError = error as { code?: string; message?: string };
+            console.error('❌ Firebase login failed:', {
+                code: firebaseError?.code,
+                message: firebaseError?.message,
+                error: error
+            });
+            return false;
+        }
+    };
 
-//             setUser(mockUser);
-//             localStorage.setItem('authToken', 'mock-token');
-//             localStorage.setItem('userData', JSON.stringify(mockUser));
+    const logout = async () => {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+    };
 
-//             return true;
-//         } catch (error) {
-//             console.error('Login failed:', error);
-//             return false;
-//         } finally {
-//             setIsLoading(false);
-//         }
-//     };
+    const value: AuthContextType = {
+        user,
+        isAuthenticated,
+        isLoading,
+        login,
+        logout
+    };
 
-//     const logout = () => {
-//         setUser(null);
-//         localStorage.removeItem('authToken');
-//         localStorage.removeItem('userData');
-//     };
+    return (
+        <AuthContext.Provider value={value}>
+            {children}
+        </AuthContext.Provider>
+    );
+};
 
-//     const contextValue: AuthContextType = {
-//         user,
-//         isAuthenticated,
-//         isLoading,
-//         login,
-//         logout
-//     };
-
-//     return (
-//         <AuthContext.Provider value={contextValue}>
-//             {children}
-//         </AuthContext.Provider>
-//     );
-// };
-
-// export const useAuth = (): AuthContextType => {
-//     const context = useContext(AuthContext);
-//     if (!context) {
-//         throw new Error('useAuth must be used within an AuthProvider');
-//     }
-//     return context;
-// };

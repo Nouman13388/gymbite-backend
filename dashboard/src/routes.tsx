@@ -10,7 +10,7 @@ export const routes: RouteObject[] = [
     {
         path: ROUTES.LOGIN,
         element: (
-            <ProtectedRoute requiresAuth={true}>
+            <ProtectedRoute requiresAuth={false}>
                 <AdminLogin />
             </ProtectedRoute>
         ),

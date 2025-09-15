@@ -51,10 +51,24 @@ npx prisma generate
 Create `.env` in the root directory:
 
 ```env
+# Database Configuration
 DATABASE_URL="postgresql://username:password@localhost:5432/gymbite?schema=public"
+
+# Server Configuration
 PORT=3000
 NODE_ENV=development
 CORS_ORIGIN=http://localhost:5173
+
+# Firebase Configuration (for dashboard authentication)
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_firebase_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+VITE_FIREBASE_APP_ID=your_firebase_app_id
+
+# API Configuration
+VITE_API_URL=http://localhost:3000
 ```
 
 ### 3. Database Setup

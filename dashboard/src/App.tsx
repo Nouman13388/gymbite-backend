@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, useRoutes } from 'react-router-dom';
-// import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext.tsx';
 import { routes } from './routes';
 
 // App Routes Component - using useRoutes hook
@@ -10,11 +10,11 @@ const AppRoutes = () => {
 
 function App() {
   return (
-    // <AuthProvider>
+    <AuthProvider>
       <Router>
         <AppRoutes />
       </Router>
-    // </AuthProvider>
+    </AuthProvider>
   );
 }
 
