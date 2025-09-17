@@ -6,8 +6,12 @@ import {
   updateMealPlan,
   deleteMealPlan,
 } from "../controllers/mealPlanController.js";
+import { verifyFirebaseToken } from "../middleware/auth.js";
 
 const router = express.Router();
+
+// All meal plan routes require authentication
+router.use(verifyFirebaseToken);
 
 // Get all meal plans
 router.get("/", getMealPlans);

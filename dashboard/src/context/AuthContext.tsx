@@ -27,7 +27,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             if (firebaseUser) {
                 try {
                     console.log("📡 Fetching user data from backend API...");
-                    const response = await fetch(`/api/users/firebase/${firebaseUser.uid}`);
+                    // Get ID token for authenticated request
+                    const idToken = await firebaseUser.getIdToken();
+                    const response = await fetch(`/api/users/me`, {
+                        headers: {
+                            'Authorization': `Bearer ${idToken}`
+                        }
+                    });
                     console.log("📊 API Response status:", response.status);
 
                     if (response.ok) {

@@ -7,29 +7,36 @@ import {
   deleteUser,
   getUserByFirebaseUid,
   getUserByEmail,
+  getCurrentUser,
 } from "../controllers/userController.js";
+import { verifyFirebaseToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// GET all users
-router.get("/", getUsers);
-
-// GET a single user by ID
-router.get("/:id", getUserById);
-
-// GET user by Firebase UID
-router.get("/firebase/:firebaseUid", getUserByFirebaseUid);
-
-// GET user by email
-router.get("/email/:email", getUserByEmail);
-
+// Public routes (no authentication required)
 // POST create a new user
 router.post("/", createUser);
 
+// Protected routes (require Firebase authentication)
+// GET all users
+router.get("/", verifyFirebaseToken, getUsers);
+
+// GET current user profile
+router.get("/me", verifyFirebaseToken, getCurrentUser);
+
+// GET a single user by ID
+router.get("/:id", verifyFirebaseToken, getUserById);
+
+// GET user by Firebase UID (deprecated - use /me instead)
+router.get("/firebase/:firebaseUid", verifyFirebaseToken, getUserByFirebaseUid);
+
+// GET user by email
+router.get("/email/:email", verifyFirebaseToken, getUserByEmail);
+
 // PUT update a user
-router.put("/:id", updateUser);
+router.put("/:id", verifyFirebaseToken, updateUser);
 
 // DELETE a user
-router.delete("/:id", deleteUser);
+router.delete("/:id", verifyFirebaseToken, deleteUser);
 
 export default router;

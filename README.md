@@ -1,28 +1,61 @@
-# Gymbite
+# Gymbite Backend API 🏋️‍♀️
 
-A comprehensive fitness platform backend built with Node.js, Express, TypeScript, and PostgreSQL. Features a React dashboard for administration and includes complete API endpoints for user management, trainer-client relationships, workout plans, meal plans, and progress tracking.
+A comprehensive fitness and nutrition management system built with Node.js, TypeScript, and React. This backend API provides secure user management, workout planning, nutrition tracking, and appointment scheduling for fitness professionals and their clients.
 
-## ✨ Features
+## 🌟 Key Features
 
-### 🏗️ Architecture & Tech Stack
+### Backend Services
 
-- **Backend**: Node.js + Express + TypeScript
-- **Database**: PostgreSQL with Prisma ORM
-- **Frontend**: React + TypeScript + Tailwind CSS v4 + React Router (Dashboard)
-- **Authentication**: React Context API with localStorage persistence
-- **Styling**: Tailwind CSS v4 with CSS-based configuration
-- **Development**: Root-controlled workspace with npm workspaces
-- **Security**: Helmet, CORS, rate limiting, compression
-- **Deployment**: Vercel-ready with health checks
+- **🔐 Firebase Admin SDK Integration** - Server-side token verification for secure authentication
+- **👥 User Management** - Complete CRUD operations for trainers and clients
+- **🏋️ Workout Plans** - Create, manage, and track personalized workout routines
+- **🥗 Meal Plans** - Nutrition planning with calorie and macro tracking
+- **📅 Appointments** - Scheduling system for trainer-client sessions
+- **💬 Consultations** - Chat and video consultation support
+- **📊 Progress Tracking** - Weight, measurements, and fitness progress monitoring
+- **💌 Notifications** - Push notifications and alerts
+- **⭐ Feedback** - Rating and review system
 
-### 🚀 Core Functionality
+### Dashboard Interface
 
-- **User Management**: Complete CRUD with Firebase Auth integration
-- **Trainer-Client System**: Profile management and relationship tracking
-- **Fitness Features**: Workout plans, meal plans, progress tracking
-- **Communication**: Consultations, appointments, feedback, notifications
-- **Admin Dashboard**: React-based management interface
-- **API Documentation**: Comprehensive REST API with validation
+- **🔐 Admin Authentication** - Secure login for trainers and admins
+- **📱 Responsive Design** - Mobile-friendly admin dashboard
+- **🎯 Real-time Data** - Live updates and synchronization
+- **📈 Analytics** - User engagement and progress insights
+
+### 🔒 Security Features
+
+- **JWT Token Verification** - Firebase ID tokens validated server-side
+- **Role-Based Access Control** - CLIENT/TRAINER/ADMIN permissions
+- **Protected API Endpoints** - All routes secured with authentication middleware
+- **Service Account Integration** - Secure Firebase Admin SDK configuration
+
+## ✨ Tech Stack
+
+### Backend
+
+- **Node.js + TypeScript** - Type-safe server development
+- **Express.js** - Web framework with middleware support
+- **Prisma ORM** - Type-safe database queries with PostgreSQL
+- **Firebase Admin SDK** - Server-side authentication and token verification
+- **Firebase Authentication** - Secure user authentication
+- **Vercel** - Serverless deployment platform
+
+### Frontend (Dashboard)
+
+- **React 18** - Modern UI library with hooks
+- **TypeScript** - Type safety for frontend development
+- **Vite** - Fast build tool and dev server
+- **React Router v6** - Client-side routing
+- **Tailwind CSS v4** - Utility-first styling
+- **Firebase SDK** - Authentication integration
+
+### Database & Infrastructure
+
+- **PostgreSQL** - Relational database with ACID compliance
+- **Prisma Migrations** - Version-controlled schema management
+- **Vercel Postgres** - Managed database hosting
+- **Environment Variables** - Secure configuration management
 
 ## 📋 Prerequisites
 
@@ -54,21 +87,138 @@ Create `.env` in the root directory:
 # Database Configuration
 DATABASE_URL="postgresql://username:password@localhost:5432/gymbite?schema=public"
 
+# Firebase Admin SDK Configuration (REQUIRED for security)
+FIREBASE_PROJECT_ID="your-firebase-project-id"
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+FIREBASE_CLIENT_EMAIL="firebase-adminsdk-xxx@your-project.iam.gserviceaccount.com"
+
+# Firebase Client Configuration
+FIREBASE_API_KEY="your-firebase-api-key"
+FIREBASE_AUTH_DOMAIN="your-project.firebaseapp.com"
+
 # Server Configuration
 PORT=3000
 NODE_ENV=development
 CORS_ORIGIN=http://localhost:5173
 
-# Firebase Configuration (for dashboard authentication)
+# Dashboard Configuration (for Vite)
 VITE_FIREBASE_API_KEY=your_firebase_api_key
 VITE_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=your_firebase_project_id
 VITE_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
 VITE_FIREBASE_APP_ID=your_firebase_app_id
-
-# API Configuration
 VITE_API_URL=http://localhost:3000
+
+# Optional: Testing credentials
+FIREBASE_TEST_EMAIL="testadmin@gymbite.com"
+FIREBASE_TEST_PASSWORD="your_test_password"
+```
+
+### 3. Firebase Setup
+
+1. **Create Firebase Project**:
+
+   - Go to [Firebase Console](https://console.firebase.google.com/)
+   - Create new project
+   - Enable Authentication with Email/Password
+
+2. **Generate Service Account**:
+
+   - Project Settings → Service Accounts
+   - Generate new private key (JSON)
+   - Extract credentials for environment variables:
+     ```json
+     {
+       "project_id": "your-firebase-project-id",
+       "private_key": "-----BEGIN PRIVATE KEY-----\n...",
+       "client_email": "firebase-adminsdk-xxx@..."
+     }
+     ```
+
+3. **Test Firebase Integration**:
+   ```bash
+   # Create a test user and get token
+   npm run auth-utils create-user testadmin@gymbite.com mypassword
+   npm run auth-utils token testadmin@gymbite.com mypassword
+   ```
+
+### 4. Database Setup
+
+```bash
+# Run database migrations
+npx prisma migrate dev
+
+# Optional: Populate with sample data
+node populate-data.js
+```
+
+### 5. Development Server
+
+```bash
+# Start both backend and dashboard
+npm run dev
+
+# Or separately:
+npm run dev:server    # Backend only (port 3000)
+npm run dev:client    # Dashboard only (port 5173)
+```
+
+🎉 **Your services are now running:**
+
+- Backend API: `http://localhost:3000`
+- Dashboard: `http://localhost:5173`
+- Health Check: `http://localhost:3000/api/health`
+
+## 🔐 Authentication System
+
+### Firebase Admin SDK Integration
+
+The backend uses Firebase Admin SDK for secure server-side token verification:
+
+```mermaid
+graph LR
+    A[Flutter/Web App] --> B[Firebase Auth]
+    B --> C[ID Token]
+    C --> D[Backend API]
+    D --> E[Token Verification]
+    E --> F[Prisma Database]
+```
+
+### Security Features
+
+- **🔒 Server-side Token Verification**: All tokens validated against Firebase Admin SDK
+- **🛡️ Protected Routes**: Authentication middleware on all API endpoints
+- **👥 Role-based Access**: CLIENT/TRAINER/ADMIN permission levels
+- **🚫 No Client Trust**: UIDs never trusted from client-side requests
+
+### Testing Authentication
+
+Use the built-in testing utilities:
+
+```bash
+# Generate Firebase ID token for testing
+npm run auth-utils token test@gymbite.com password123
+
+# Output: Bearer token for Postman/API testing
+# Example usage in requests:
+curl -H "Authorization: Bearer <token>" http://localhost:3000/api/users/me
+```
+
+### Available Testing Scripts
+
+```bash
+# Create test user
+npm run auth-utils create-user newuser@test.com password123
+
+# Get Firebase ID token
+npm run auth-utils token user@test.com password
+
+# Get user info and token
+npm run auth-utils user-info user@test.com password
+
+# Simple token generation
+npm run get-token user@test.com password
 ```
 
 ### 3. Database Setup
@@ -229,28 +379,39 @@ Authorization: Bearer <firebase-id-token>
 
 ### 📊 Core Endpoints
 
+#### 🔓 Public Endpoints (No Authentication Required)
+
+| Method | Endpoint      | Description     |
+| ------ | ------------- | --------------- |
+| `GET`  | `/api/health` | Health check    |
+| `POST` | `/api/users`  | Create new user |
+
+#### 🔐 Protected Endpoints (Require Authentication)
+
+All endpoints below require `Authorization: Bearer <firebase-id-token>` header.
+
 #### Users
 
-| Method   | Endpoint                           | Description              |
-| -------- | ---------------------------------- | ------------------------ |
-| `GET`    | `/api/users`                       | List all users           |
-| `GET`    | `/api/users/:id`                   | Get user by ID           |
-| `GET`    | `/api/users/firebase/:firebaseUid` | Get user by Firebase UID |
-| `POST`   | `/api/users`                       | Create new user          |
-| `PUT`    | `/api/users/:id`                   | Update user              |
-| `DELETE` | `/api/users/:id`                   | Delete user              |
+| Method   | Endpoint                           | Description              | Auth Required |
+| -------- | ---------------------------------- | ------------------------ | ------------- |
+| `GET`    | `/api/users`                       | List all users           | ✅            |
+| `GET`    | `/api/users/me`                    | Get current user profile | ✅            |
+| `GET`    | `/api/users/:id`                   | Get user by ID           | ✅            |
+| `GET`    | `/api/users/firebase/:firebaseUid` | Get user by Firebase UID | ✅            |
+| `PUT`    | `/api/users/:id`                   | Update user              | ✅            |
+| `DELETE` | `/api/users/:id`                   | Delete user              | ✅            |
 
 #### Trainers
 
-| Method   | Endpoint                     | Description               |
-| -------- | ---------------------------- | ------------------------- |
-| `GET`    | `/api/trainers`              | List all trainers         |
-| `GET`    | `/api/trainers/:id`          | Get trainer profile       |
-| `GET`    | `/api/trainers/:id/complete` | Get complete trainer info |
-| `GET`    | `/api/trainers/:id/clients`  | Get trainer's clients     |
-| `POST`   | `/api/trainers`              | Create trainer profile    |
-| `PUT`    | `/api/trainers/:id`          | Update trainer            |
-| `DELETE` | `/api/trainers/:id`          | Delete trainer            |
+| Method   | Endpoint                     | Description               | Auth Required |
+| -------- | ---------------------------- | ------------------------- | ------------- |
+| `GET`    | `/api/trainers`              | List all trainers         | ✅            |
+| `GET`    | `/api/trainers/:id`          | Get trainer profile       | ✅            |
+| `GET`    | `/api/trainers/:id/complete` | Get complete trainer info | ✅            |
+| `GET`    | `/api/trainers/:id/clients`  | Get trainer's clients     | ✅            |
+| `POST`   | `/api/trainers`              | Create trainer profile    | ✅            |
+| `PUT`    | `/api/trainers/:id`          | Update trainer            | ✅            |
+| `DELETE` | `/api/trainers/:id`          | Delete trainer            | ✅            |
 
 #### Clients
 
@@ -379,6 +540,22 @@ node populate-data.js
 
 ## 🚀 Production Deployment
 
+### Firebase Admin SDK Environment Variables
+
+For production deployment, ensure these environment variables are set:
+
+```bash
+# Required Firebase Admin SDK variables
+FIREBASE_PROJECT_ID=your-firebase-project-id
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxx@your-project.iam.gserviceaccount.com
+
+# Database and server config
+DATABASE_URL=your_production_db_url
+NODE_ENV=production
+PORT=3000
+```
+
 ### Option 1: Vercel (Recommended)
 
 #### Backend API
@@ -391,6 +568,9 @@ npx vercel --prod
 DATABASE_URL=your_production_db_url
 NODE_ENV=production
 CORS_ORIGIN=https://your-dashboard.vercel.app
+FIREBASE_PROJECT_ID=your-firebase-project-id
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxx@your-project.iam.gserviceaccount.com
 ```
 
 #### Dashboard
@@ -524,16 +704,230 @@ export default {
 ### Scripts Reference
 
 ```bash
+# Development
 npm run dev              # Start both servers
 npm run dev:server       # Backend only (tsx watch)
 npm run dev:client       # Dashboard only (vite dev)
+
+# Firebase Testing Utilities
+npm run auth-utils token <email> <password>     # Get Firebase ID token
+npm run auth-utils create-user <email> <pass>   # Create test user
+npm run auth-utils user-info <email> <pass>     # Get user details
+npm run get-token <email> <password>            # Simple token generator
+
+# Building
+npm run build            # Build both client and server
+npm run build:client     # Build dashboard only
+npm run build:server     # Build backend only
+
+# Database
+npx prisma generate      # Generate Prisma client
+npx prisma migrate dev   # Run migrations
+npx prisma studio        # Open Prisma studio
+```
+
+### Testing Workflow
+
+1. **Create test user**:
+
+   ```bash
+   npm run auth-utils create-user test@gymbite.com password123
+   ```
+
+2. **Get authentication token**:
+
+   ```bash
+   npm run auth-utils token test@gymbite.com password123
+   ```
+
+3. **Test API endpoints**:
+   ```bash
+   # Copy Bearer token to Postman Authorization header
+   curl -H "Authorization: Bearer <token>" http://localhost:3000/api/users/me
+   ```
+
+### Flutter Integration Guide
+
+For mobile app integration, use these patterns:
+
+```dart
+// Firebase Auth in Flutter
+final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+
+// API request with token
+final response = await http.get(
+  Uri.parse('$baseUrl/api/users/me'),
+  headers: {
+    'Authorization': 'Bearer $idToken',
+    'Content-Type': 'application/json',
+  },
+);
+```
+
+### Project Architecture
+
+```text
+🏗️ Monorepo Structure
+├── 📁 src/                    # Backend (Node.js + Express + TypeScript)
+│   ├── 📁 config/             # Firebase Admin SDK configuration
+│   ├── 📁 controllers/        # Route controllers with authentication
+│   ├── 📁 middleware/         # Auth middleware for token verification
+│   ├── 📁 routes/             # Protected API routes
+│   └── 📁 database/           # Prisma client and connection
+
+├── 📁 dashboard/              # Frontend (React + TypeScript + Vite)
+│   ├── 📁 src/components/     # UI components and layout
+│   ├── 📁 src/context/        # Authentication context
+│   ├── 📁 src/pages/          # Dashboard pages
+│   └── 📁 src/utils/          # Firebase client configuration
+
+├── 📁 prisma/                 # Database schema and migrations
+├── 📄 get-firebase-token.js   # Simple token generation utility
+├── 📄 firebase-auth-utils.js  # Advanced authentication testing
+└── 📄 populate-data.js        # Sample data population
+```
+
+## 📋 Environment Variables Reference
+
+### Required Variables
+
+```env
+# Database
+DATABASE_URL="postgresql://user:pass@host:port/db"
+
+# Firebase Admin SDK (REQUIRED for authentication)
+FIREBASE_PROJECT_ID="your-project-id"
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+FIREBASE_CLIENT_EMAIL="firebase-adminsdk-xxx@project.iam.gserviceaccount.com"
+
+# Firebase Client (for testing utilities)
+FIREBASE_API_KEY="your-api-key"
+FIREBASE_AUTH_DOMAIN="project.firebaseapp.com"
+```
+
+### Optional Variables
+
+```env
+# Server Configuration
+PORT=3000
+NODE_ENV=development
+CORS_ORIGIN=http://localhost:5173
+
+# Testing
+FIREBASE_TEST_EMAIL="test@example.com"
+FIREBASE_TEST_PASSWORD="testpass123"
+```
+
+## 🔍 Troubleshooting
+
+### Authentication Issues
+
+#### "Invalid token" or 401 Unauthorized
+
+1. **Check token format**:
+
+   ```bash
+   # Token should start with "eyJ"
+   npm run auth-utils token test@gymbite.com password123
+   ```
+
+2. **Verify Firebase service account**:
+
+   ```bash
+   # Check environment variables are set
+   echo $FIREBASE_PROJECT_ID
+   echo $FIREBASE_CLIENT_EMAIL
+   ```
+
+3. **Test with valid user**:
+   ```bash
+   # Create user first if needed
+   npm run auth-utils create-user test@gymbite.com password123
+   ```
+
+#### Database Connection Errors
+
+```bash
+# Run migrations
+npx prisma migrate dev
+
+# Reset database if needed
+npx prisma migrate reset --force
+
+# Generate Prisma client
+npx prisma generate
+```
+
+#### Port Already in Use
+
+```bash
+# Find process using port 3000 (Windows)
+netstat -ano | findstr :3000
+
+# Kill process
+taskkill /PID <process_id> /F
+
+# Or use different port
+PORT=3001 npm run dev:server
+```
+
+#### Proxy Issues in Development
+
+Verify `dashboard/vite.config.ts`:
+
+```typescript
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
+});
+```
+
+### Common Error Messages
+
+| Error                         | Solution                                                 |
+| ----------------------------- | -------------------------------------------------------- |
+| `Table 'User' does not exist` | Run `npx prisma migrate dev`                             |
+| `Firebase project not found`  | Check `FIREBASE_PROJECT_ID` in `.env`                    |
+| `Invalid private key`         | Ensure `FIREBASE_PRIVATE_KEY` has proper newlines (`\n`) |
+| `CORS policy error`           | Set `CORS_ORIGIN` to your frontend URL                   |
+| `Port 3000 in use`            | Change `PORT` in `.env` or kill existing process         |
+
+### Build and Deployment
+
+```bash
 npm run build            # Build both for production
 npm run build:server     # Compile TypeScript
 npm run build:client     # Build React app → public/
 npm start                # Run production server
 ```
 
-### Contributing
+## 📚 Additional Resources
+
+- **Firebase Console**: [console.firebase.google.com](https://console.firebase.google.com)
+- **Prisma Documentation**: [prisma.io/docs](https://prisma.io/docs)
+- **Express.js Guide**: [expressjs.com](https://expressjs.com)
+- **React Documentation**: [react.dev](https://react.dev)
+- **Vercel Deployment**: [vercel.com/docs](https://vercel.com/docs)
+
+## 🆘 Support
+
+For questions or issues:
+
+1. Check this README for common solutions
+2. Review Firebase Admin SDK documentation
+3. Verify environment variables are properly set
+4. Test authentication flow with provided utilities
+5. Check server logs for detailed error messages
+
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create feature branch: `git checkout -b feature-name`
@@ -546,5 +940,7 @@ npm start                # Run production server
 This project is licensed under the MIT License.
 
 ---
+
+**📝 Note**: This README consolidates all Firebase Admin SDK integration details, testing utilities, and comprehensive setup instructions. The implementation includes server-side token verification, protected API endpoints, and complete authentication workflow for secure fitness platform management.
 
 Built with ❤️ using Node.js, React, TypeScript, Tailwind CSS, and PostgreSQL
