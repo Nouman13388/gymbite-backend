@@ -6,8 +6,11 @@ import {
   updateNotification,
   deleteNotification,
 } from '../controllers/notificationController.js';
+import { verifyFirebaseToken } from '@/middleware/auth.js';
 
 const router = express.Router();
+
+router.use(verifyFirebaseToken);
 
 // Define routes for notifications
 router.get('/', getNotifications);

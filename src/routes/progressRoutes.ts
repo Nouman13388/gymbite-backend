@@ -6,8 +6,11 @@ import {
   updateProgress,
   deleteProgress,
 } from '../controllers/progressController.js';
+import { verifyFirebaseToken } from '@/middleware/auth.js';
 
 const router = express.Router();
+
+router.use(verifyFirebaseToken);
 
 // Define routes for progress
 router.get('/', getAllProgress);

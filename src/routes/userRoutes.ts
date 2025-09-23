@@ -13,11 +13,10 @@ import { verifyFirebaseToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// Public routes (no authentication required)
+
 // POST create a new user
 router.post("/", createUser);
 
-// Protected routes (require Firebase authentication)
 // GET all users
 router.get("/", verifyFirebaseToken, getUsers);
 

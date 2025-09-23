@@ -17,8 +17,12 @@ import {
   validateCreateClient,
   validateUpdateClient
 } from '../middleware/validation.js';
+import { verify } from 'crypto';
+import { verifyFirebaseToken } from '@/middleware/auth.js';
 
 const router = express.Router();
+
+router.use(verifyFirebaseToken);
 
 // GET all clients
 router.get('/', getClients);

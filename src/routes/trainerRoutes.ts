@@ -11,8 +11,12 @@ import {
   getTrainerMetrics,
   getTrainerByUserId
 } from '../controllers/trainerController.js';
+import { verifyFirebaseToken } from '@/middleware/auth.js';
 
 const router = express.Router();
+
+// All trainer routes require authentication
+router.use(verifyFirebaseToken);
 
 // GET all trainers
 router.get('/', getTrainers);

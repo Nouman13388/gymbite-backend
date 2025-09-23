@@ -6,8 +6,11 @@ import {
   updateConsultation,
   deleteConsultation,
 } from '../controllers/consultationController.js';
+import { verifyFirebaseToken } from '@/middleware/auth.js';
 
 const router = express.Router();
+
+router.use(verifyFirebaseToken);
 
 // Define routes for consultations
 router.get('/', getConsultations);
