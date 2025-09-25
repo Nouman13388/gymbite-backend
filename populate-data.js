@@ -3,6 +3,9 @@
 
 const API_BASE = 'http://localhost:3000/api';
 
+// Put your actual Bearer token here
+// const authToken = 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjA1NTc3MjZmYWIxMjMxZmEyZGNjNTcyMWExMDgzZGE2ODBjNGE3M2YiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vZ3ltYml0ZSIsImF1ZCI6Imd5bWJpdGUiLCJhdXRoX3RpbWUiOjE3NTg4MDY2ODMsInVzZXJfaWQiOiJCM1FzOXZpYWdIVDJDR3hqWmFnbk9iR3JFS2QyIiwic3ViIjoiQjNRczl2aWFnSFQyQ0d4alphZ25PYkdyRUtkMiIsImlhdCI6MTc1ODgwNjY4MywiZXhwIjoxNzU4ODEwMjgzLCJlbWFpbCI6InRlc3RhZG1pbkBneW1iaXRlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJ0ZXN0YWRtaW5AZ3ltYml0ZS5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJwYXNzd29yZCJ9fQ.NwHCSrLgTU9nj7gUkTp3bJIjJ1jmQDL1lng7hGdlAM8u9bChYcd2EUlbO5aVJG5ghfDtC7Gz3pZxbDofdaqZc4HphHqsLx-5hmx9Lw1ynbEaVa1VaDowNrZdo2qg6Lr4520UjB7fRE607cHn7IbkfgGH9WkKq3drO27Wq5R12Uez3Hwy7WA1j3h0tz8heT45SBrV-WT9HW7DgeG5L4oT2Wlhez6gaPOSsW8xyRYIFTVpoxGnjvoUt-ks3HkV7x1lkJflrrU_J0-8jxLKGcaMr31c3rMR2n5v-T45e910V1xdYdQZWVJmGvx_ErfcAEYX-lOQH8MyyHPBACCfh1z0PQ';
+
 // Sample data
 const sampleData = {
   // User 1: Client
@@ -44,6 +47,7 @@ async function apiCall(method, endpoint, data = null) {
     method,
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${authToken}`, // Added Bearer token header
     },
   };
   
