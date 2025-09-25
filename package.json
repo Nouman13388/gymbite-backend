@@ -20,7 +20,11 @@
     "postinstall": "prisma generate",
     "vercel-build": "prisma generate && npm run build:client && npm run build:server",
     "get-token": "node get-firebase-token.js",
-    "auth-utils": "node firebase-auth-utils.js"
+    "auth-utils": "node firebase-auth-utils.js",
+    "install:all": "npm install",
+    "clean": "npm --workspaces run clean && rm -rf node_modules dist",
+    "lint": "npm --workspaces run lint",
+    "workspace:dashboard": "npm --workspace=dashboard"
   },
   "dependencies": {
     "@prisma/client": "^6.16.2",

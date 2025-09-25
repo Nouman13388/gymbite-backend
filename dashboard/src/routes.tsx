@@ -1,6 +1,10 @@
 import type { RouteObject } from 'react-router-dom';
 import AdminLogin from "./pages/auth/AdminLogin.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
+import Users from "./pages/Users.tsx";
+import Workouts from "./pages/Workouts.tsx";
+import Meals from "./pages/Meals.tsx";
+import Analytics from "./pages/Analytics.tsx";
 import Layout from "./components/layout/Layout.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ROUTES } from "./types/routes";
@@ -31,19 +35,22 @@ export const routes: RouteObject[] = [
                 path: ROUTES.DASHBOARD.substring(1), // Remove leading slash for nested routes
                 element: <Dashboard />,
             },
-            // Future routes can be added here
-            // {
-            //   path: ROUTES.USERS.substring(1),
-            //   element: <Users />,
-            // },
-            // {
-            //   path: ROUTES.WORKOUTS.substring(1),
-            //   element: <Workouts />,
-            // },
-            // {
-            //   path: ROUTES.MEALPLANS.substring(1),
-            //   element: <MealPlans />,
-            // },
+            {
+                path: "users",
+                element: <Users />,
+            },
+            {
+                path: "workouts",
+                element: <Workouts />,
+            },
+            {
+                path: "meals",
+                element: <Meals />,
+            },
+            {
+                path: "analytics",
+                element: <Analytics />,
+            },
         ],
     },
     {

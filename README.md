@@ -30,6 +30,22 @@ A comprehensive fitness and nutrition management system built with Node.js, Type
 - **Protected API Endpoints** - All routes secured with authentication middleware
 - **Service Account Integration** - Secure Firebase Admin SDK configuration
 
+## 🎯 Recent Updates
+
+### ✅ Monorepo Architecture (v2.0)
+
+- **🚀 Unified Package Management**: Single `npm install` command installs dependencies for both backend and dashboard
+- **📁 Consolidated .gitignore**: One file handles all ignore patterns for the entire project
+- **🔄 Workspace Scripts**: Run commands across all projects from the root directory
+- **⚡ Optimized Dependencies**: Shared packages automatically hoisted for better performance
+
+### ✅ Dashboard Improvements
+
+- **🎨 Real API Integration**: All fake data eliminated, using live API endpoints
+- **🌙 Dark Theme UI**: Consistent styling with loading, error, and empty states
+- **📱 Responsive Design**: Mobile-first approach with sidebar navigation
+- **🛡️ Type Safety**: Full TypeScript compliance with Prisma schema integration
+
 ## ✨ Tech Stack
 
 ### Backend
@@ -72,12 +88,14 @@ A comprehensive fitness and nutrition management system built with Node.js, Type
 git clone https://github.com/yourusername/gymbite-backend.git
 cd gymbite-backend
 
-# Install dependencies (workspace-aware)
+# 🎯 Single command installs ALL dependencies (backend + dashboard)
 npm install
 
 # Generate Prisma client
 npx prisma generate
 ```
+
+> **✨ Monorepo Setup**: This project uses npm workspaces for unified dependency management. Running `npm install` from the root automatically installs packages for both the backend and dashboard!
 
 ### 2. Environment Setup
 
@@ -128,6 +146,7 @@ FIREBASE_TEST_PASSWORD="your_test_password"
    - Project Settings → Service Accounts
    - Generate new private key (JSON)
    - Extract credentials for environment variables:
+
      ```json
      {
        "project_id": "your-firebase-project-id",
@@ -137,6 +156,7 @@ FIREBASE_TEST_PASSWORD="your_test_password"
      ```
 
 3. **Test Firebase Integration**:
+
    ```bash
    # Create a test user and get token
    npm run auth-utils create-user testadmin@gymbite.com mypassword
@@ -280,16 +300,20 @@ gymbite-backend/
 │   └── 📁 migrations/         # Migration history
 ├── 📁 public/                 # Built dashboard (production)
 ├── 📁 dist/                   # Compiled backend (production)
-├── 📄 package.json            # Root package & scripts
+├── 📄 package.json            # Root package & workspace config
 ├── 📄 tsconfig.json           # TypeScript config
-└── 📄 populate-data.js        # Sample data script
+├── 📄 .gitignore              # 🎯 Unified gitignore (backend + dashboard)
+├── 📄 vercel.json             # Deployment configuration
+├── 📄 populate-data.js        # Sample data script
+├── 📄 firebase-auth-utils.js  # Firebase testing utilities
+└── 📄 get-firebase-token.js   # Token generation utility
 ```
 
 ## 🛠️ Development Workflow
 
-### Root-Controlled Architecture
+### 🎯 Monorepo Architecture
 
-The project uses **npm workspaces** for centralized dependency management:
+This project uses **npm workspaces** for unified dependency and script management:
 
 ```json
 {
@@ -298,6 +322,10 @@ The project uses **npm workspaces** for centralized dependency management:
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "tsx watch src/index.ts",
     "dev:client": "npm --workspace=dashboard run dev",
+    "install:all": "npm install",
+    "clean": "npm --workspaces run clean && rm -rf node_modules dist",
+    "lint": "npm --workspaces run lint",
+    "workspace:dashboard": "npm --workspace=dashboard",
     "build": "npm run build:client && npm run build:server",
     "vercel-build": "prisma generate && npm run build:client && npm run build:server"
   }
@@ -311,6 +339,88 @@ The project uses **npm workspaces** for centralized dependency management:
 - **🔗 API Proxy**: `/api` requests proxy from `:5173` → `:3000`
 - **📦 Workspace Management**: Single `npm install` for everything
 - **🏗️ Build Pipeline**: Client → `public/`, Server → `dist/`
+
+### 🎯 Monorepo Package Management
+
+#### **Install Dependencies**
+
+```bash
+# Install ALL dependencies (backend + dashboard)
+npm install
+
+# Add package to specific workspace
+npm install --workspace=dashboard @types/react
+npm install express-session  # adds to root/backend
+
+# Add shared dependency to both
+npm install lodash
+npm install --workspace=dashboard lodash
+```
+
+#### **Workspace Commands**
+
+```bash
+# Run commands across workspaces
+npm run lint                    # Lint all workspaces
+npm run clean                   # Clean all build files
+npm run build                   # Build backend + dashboard
+
+# Target specific workspace
+npm run workspace:dashboard -- run build
+npm run workspace:dashboard -- install some-package
+```
+
+#### **Benefits of This Setup**
+
+- **🚀 Single Install**: One `npm install` command handles everything
+- **📦 Dependency Hoisting**: Shared packages optimized at root level
+- **🔄 Unified Scripts**: Run commands for all projects from root
+- **⚡ Better Performance**: npm optimizes duplicate dependencies
+- **🛠️ Simplified CI/CD**: Single install step in deployment pipelines
+
+### 📁 Consolidated Git Configuration
+
+#### **Unified .gitignore**
+
+The project uses a **single `.gitignore`** at the root level that handles both backend and dashboard:
+
+```gitignore
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+dist-ssr/
+build/
+*.local
+
+# IDE and editor files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Deployment
+.vercel
+```
+
+#### **Benefits of Consolidated .gitignore**
+
+- **🎯 Single Source of Truth**: One file manages all ignore patterns
+- **🔄 Simplified Maintenance**: No duplicate or conflicting rules
+- **📦 Monorepo Friendly**: Handles multiple project types in one file
+- **🚀 Better Performance**: Git processes fewer ignore files
 
 ## 🎨 Dashboard Architecture
 
@@ -741,6 +851,7 @@ npx prisma studio        # Open Prisma studio
    ```
 
 3. **Test API endpoints**:
+
    ```bash
    # Copy Bearer token to Postman Authorization header
    curl -H "Authorization: Bearer <token>" http://localhost:3000/api/users/me
@@ -840,6 +951,7 @@ FIREBASE_TEST_PASSWORD="testpass123"
    ```
 
 3. **Test with valid user**:
+
    ```bash
    # Create user first if needed
    npm run auth-utils create-user test@gymbite.com password123
