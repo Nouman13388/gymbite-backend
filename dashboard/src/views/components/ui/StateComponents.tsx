@@ -27,7 +27,7 @@ export const Loading: React.FC<LoadingProps> = ({
         <div className={`flex items-center justify-center space-x-3 ${className}`}>
             <div className={`animate-spin rounded-full ${sizeClasses[size]} border-b-2 border-[#1173d4]`}></div>
             {text && (
-                <span className={`text-gray-400 ${textSizeClasses[size]}`}>{text}</span>
+                <span className={`text-white/80 ${textSizeClasses[size]}`}>{text}</span>
             )}
         </div>
     );
@@ -56,12 +56,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
                 </div>
             )}
 
-            <h3 className="text-lg font-medium text-gray-300 mb-2">
+            <h3 className="text-lg font-medium text-white mb-2">
                 {message}
             </h3>
 
             {description && (
-                <p className="text-gray-400 mb-6 max-w-md mx-auto">
+                <p className="text-white/70 mb-6 max-w-md mx-auto">
                     {description}
                 </p>
             )}

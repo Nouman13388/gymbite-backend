@@ -6,7 +6,7 @@ export interface BaseEntity {
   updatedAt: string;
 }
 
-export interface CRUDConfig<T extends BaseEntity> {
+export interface CRUDConfig {
   entity: string;
   entityPlural: string;
   apiEndpoint: string;

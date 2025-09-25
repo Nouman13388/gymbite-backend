@@ -1,41 +1,27 @@
 import React from 'react';
-import { Bell, Search, Menu, X } from 'lucide-react';
+import { Bell, Search } from 'lucide-react';
 
 interface HeaderProps {
-    sidebarCollapsed: boolean;
-    onToggleSidebar: () => void;
     title?: string;
 }
 
 export const Header: React.FC<HeaderProps> = ({
-    sidebarCollapsed,
-    onToggleSidebar,
     title = 'Dashboard'
 }) => {
     return (
         <header className="bg-[#181c22] border-b border-gray-700 px-6 py-4">
             <div className="flex items-center justify-between">
                 {/* Left Section */}
-                <div className="flex items-center space-x-4">
-                    <button
-                        onClick={onToggleSidebar}
-                        className="text-gray-400 hover:text-white transition-colors"
-                        aria-label="Toggle sidebar"
-                    >
-                        {sidebarCollapsed ? <Menu size={20} /> : <X size={20} />}
-                    </button>
-
-                    <div>
-                        <h1 className="text-white text-xl font-semibold">{title}</h1>
-                        <p className="text-gray-400 text-sm">
-                            {new Date().toLocaleDateString('en-US', {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            })}
-                        </p>
-                    </div>
+                <div>
+                    <h1 className="text-white text-xl font-semibold">{title}</h1>
+                    <p className="text-gray-400 text-sm">
+                        {new Date().toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        })}
+                    </p>
                 </div>
 
                 {/* Right Section */}

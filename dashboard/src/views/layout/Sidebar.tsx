@@ -1,142 +1,205 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useCallback, useMemo } from 'react';
+import { Link, useLocation, matchPath } from 'react-router-dom';
 import {
     Home,
     Users,
     Dumbbell,
     Utensils,
     BarChart3,
-    Settings,
-    LogOut
+    Settings
 } from 'lucide-react';
 
 interface SidebarProps {
-    isCollapsed?: boolean;
-    onToggle?: () => void;
+    className?: string;
 }
 
 interface NavItem {
     path: string;
     label: string;
     icon: React.ComponentType<{ size?: number; className?: string }>;
-    quickAction?: boolean;
+    iconSize?: number;
+    ariaLabel?: string;
+    matchExact?: boolean;
 }
 
+// Enhanced navigation items configuration with improved accessibility and customization
 const navigationItems: NavItem[] = [
-    { path: '/', label: 'Dashboard', icon: Home },
-    { path: '/users', label: 'Users', icon: Users, quickAction: true },
-    { path: '/workouts', label: 'Workouts', icon: Dumbbell, quickAction: true },
-    { path: '/meals', label: 'Meals', icon: Utensils, quickAction: true },
-    { path: '/analytics', label: 'Analytics', icon: BarChart3, quickAction: true },
-    { path: '/settings', label: 'Settings', icon: Settings },
+    {
+        path: '/',
+        label: 'Dashboard',
+        icon: Home,
+        iconSize: 20,
+        ariaLabel: 'Navigate to Dashboard - Overview of platform metrics',
+        matchExact: true
+    },
+    {
+        path: '/users',
+        label: 'Users',
+        icon: Users,
+        iconSize: 20,
+        ariaLabel: 'Navigate to User Management - Manage platform users and roles',
+    },
+    {
+        path: '/workouts',
+        label: 'Workouts',
+        icon: Dumbbell,
+        iconSize: 20,
+        ariaLabel: 'Navigate to Workout Plans - Create and manage workout routines',
+    },
+    {
+        path: '/meals',
+        label: 'Meals',
+        icon: Utensils,
+        iconSize: 20,
+        ariaLabel: 'Navigate to Meal Plans - Design and oversee nutrition plans',
+    },
+    {
+        path: '/analytics',
+        label: 'Analytics',
+        icon: BarChart3,
+        iconSize: 20,
+        ariaLabel: 'Navigate to Analytics - Platform usage statistics and insights',
+    },
+    {
+        path: '/settings',
+        label: 'Settings',
+        icon: Settings,
+        iconSize: 20,
+        ariaLabel: 'Navigate to Settings - Configure application preferences'
+    },
 ];
 
-export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false }) => {
+export const Sidebar: React.FC<SidebarProps> = ({
+    className = ''
+}) => {
     const location = useLocation();
 
-    const isActiveRoute = (path: string) => {
-        if (path === '/') {
-            return location.pathname === '/';
+    /**
+     * Enhanced active route detection with precise path matching
+     * Handles query parameters and nested routes correctly
+     */
+    const isActiveRoute = useCallback((navItem: NavItem): boolean => {
+        const currentPath = location.pathname;
+        const { path, matchExact = false } = navItem;
+
+        if (matchExact) {
+            return currentPath === path;
         }
-        return location.pathname.startsWith(path);
-    };
+
+        // Use react-router's matchPath for more accurate matching
+        const match = matchPath(
+            { path, caseSensitive: false },
+            currentPath
+        );
+
+        return !!match;
+    }, [location.pathname]);
+
+    /**
+     * Memoized navigation items for performance optimization
+     */
+    const navigationElements = useMemo(() => {
+        return navigationItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = isActiveRoute(item);
+            const iconSize = item.iconSize || 20;
+
+            return (
+                <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`
+                        group flex items-center space-x-3 px-3 py-3 rounded-xl transition-all duration-200
+                        focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 focus:ring-offset-gray-800
+                        relative overflow-hidden justify-start
+                        ${isActive
+                            ? 'bg-gradient-to-r from-[#1173d4] to-[#0f5fb3] text-white shadow-lg border border-blue-400/20'
+                            : 'text-gray-300 hover:bg-gray-700/80 hover:text-white hover:shadow-md border border-transparent hover:border-gray-600/50'
+                        }
+                    `}
+                    aria-label={item.ariaLabel || `Navigate to ${item.label}`}
+                    aria-current={isActive ? 'page' : undefined}
+                >
+                    {/* Active indicator bar */}
+                    {isActive && (
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full" />
+                    )}
+
+                    {/* Icon container */}
+                    <div className="flex items-center justify-center w-5 h-5 relative">
+                        <Icon
+                            size={iconSize}
+                            className={`flex-shrink-0 transition-transform duration-200 ${isActive ? 'scale-110' : 'group-hover:scale-105'
+                                }`}
+                        />
+                    </div>
+
+                    <span className={`flex-1 font-medium transition-colors duration-200 ${isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'
+                        }`}>
+                        {item.label}
+                    </span>
+
+                    {/* Subtle glow effect for active state */}
+                    {isActive && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl pointer-events-none" />
+                    )}
+                </Link>
+            );
+        });
+    }, [isActiveRoute]);
+
+
 
     return (
-        <div className={`bg-[#181c22] border-r border-gray-700 transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-64'
-            } flex flex-col h-full`}>
-            {/* Logo Section */}
-            <div className="p-4 border-b border-gray-700">
+        <aside
+            className={`
+                bg-[#181c22] border-r border-gray-700 transition-all duration-300 ease-in-out
+                flex flex-col h-full relative w-64
+                ${className}
+            `}
+            role="navigation"
+            aria-label="Main navigation"
+        >
+            {/* Enhanced Logo Section with better spacing */}
+            <header className="p-6 border-b border-gray-700 bg-[#1a1f26]">
                 <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-[#1173d4] rounded-lg flex items-center justify-center">
-                        <Dumbbell size={20} className="text-white" />
+                    <div className="bg-[#1173d4] rounded-lg flex items-center justify-center transition-all duration-200 w-12 h-12">
+                        <Dumbbell size={24} className="text-white" />
                     </div>
-                    {!isCollapsed && (
-                        <div>
-                            <h1 className="text-white font-bold text-lg">GymBite</h1>
-                            <p className="text-gray-400 text-xs">Admin Dashboard</p>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {/* Navigation */}
-            <nav className="flex-1 p-4">
-                <div className="space-y-2">
-                    {navigationItems.map((item) => {
-                        const Icon = item.icon;
-                        const isActive = isActiveRoute(item.path);
-
-                        return (
-                            <Link
-                                key={item.path}
-                                to={item.path}
-                                className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${isActive
-                                        ? 'bg-[#1173d4] text-white'
-                                        : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-                                    }`}
-                                title={isCollapsed ? item.label : undefined}
-                            >
-                                <Icon size={20} />
-                                {!isCollapsed && (
-                                    <span className="flex-1">{item.label}</span>
-                                )}
-                                {!isCollapsed && item.quickAction && (
-                                    <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full">
-                                        QA
-                                    </span>
-                                )}
-                            </Link>
-                        );
-                    })}
-                </div>
-
-                {/* Quick Actions Section */}
-                {!isCollapsed && (
-                    <div className="mt-8">
-                        <h3 className="text-gray-400 text-xs uppercase tracking-wider mb-3">
-                            Quick Actions
-                        </h3>
-                        <div className="space-y-2">
-                            {navigationItems
-                                .filter(item => item.quickAction)
-                                .map((item) => {
-                                    const Icon = item.icon;
-                                    return (
-                                        <Link
-                                            key={`qa-${item.path}`}
-                                            to={`${item.path}/create`}
-                                            className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
-                                        >
-                                            <Icon size={16} />
-                                            <span className="text-sm">New {item.label.slice(0, -1)}</span>
-                                        </Link>
-                                    );
-                                })}
-                        </div>
+                    <div className="text-left">
+                        <h1 className="text-white font-bold text-xl tracking-tight">GymBite</h1>
+                        <p className="text-gray-400 text-sm font-medium">Admin Dashboard</p>
                     </div>
-                )}
+                </div>
+            </header>
+
+            {/* Enhanced Navigation with better accessibility */}
+            <nav className="flex-1 py-6 px-4 overflow-y-auto" role="navigation" aria-label="Primary navigation">
+                <div className="space-y-1">
+                    {navigationElements}
+                </div>
             </nav>
 
-            {/* User Profile Section */}
-            <div className="p-4 border-t border-gray-700">
-                <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-                        <span className="text-white text-sm font-medium">A</span>
-                    </div>
-                    {!isCollapsed && (
-                        <div className="flex-1">
-                            <p className="text-white text-sm font-medium">Admin User</p>
-                            <p className="text-gray-400 text-xs">admin@gymbite.com</p>
+            {/* Enhanced User Profile Section with better accessibility */}
+            <footer className="p-4 border-t border-gray-700/50 bg-gradient-to-r from-[#1a1f26] to-[#1d2329]" role="contentinfo">
+                <div className="flex items-center space-x-3 bg-gray-800/30 rounded-xl p-3 border border-gray-700/30">
+                    <div className="relative">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg ring-2 ring-gray-700/50 ring-offset-2 ring-offset-gray-800">
+                            <span className="text-white text-sm font-bold">A</span>
                         </div>
-                    )}
-                    <button
-                        className="text-gray-400 hover:text-white transition-colors"
-                        title="Logout"
-                    >
-                        <LogOut size={16} />
-                    </button>
+                        {/* Online status indicator */}
+                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-gray-800 rounded-full" />
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                        <p className="text-white text-sm font-semibold truncate">Admin User</p>
+                        <p className="text-gray-400 text-xs truncate flex items-center">
+                            <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse" />
+                            admin@gymbite.com
+                        </p>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </footer>
+        </aside>
     );
 };

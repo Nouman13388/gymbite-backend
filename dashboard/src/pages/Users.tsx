@@ -21,6 +21,20 @@ const UsersPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [refreshKey, setRefreshKey] = useState(0);
 
+    // Helper function for role badge styling
+    const getRoleBadgeClasses = (role: string): string => {
+        switch (role) {
+            case 'ADMIN':
+                return 'bg-red-700 text-white';
+            case 'TRAINER':
+                return 'bg-blue-700 text-white';
+            case 'CLIENT':
+                return 'bg-green-700 text-white';
+            default:
+                return 'bg-gray-700 text-white';
+        }
+    };
+
     // Fetch users from API
     const fetchUsers = async () => {
         try {
@@ -52,10 +66,7 @@ const UsersPage: React.FC = () => {
             label: 'Role',
             sortable: true,
             render: (value) => (
-                <span className={`px-2 py-1 rounded-full text-xs ${value === 'ADMIN' ? 'bg-red-900/20 text-red-400' :
-                    value === 'TRAINER' ? 'bg-blue-900/20 text-blue-400' :
-                        'bg-green-900/20 text-green-400'
-                    }`}>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeClasses(String(value))}`}>
                     {String(value)}
                 </span>
             )
@@ -87,19 +98,21 @@ const UsersPage: React.FC = () => {
         {
             label: 'Edit',
             onClick: handleEditUser,
-            className: 'text-yellow-400 hover:text-yellow-300'
+            className: 'text-yellow-300 hover:text-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-dark-bg',
+            ariaLabel: 'Edit user'
         },
         {
             label: 'Delete',
             onClick: handleDeleteUser,
-            className: 'text-red-400 hover:text-red-300'
+            className: 'text-red-300 hover:text-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-dark-bg',
+            ariaLabel: 'Delete user'
         }
     ];
 
     // Loading state
     if (loading) {
         return (
-            <PageWrapper title="User Management">
+            <PageWrapper>
                 <Loading text="Loading users..." />
             </PageWrapper>
         );
@@ -108,7 +121,7 @@ const UsersPage: React.FC = () => {
     // Error state
     if (error) {
         return (
-            <PageWrapper title="User Management">
+            <PageWrapper>
                 <ErrorMessage
                     message={error}
                     onRetry={handleRefresh}
@@ -119,20 +132,22 @@ const UsersPage: React.FC = () => {
 
     return (
         <PageWrapper
-            title="User Management"
             subtitle="Manage system users, trainers, and administrators"
             actions={
                 <div className="flex items-center gap-2">
                     <button
                         onClick={handleRefresh}
-                        className="bg-dark-card hover:bg-gray-700 text-white px-3 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                        disabled={loading}
+                        className="bg-dark-card hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-3 py-2 rounded-lg flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        aria-label="Refresh users list"
                     >
-                        <RefreshCw className="w-4 h-4" />
-                        Refresh
+                        <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                        {loading ? 'Loading...' : 'Refresh'}
                     </button>
                     <button
                         onClick={handleCreateUser}
-                        className="bg-primary-blue hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                        className="bg-primary-blue hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        aria-label="Add new user to the system"
                     >
                         <UserPlus className="w-4 h-4" />
                         Add User
@@ -145,11 +160,11 @@ const UsersPage: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="bg-dark-card rounded-lg p-6">
                         <div className="flex items-center">
-                            <div className="p-2 bg-blue-900/20 rounded-lg">
-                                <Users className="h-6 w-6 text-blue-400" />
+                            <div className="p-2 bg-blue-600 rounded-lg">
+                                <Users className="h-6 w-6 text-white" />
                             </div>
                             <div className="ml-4">
-                                <p className="text-sm text-gray-400">Total Users</p>
+                                <p className="text-sm text-gray-200">Total Users</p>
                                 <p className="text-2xl font-bold text-white">{users.length}</p>
                             </div>
                         </div>
@@ -157,11 +172,11 @@ const UsersPage: React.FC = () => {
 
                     <div className="bg-dark-card rounded-lg p-6">
                         <div className="flex items-center">
-                            <div className="p-2 bg-green-900/20 rounded-lg">
-                                <Users className="h-6 w-6 text-green-400" />
+                            <div className="p-2 bg-green-600 rounded-lg">
+                                <Users className="h-6 w-6 text-white" />
                             </div>
                             <div className="ml-4">
-                                <p className="text-sm text-gray-400">Active Clients</p>
+                                <p className="text-sm text-gray-200">Active Clients</p>
                                 <p className="text-2xl font-bold text-white">
                                     {users.filter(u => u.role === 'CLIENT').length}
                                 </p>
@@ -171,11 +186,11 @@ const UsersPage: React.FC = () => {
 
                     <div className="bg-dark-card rounded-lg p-6">
                         <div className="flex items-center">
-                            <div className="p-2 bg-purple-900/20 rounded-lg">
-                                <Users className="h-6 w-6 text-purple-400" />
+                            <div className="p-2 bg-purple-600 rounded-lg">
+                                <Users className="h-6 w-6 text-white" />
                             </div>
                             <div className="ml-4">
-                                <p className="text-sm text-gray-400">Trainers</p>
+                                <p className="text-sm text-gray-200">Trainers</p>
                                 <p className="text-2xl font-bold text-white">
                                     {users.filter(u => u.role === 'TRAINER').length}
                                 </p>
@@ -187,13 +202,14 @@ const UsersPage: React.FC = () => {
                 {/* Users Table */}
                 {users.length === 0 ? (
                     <EmptyState
-                        icon={<Users className="w-12 h-12" />}
+                        icon={<Users className="w-12 h-12 text-white/80" />}
                         message="No users found"
                         description="Get started by adding your first user to the system."
                         action={
                             <button
                                 onClick={handleCreateUser}
-                                className="bg-primary-blue hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                                className="bg-primary-blue hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                aria-label="Add your first user to get started"
                             >
                                 <UserPlus className="w-4 h-4" />
                                 Add First User

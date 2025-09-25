@@ -20,6 +20,7 @@ export interface TableAction<T = Record<string, unknown>> {
     icon?: React.ComponentType<{ size?: number; className?: string }>;
     onClick: (row: T) => void;
     className?: string;
+    ariaLabel?: string;
     show?: (row: T) => boolean;
 }
 
@@ -123,7 +124,7 @@ export function DataTable<T extends Record<string, unknown>>({
             <div className="bg-[#181c22] rounded-lg border border-gray-700 p-8">
                 <div className="flex items-center justify-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1173d4]"></div>
-                    <span className="ml-3 text-gray-400">Loading...</span>
+                    <span className="ml-3 text-white/80">Loading...</span>
                 </div>
             </div>
         );
@@ -153,7 +154,7 @@ export function DataTable<T extends Record<string, unknown>>({
                     <div className="flex items-center space-x-4">
                         {searchable && (
                             <div className="relative flex-1 max-w-md">
-                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60" size={16} />
                                 <input
                                     type="text"
                                     placeholder="Search..."
@@ -165,7 +166,7 @@ export function DataTable<T extends Record<string, unknown>>({
                         )}
 
                         {filterable && (
-                            <button className="flex items-center space-x-2 px-4 py-2 bg-[#283039] border border-gray-600 rounded-lg text-gray-300 hover:text-white transition-colors">
+                            <button className="flex items-center space-x-2 px-4 py-2 bg-[#283039] border border-gray-600 rounded-lg text-white/80 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <Filter size={16} />
                                 <span>Filter</span>
                             </button>
@@ -182,7 +183,7 @@ export function DataTable<T extends Record<string, unknown>>({
                             {columns.map((column) => (
                                 <th
                                     key={String(column.key)}
-                                    className={`px-6 py-4 text-left text-sm font-medium text-gray-300 ${column.sortable ? 'cursor-pointer hover:text-white' : ''
+                                    className={`px-6 py-4 text-left text-sm font-medium text-white/90 ${column.sortable ? 'cursor-pointer hover:text-white' : ''
                                         }`}
                                     style={{ width: column.width }}
                                     onClick={() => handleSort(column.key)}
@@ -198,7 +199,7 @@ export function DataTable<T extends Record<string, unknown>>({
                                 </th>
                             ))}
                             {actions.length > 0 && (
-                                <th className="px-6 py-4 text-left text-sm font-medium text-gray-300 w-32">
+                                <th className="px-6 py-4 text-left text-sm font-medium text-white/90 w-32">
                                     Actions
                                 </th>
                             )}
@@ -209,7 +210,7 @@ export function DataTable<T extends Record<string, unknown>>({
                             <tr>
                                 <td
                                     colSpan={columns.length + (actions.length > 0 ? 1 : 0)}
-                                    className="px-6 py-12 text-center text-gray-400"
+                                    className="px-6 py-12 text-center text-white/70"
                                 >
                                     {emptyMessage}
                                 </td>
@@ -223,14 +224,14 @@ export function DataTable<T extends Record<string, unknown>>({
                                     {columns.map((column) => (
                                         <td
                                             key={String(column.key)}
-                                            className="px-6 py-4 text-sm text-gray-300"
+                                            className="px-6 py-4 text-sm text-white/90"
                                         >
                                             {renderCellValue(column, row)}
                                         </td>
                                     ))}
                                     {actions.length > 0 && (
                                         <td className="px-6 py-4">
-                                            <div className="flex items-center space-x-2">
+                                            <div className="flex items-center space-x-3">
                                                 {actions.map((action, actionIndex) => {
                                                     if (action.show && !action.show(row)) return null;
 
@@ -242,8 +243,9 @@ export function DataTable<T extends Record<string, unknown>>({
                                                             className={`p-2 rounded-lg transition-colors ${action.className || 'text-gray-400 hover:text-white hover:bg-[#283039]'
                                                                 }`}
                                                             title={action.label}
+                                                            aria-label={action.ariaLabel || action.label}
                                                         >
-                                                            {Icon && <Icon size={16} />}
+                                                            {Icon && <Icon size={18} />}
                                                         </button>
                                                     );
                                                 })}
@@ -260,7 +262,7 @@ export function DataTable<T extends Record<string, unknown>>({
             {/* Pagination */}
             {pageable && totalPages > 1 && (
                 <div className="px-6 py-4 border-t border-gray-700 flex items-center justify-between">
-                    <div className="text-sm text-gray-400">
+                    <div className="text-sm text-white/80">
                         Showing {(currentPage - 1) * pageSize + 1} to{' '}
                         {Math.min(currentPage * pageSize, sortedData.length)} of{' '}
                         {sortedData.length} results
@@ -270,19 +272,21 @@ export function DataTable<T extends Record<string, unknown>>({
                         <button
                             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                             disabled={currentPage === 1}
-                            className="p-2 rounded-lg border border-gray-600 text-gray-400 hover:text-white hover:bg-[#283039] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            className="p-2 rounded-lg border border-gray-600 text-white/80 hover:text-white hover:bg-[#283039] disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            aria-label="Previous page"
                         >
                             <ChevronLeft size={16} />
                         </button>
 
-                        <span className="text-sm text-gray-400">
+                        <span className="text-sm text-white/80">
                             Page {currentPage} of {totalPages}
                         </span>
 
                         <button
                             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                             disabled={currentPage === totalPages}
-                            className="p-2 rounded-lg border border-gray-600 text-gray-400 hover:text-white hover:bg-[#283039] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            className="p-2 rounded-lg border border-gray-600 text-white/80 hover:text-white hover:bg-[#283039] disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            aria-label="Next page"
                         >
                             <ChevronRight size={16} />
                         </button>

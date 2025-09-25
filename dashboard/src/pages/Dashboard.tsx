@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { api } from '../services/api';
 import { PageWrapper } from '../views/layout/PageWrapper';
 import { Loading } from '../views/components/ui';
-import { Users, Dumbbell, Utensils, BarChart3, RefreshCw } from 'lucide-react';
+import { Users, Dumbbell, Utensils, BarChart3, RefreshCw, User } from 'lucide-react';
 
 // Dashboard data interfaces
 interface DashboardStats {
@@ -136,17 +136,18 @@ const Dashboard: React.FC = () => {
 
   // Get activity icon based on type
   const getActivityIcon = (type: ActivityItem['type']) => {
+    const iconProps = "w-5 h-5 text-white";
     switch (type) {
       case 'user_created':
-        return '👤';
+        return <User className={iconProps} />;
       case 'workout_created':
-        return '🏋️‍♂️';
+        return <Dumbbell className={iconProps} />;
       case 'meal_plan_created':
-        return '🥗';
+        return <Utensils className={iconProps} />;
       case 'appointment_scheduled':
-        return '📅';
+        return <BarChart3 className={iconProps} />;
       default:
-        return '📝';
+        return <BarChart3 className={iconProps} />;
     }
   };
 
@@ -158,14 +159,15 @@ const Dashboard: React.FC = () => {
   // Error state
   if (error) {
     return (
-      <PageWrapper title="Dashboard">
+      <PageWrapper>
         <div className="flex items-center justify-center h-64">
           <div className="bg-red-900/20 border border-red-500 rounded-lg p-6 max-w-md w-full">
             <h2 className="text-xl font-bold text-red-400 mb-2">⚠️ Error Loading Dashboard</h2>
             <p className="text-gray-300 mb-4">{error}</p>
             <button
               onClick={handleRefresh}
-              className="bg-primary-blue hover:bg-blue-600 px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+              className="bg-primary-blue hover:bg-blue-600 px-4 py-2 rounded-lg transition-colors flex items-center gap-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Retry loading dashboard"
             >
               <RefreshCw className="w-4 h-4" />
               Retry
@@ -210,15 +212,16 @@ const Dashboard: React.FC = () => {
 
   return (
     <PageWrapper
-      title="Dashboard"
       subtitle={`Welcome back, ${user?.displayName || user?.email}`}
       actions={
         <button
           onClick={handleRefresh}
-          className="bg-dark-card hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+          disabled={isLoading}
+          className="bg-dark-card hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-lg transition-colors flex items-center gap-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          aria-label="Refresh dashboard data"
         >
-          <RefreshCw className="w-4 h-4" />
-          Refresh
+          <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+          {isLoading ? 'Loading...' : 'Refresh'}
         </button>
       }
     >
@@ -229,50 +232,60 @@ const Dashboard: React.FC = () => {
           <div className="bg-dark-card rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Total Users</p>
-                <p className="text-2xl font-bold">{stats.totalUsers}</p>
+                <p className="text-gray-200 text-sm">Total Users</p>
+                <p className="text-2xl font-bold text-white">{stats.totalUsers}</p>
               </div>
-              <div className="text-2xl">👥</div>
+              <div className="p-2 bg-blue-600 rounded-lg">
+                <Users className="w-6 h-6 text-white" />
+              </div>
             </div>
           </div>
 
           <div className="bg-dark-card rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Trainers</p>
-                <p className="text-2xl font-bold">{stats.totalTrainers}</p>
+                <p className="text-gray-200 text-sm">Trainers</p>
+                <p className="text-2xl font-bold text-white">{stats.totalTrainers}</p>
               </div>
-              <div className="text-2xl">💪</div>
+              <div className="p-2 bg-green-600 rounded-lg">
+                <User className="w-6 h-6 text-white" />
+              </div>
             </div>
           </div>
 
           <div className="bg-dark-card rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Clients</p>
-                <p className="text-2xl font-bold">{stats.totalClients}</p>
+                <p className="text-gray-200 text-sm">Clients</p>
+                <p className="text-2xl font-bold text-white">{stats.totalClients}</p>
               </div>
-              <div className="text-2xl">🏃‍♂️</div>
+              <div className="p-2 bg-purple-600 rounded-lg">
+                <Users className="w-6 h-6 text-white" />
+              </div>
             </div>
           </div>
 
           <div className="bg-dark-card rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Workout Plans</p>
-                <p className="text-2xl font-bold">{stats.totalWorkoutPlans}</p>
+                <p className="text-gray-200 text-sm">Workout Plans</p>
+                <p className="text-2xl font-bold text-white">{stats.totalWorkoutPlans}</p>
               </div>
-              <div className="text-2xl">🏋️‍♂️</div>
+              <div className="p-2 bg-orange-600 rounded-lg">
+                <Dumbbell className="w-6 h-6 text-white" />
+              </div>
             </div>
           </div>
 
           <div className="bg-dark-card rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">Meal Plans</p>
-                <p className="text-2xl font-bold">{stats.totalMealPlans}</p>
+                <p className="text-gray-200 text-sm">Meal Plans</p>
+                <p className="text-2xl font-bold text-white">{stats.totalMealPlans}</p>
               </div>
-              <div className="text-2xl">🥗</div>
+              <div className="p-2 bg-red-600 rounded-lg">
+                <Utensils className="w-6 h-6 text-white" />
+              </div>
             </div>
           </div>
         </div>
@@ -282,50 +295,62 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Recent Activity */}
         <div className="bg-dark-card rounded-lg p-6">
-          <h2 className="text-xl font-bold mb-4">📈 Recent Activity</h2>
+          <div className="mb-6 pb-2 border-b border-gray-700">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <BarChart3 className="w-5 h-5" />
+              Recent Activity
+            </h2>
+          </div>
           {stats?.recentActivity && stats.recentActivity.length > 0 ? (
             <div className="space-y-4">
               {stats.recentActivity.map((activity) => (
                 <div key={activity.id} className="flex items-start gap-3 p-3 bg-dark-input rounded-lg">
-                  <div className="text-lg">{getActivityIcon(activity.type)}</div>
-                  <div className="flex-1">
-                    <p className="text-white">{activity.description}</p>
+                  <div className="p-2 bg-blue-600 rounded-lg flex-shrink-0 mt-1">
+                    {getActivityIcon(activity.type)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white font-medium">{activity.description}</p>
                     {activity.user && (
-                      <p className="text-sm text-gray-400">
+                      <p className="text-sm text-white/80 mt-1">
                         {activity.user.name} ({activity.user.email})
                       </p>
                     )}
-                    <p className="text-xs text-gray-500">{formatTimestamp(activity.timestamp)}</p>
+                    <p className="text-xs text-white/50 mt-1">{formatTimestamp(activity.timestamp)}</p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-400">No recent activity</p>
+            <p className="text-gray-200">No recent activity</p>
           )}
         </div>
 
         {/* Recent Users */}
         <div className="bg-dark-card rounded-lg p-6">
-          <h2 className="text-xl font-bold mb-4">👥 Recent Users</h2>
+          <div className="mb-6 pb-2 border-b border-gray-700">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <Users className="w-5 h-5" />
+              Recent Users
+            </h2>
+          </div>
           {recentUsers.length > 0 ? (
             <div className="space-y-4">
               {recentUsers.map((user) => (
                 <div key={user.id} className="flex items-center gap-3 p-3 bg-dark-input rounded-lg">
-                  <div className="w-10 h-10 bg-primary-blue rounded-full flex items-center justify-center text-white font-bold">
+                  <div className="w-10 h-10 bg-primary-blue rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
                     {user.name.charAt(0).toUpperCase()}
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <p className="text-white font-medium">{user.name}</p>
-                    <p className="text-sm text-gray-400">{user.email}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className={`px-2 py-1 text-xs rounded-full ${user.role === 'ADMIN' ? 'bg-red-900 text-red-300' :
-                        user.role === 'TRAINER' ? 'bg-blue-900 text-blue-300' :
-                          'bg-green-900 text-green-300'
+                    <p className="text-sm text-white/80 truncate">{user.email}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className={`px-2 py-1 text-xs rounded-full font-medium ${user.role === 'ADMIN' ? 'bg-red-700 text-white' :
+                        user.role === 'TRAINER' ? 'bg-blue-700 text-white' :
+                          'bg-green-700 text-white'
                         }`}>
                         {user.role}
                       </span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-white/50">
                         {formatTimestamp(user.createdAt)}
                       </span>
                     </div>
@@ -334,14 +359,19 @@ const Dashboard: React.FC = () => {
               ))}
             </div>
           ) : (
-            <p className="text-gray-400">No users found</p>
+            <p className="text-gray-200">No users found</p>
           )}
         </div>
       </div>
 
       {/* Quick Actions */}
-      <div className="mt-8 bg-dark-card rounded-lg p-6">
-        <h2 className="text-xl font-bold mb-4">⚡ Quick Actions</h2>
+      <div className="mt-12 bg-dark-card rounded-lg p-6">
+        <div className="mb-6 pb-2 border-b border-gray-700">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <BarChart3 className="w-5 h-5" />
+            Quick Actions
+          </h2>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {quickActions.map((action, index) => {
             const IconComponent = action.icon;
@@ -349,13 +379,15 @@ const Dashboard: React.FC = () => {
               <button
                 key={index}
                 onClick={action.onClick}
-                className={`${action.color} p-6 rounded-lg transition-all duration-200 text-center hover:scale-105 hover:shadow-lg group`}
+                className={`${action.color} p-6 rounded-lg transition-all duration-200 text-center hover:scale-105 hover:shadow-lg group focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-dark-bg`}
+                role="button"
+                aria-label={`${action.label}: ${action.description}`}
               >
                 <div className="mb-3">
                   <IconComponent className="w-8 h-8 mx-auto text-white group-hover:scale-110 transition-transform" />
                 </div>
                 <div className="text-white font-semibold mb-1">{action.label}</div>
-                <div className="text-white/70 text-sm">{action.description}</div>
+                <div className="text-white/80 text-sm">{action.description}</div>
               </button>
             );
           })}

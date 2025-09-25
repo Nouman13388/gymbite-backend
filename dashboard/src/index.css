@@ -3,6 +3,12 @@
 
 @import "tailwindcss";
 
+/* Global background fix */
+html {
+  background-color: #111418;
+  min-width: 100%;
+}
+
 @theme {
   --color-primary-blue: #1173d4;
   --color-dark-bg: #111418;
@@ -18,6 +24,8 @@ body {
   font-family: "Inter", "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #111418;
+  min-width: 100vw;
 }
 
 /* Form input styles */
