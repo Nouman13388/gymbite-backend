@@ -86,11 +86,6 @@ app.get("*", (req, res, next) => {
   });
 });
 
-// Basic route (kept for explicit health / root checks)
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to Gymbite API" });
-});
-
 // Error handling middleware
 app.use(
   (
