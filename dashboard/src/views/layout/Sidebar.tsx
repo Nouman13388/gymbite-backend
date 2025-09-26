@@ -187,14 +187,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg ring-2 ring-gray-700/50 ring-offset-2 ring-offset-gray-800">
                             <span className="text-white text-sm font-bold">A</span>
                         </div>
-                        {/* Online status indicator */}
-                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-gray-800 rounded-full" />
                     </div>
 
                     <div className="flex-1 min-w-0">
                         <p className="text-white text-sm font-semibold truncate">Admin User</p>
                         <p className="text-gray-400 text-xs truncate flex items-center">
-                            <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse" />
                             admin@gymbite.com
                         </p>
                     </div>
