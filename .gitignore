@@ -10,14 +10,20 @@ lerna-debug.log*
 .env
 .env.local
 .env.*.local
+.env.production
 
 # Build output
 dist/
 dist-ssr/
 build/
 generated/
-public/
+dashboard/dist/
+dashboard/build/
 *.local
+
+# Allow public folder but ignore development assets
+!public/
+public/*.local
 
 # IDE and editor files
 .idea/

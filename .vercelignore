@@ -1,4 +1,5 @@
 # Vercel ignore file
+
 .env
 .env.local
 .env.production
@@ -7,4 +8,8 @@ node_modules
 .git
 .gitignore
 README.md
-*.log
+\*.log
+
+# Don't ignore public folder - it contains built assets
+
+!public/
