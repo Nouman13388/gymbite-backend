@@ -1,7 +1,10 @@
 import express from 'express';
 import { healthCheck, readinessCheck, livenessCheck } from '../controllers/healthController.js';
+import { verifyFirebaseToken } from '@/middleware/auth.js';
 
 const router = express.Router();
+
+router.use(verifyFirebaseToken);
 
 // Health check endpoint - comprehensive health status
 router.get('/health', healthCheck);

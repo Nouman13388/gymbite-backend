@@ -6,8 +6,11 @@ import {
   updateFeedback,
   deleteFeedback,
 } from '../controllers/feedbackController.js';
+import { verifyFirebaseToken } from '@/middleware/auth.js';
 
 const router = express.Router();
+
+router.use(verifyFirebaseToken);
 
 // Define routes for feedback
 router.get('/', getFeedbacks);
