@@ -29,7 +29,42 @@ const port = process.env.PORT || 3000;
 
 // Security & performance middlewares (apply early)
 if (process.env.NODE_ENV === "production") {
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: [
+            "'self'",
+            "'unsafe-inline'",
+            "'unsafe-eval'",
+            "https://apis.google.com",
+            "https://www.gstatic.com",
+            "https://securetoken.googleapis.com",
+            "https://identitytoolkit.googleapis.com",
+            "https://vercel.live",
+            "*.vercel.app",
+          ],
+          styleSrc: [
+            "'self'",
+            "'unsafe-inline'",
+            "https://fonts.googleapis.com",
+          ],
+          fontSrc: ["'self'", "https://fonts.gstatic.com"],
+          connectSrc: [
+            "'self'",
+            "https://identitytoolkit.googleapis.com",
+            "https://securetoken.googleapis.com",
+            "https://*.firebaseio.com",
+            "https://*.googleapis.com",
+            "wss://*.firebaseio.com",
+          ],
+          imgSrc: ["'self'", "data:", "https:"],
+          frameSrc: ["'self'", "https://*.firebaseapp.com"],
+        },
+      },
+    })
+  );
   app.use(compression());
   app.set("trust proxy", 1);
   app.use(

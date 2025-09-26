@@ -6,8 +6,23 @@
 import { auth } from "../utils/firebase";
 
 // API Configuration
-// Using full URL with /api path to connect directly to backend
-const API_BASE_URL = "http://localhost:3000/api";
+// Use environment variable or fallback based on environment
+const getApiBaseUrl = () => {
+  // In production, if VITE_API_URL is set, use it
+  if (import.meta.env.VITE_API_URL) {
+    return `${import.meta.env.VITE_API_URL.replace(/\/+$/, "")}/api`;
+  }
+
+  // In production without VITE_API_URL, use relative URLs (same domain)
+  if (import.meta.env.PROD) {
+    return "/api";
+  }
+
+  // Development fallback
+  return "http://localhost:3000/api";
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 console.log("🚀 API_BASE_URL configured as:", API_BASE_URL);
 console.log("🚀 VITE_API_URL env var:", import.meta.env.VITE_API_URL);
