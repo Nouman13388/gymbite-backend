@@ -6,11 +6,34 @@
 import { auth } from "../utils/firebase";
 
 // API Configuration
-// Using full URL with /api path to connect directly to backend
-const API_BASE_URL = "http://localhost:3000/api";
+// Use environment variable or fallback based on environment
+const getApiBaseUrl = () => {
+  // Check if we're in production build
+  if (import.meta.env.PROD) {
+    // Check if running on Vercel or if VITE_API_URL contains a production domain
+    const apiUrl = import.meta.env.VITE_API_URL;
+
+    // If VITE_API_URL is set and it's not localhost, use it
+    if (apiUrl && !apiUrl.includes("localhost")) {
+      return `${apiUrl.replace(/\/+$/, "")}/api`;
+    }
+
+    // In production, use relative URLs (same domain) - perfect for Vercel
+    return "/api";
+  }
+
+  // Development: use localhost or explicit VITE_API_URL
+  return import.meta.env.VITE_API_URL
+    ? `${import.meta.env.VITE_API_URL.replace(/\/+$/, "")}/api`
+    : "http://localhost:3000/api";
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 console.log("🚀 API_BASE_URL configured as:", API_BASE_URL);
 console.log("🚀 VITE_API_URL env var:", import.meta.env.VITE_API_URL);
+console.log("🚀 import.meta.env.PROD:", import.meta.env.PROD);
+console.log("🚀 Current environment mode:", import.meta.env.MODE);
 
 // Request timeout (30 seconds)
 const REQUEST_TIMEOUT = 30000;
