@@ -7,3 +7,4 @@ export { Loading, EmptyState, ErrorMessage } from "./StateComponents";
 export { SearchFilter } from "./SearchFilter";
 export { FormField, CRUDForm } from "./CRUDForm";
 export type { FormFieldConfig } from "./CRUDForm";
+export { NotificationContainer, NotificationItem } from "./NotificationSystem";

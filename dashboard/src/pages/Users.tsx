@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { PageWrapper } from '../views/layout/PageWrapper';
-import { DataTable, Loading, EmptyState, ErrorMessage } from '../views/components/ui';
-import type { Column } from '../views/components/ui';
-import { Users, UserPlus, RefreshCw } from 'lucide-react';
-import { api } from '../services/api';
+import { Loading, EmptyState, ErrorMessage, DeleteConfirm } from '../views/components/ui';
+import { EnhancedDataTable } from '../components/ui/EnhancedDataTable';
+import type { Column, TableAction } from '../components/ui/EnhancedDataTable';
+import type { FilterConfig } from '../hooks/useAdvancedSearch';
+import { Users, UserPlus, RefreshCw, Edit, Trash2 } from 'lucide-react';
+import { crudApi } from '../services/api';
+import { apiWithNotifications } from '../services/apiWithNotifications';
+import { UserFormModal } from '../components/forms/UserFormModal';
+import type { UserFormData } from '../schemas';
 
 // User data type based on Prisma schema
 interface User extends Record<string, unknown> {
@@ -11,6 +16,7 @@ interface User extends Record<string, unknown> {
     name: string;
     email: string;
     role: 'CLIENT' | 'TRAINER' | 'ADMIN';
+    firebaseUid?: string;
     createdAt: string;
     updatedAt: string;
 }
@@ -20,6 +26,12 @@ const UsersPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [refreshKey, setRefreshKey] = useState(0);
+
+    // Modal states
+    const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Helper function for role badge styling
     const getRoleBadgeClasses = (role: string): string => {
@@ -40,7 +52,7 @@ const UsersPage: React.FC = () => {
         try {
             setLoading(true);
             setError(null);
-            const response = await api.get<User[]>('/users');
+            const response = await crudApi.users.getAll();
             setUsers(Array.isArray(response) ? response : []);
         } catch (err) {
             console.error('Failed to fetch users:', err);
@@ -58,9 +70,63 @@ const UsersPage: React.FC = () => {
         setRefreshKey(prev => prev + 1);
     };
 
+    // CRUD Operations
+    const handleCreateUser = () => {
+        setSelectedUser(null);
+        setIsFormModalOpen(true);
+    };
+
+    const handleEditUser = (user: User) => {
+        setSelectedUser(user);
+        setIsFormModalOpen(true);
+    };
+
+    const handleDeleteUser = (user: User) => {
+        setSelectedUser(user);
+        setIsDeleteModalOpen(true);
+    };
+
+    const handleFormSubmit = async (data: UserFormData) => {
+        try {
+            setIsSubmitting(true);
+
+            if (selectedUser) {
+                // Update existing user
+                await apiWithNotifications.users.update(selectedUser.id, data);
+            } else {
+                // Create new user
+                await apiWithNotifications.users.create(data);
+            }
+
+            handleRefresh();
+            setIsFormModalOpen(false);
+            setSelectedUser(null);
+        } catch (err) {
+            console.error('Failed to save user:', err);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!selectedUser) return;
+
+        try {
+            setIsSubmitting(true);
+            await apiWithNotifications.users.delete(selectedUser.id);
+            handleRefresh();
+            setIsDeleteModalOpen(false);
+            setSelectedUser(null);
+        } catch (err) {
+            console.error('Failed to delete user:', err);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     const columns: Column<User>[] = [
-        { key: 'name', label: 'Name', sortable: true },
-        { key: 'email', label: 'Email', sortable: true },
+        { key: 'name', label: 'Name', sortable: true, searchable: true },
+        { key: 'email', label: 'Email', sortable: true, searchable: true },
         {
             key: 'role',
             label: 'Role',
@@ -79,35 +145,56 @@ const UsersPage: React.FC = () => {
         }
     ];
 
-    const handleCreateUser = () => {
-        console.log('Create user clicked');
-        // TODO: Implement user creation
-    };
-
-    const handleEditUser = (user: User) => {
-        console.log('Edit user:', user);
-        // TODO: Implement user editing
-    };
-
-    const handleDeleteUser = (user: User) => {
-        console.log('Delete user:', user);
-        // TODO: Implement user deletion
-    };
-
-    const actions = [
+    const actions: TableAction<User>[] = [
         {
             label: 'Edit',
+            icon: Edit,
             onClick: handleEditUser,
             className: 'text-yellow-300 hover:text-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-dark-bg',
             ariaLabel: 'Edit user'
         },
         {
             label: 'Delete',
+            icon: Trash2,
             onClick: handleDeleteUser,
             className: 'text-red-300 hover:text-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-dark-bg',
             ariaLabel: 'Delete user'
         }
     ];
+
+    // Filter configurations for advanced filtering
+    const filterConfigs: FilterConfig[] = [
+        {
+            key: 'role',
+            label: 'Role',
+            type: 'select',
+            options: [
+                { value: 'CLIENT', label: 'Client' },
+                { value: 'TRAINER', label: 'Trainer' },
+                { value: 'ADMIN', label: 'Admin' }
+            ]
+        },
+        {
+            key: 'createdAt',
+            label: 'Created Date',
+            type: 'dateRange'
+        },
+        {
+            key: 'name',
+            label: 'Name',
+            type: 'text',
+            placeholder: 'Search by name...'
+        },
+        {
+            key: 'email',
+            label: 'Email',
+            type: 'text',
+            placeholder: 'Search by email...'
+        }
+    ];
+
+    // Searchable fields for quick search
+    const searchableFields: (keyof User)[] = ['name', 'email', 'role'];
 
     // Loading state
     if (loading) {
@@ -217,7 +304,7 @@ const UsersPage: React.FC = () => {
                         }
                     />
                 ) : (
-                    <DataTable
+                    <EnhancedDataTable
                         data={users}
                         columns={columns}
                         actions={actions}
@@ -225,11 +312,37 @@ const UsersPage: React.FC = () => {
                         onCreateNew={handleCreateUser}
                         createButtonLabel="Add New User"
                         title="All Users"
-                        searchable={true}
-                        pageable={true}
+                        filterConfigs={filterConfigs}
+                        searchableFields={searchableFields}
+                        defaultPageSize={10}
                     />
                 )}
             </div>
+
+            {/* User Form Modal */}
+            <UserFormModal
+                isOpen={isFormModalOpen}
+                onClose={() => {
+                    setIsFormModalOpen(false);
+                    setSelectedUser(null);
+                }}
+                onSubmit={handleFormSubmit}
+                user={selectedUser}
+                isLoading={isSubmitting}
+            />
+
+            {/* Delete Confirmation Modal */}
+            <DeleteConfirm
+                isOpen={isDeleteModalOpen}
+                onClose={() => {
+                    setIsDeleteModalOpen(false);
+                    setSelectedUser(null);
+                }}
+                onConfirm={handleConfirmDelete}
+                title="Delete User"
+                message={`Are you sure you want to delete "${selectedUser?.name}"? This action cannot be undone.`}
+                loading={isSubmitting}
+            />
         </PageWrapper>
     );
 };
