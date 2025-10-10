@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { PageWrapper } from '../views/layout/PageWrapper';
-import { DataTable, Loading, EmptyState, ErrorMessage } from '../views/components/ui';
-import type { Column } from '../views/components/ui';
+import { Loading, EmptyState, ErrorMessage } from '../views/components/ui';
+import { EnhancedDataTable } from '../components/ui/EnhancedDataTable';
+import { DeleteConfirm } from '../views/components/ui/DeleteConfirm';
+import type { Column, TableAction } from '../components/ui/EnhancedDataTable';
+import type { FilterConfig } from '../hooks/useAdvancedSearch';
 import {
     Utensils,
     Plus,
@@ -15,13 +18,18 @@ import {
     TrendingUp
 } from 'lucide-react';
 import { api } from '../services/api';
+import { apiWithNotifications } from '../services/apiWithNotifications';
+import { MealFormModal } from '../components/forms/MealFormModal';
+import type { MealFormData } from '../schemas';
 
-// MealPlan data type based on Prisma schema
+// MealPlan data type based on updated Prisma schema
 interface MealPlan extends Record<string, unknown> {
     id: number;
     userId: number;
-    name: string;
+    title: string;
     description?: string;
+    category: string;
+    imageUrl?: string;
     calories: number;
     protein: number;
     fat: number;
@@ -29,9 +37,20 @@ interface MealPlan extends Record<string, unknown> {
     createdAt: string;
     updatedAt: string;
     user?: {
+        id: number;
         name: string;
         email: string;
     };
+    meals?: {
+        id: number;
+        name: string;
+        description?: string;
+        type: string;
+        ingredients: string[];
+        calories: number;
+        protein: number;
+        imageUrl?: string;
+    }[];
 }
 
 // Reusable StatCard component with improved accessibility and styling
@@ -144,6 +163,13 @@ const MealsPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [refreshKey, setRefreshKey] = useState(0);
 
+    // Modal states
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [selectedMeal, setSelectedMeal] = useState<MealPlan | null>(null);
+    const [modalLoading, setModalLoading] = useState(false);
+
     // Fetch meal plans from API
     const fetchMealPlans = async () => {
         try {
@@ -169,7 +195,7 @@ const MealsPage: React.FC = () => {
 
     const columns: Column<MealPlan>[] = [
         {
-            key: 'name',
+            key: 'title',
             label: 'Meal Plan Name',
             sortable: true,
             render: (value) => (
@@ -244,33 +270,124 @@ const MealsPage: React.FC = () => {
         }
     ];
 
-    const handleCreateMeal = () => {
-        console.log('Create meal clicked');
-        // TODO: Implement meal creation
+    // CRUD handlers
+    const handleCreateMeal = useCallback(async (data: MealFormData) => {
+        try {
+            setModalLoading(true);
+            await apiWithNotifications.meals.create(data);
+            handleRefresh();
+        } catch (error) {
+            console.error('Failed to create meal:', error);
+            throw error;
+        } finally {
+            setModalLoading(false);
+        }
+    }, []);
+
+    const handleEditMeal = useCallback(async (data: MealFormData) => {
+        if (!selectedMeal) return;
+
+        try {
+            setModalLoading(true);
+            await apiWithNotifications.meals.update(selectedMeal.id, data);
+            handleRefresh();
+        } catch (error) {
+            console.error('Failed to update meal:', error);
+            throw error;
+        } finally {
+            setModalLoading(false);
+        }
+    }, [selectedMeal]);
+
+    const handleDeleteMeal = useCallback(async () => {
+        if (!selectedMeal) return;
+
+        try {
+            setModalLoading(true);
+            await apiWithNotifications.meals.delete(selectedMeal.id);
+            handleRefresh();
+            setIsDeleteModalOpen(false);
+            setSelectedMeal(null);
+        } catch (error) {
+            console.error('Failed to delete meal:', error);
+        } finally {
+            setModalLoading(false);
+        }
+    }, [selectedMeal]);
+
+    // UI event handlers
+    const openCreateModal = () => setIsCreateModalOpen(true);
+    const openEditModal = (meal: MealPlan) => {
+        setSelectedMeal(meal);
+        setIsEditModalOpen(true);
+    };
+    const openDeleteModal = (meal: MealPlan) => {
+        setSelectedMeal(meal);
+        setIsDeleteModalOpen(true);
     };
 
-    const handleEditMeal = (meal: MealPlan) => {
-        console.log('Edit meal:', meal);
-        // TODO: Implement meal editing
-    };
+    // Filter configuration for meal plans
+    const filterConfigs: FilterConfig[] = [
+        {
+            key: 'calories',
+            label: 'Calories Range',
+            type: 'select',
+            options: [
+                { value: '0-500', label: 'Low (0-500)' },
+                { value: '501-1000', label: 'Medium (501-1000)' },
+                { value: '1001-1500', label: 'High (1001-1500)' },
+                { value: '1501+', label: 'Very High (1501+)' }
+            ]
+        },
+        {
+            key: 'protein',
+            label: 'Protein Content',
+            type: 'select',
+            options: [
+                { value: '0-20', label: 'Low (0-20g)' },
+                { value: '21-40', label: 'Medium (21-40g)' },
+                { value: '41-60', label: 'High (41-60g)' },
+                { value: '61+', label: 'Very High (61g+)' }
+            ]
+        },
+        {
+            key: 'carbohydrates',
+            label: 'Carbohydrates',
+            type: 'select',
+            options: [
+                { value: '0-30', label: 'Low Carb (0-30g)' },
+                { value: '31-60', label: 'Medium (31-60g)' },
+                { value: '61-100', label: 'High (61-100g)' },
+                { value: '101+', label: 'Very High (101g+)' }
+            ]
+        },
+        {
+            key: 'createdAt',
+            label: 'Created Date',
+            type: 'dateRange'
+        },
+        {
+            key: 'user',
+            label: 'Assigned User',
+            type: 'text'
+        }
+    ];
 
-    const handleDeleteMeal = (meal: MealPlan) => {
-        console.log('Delete meal:', meal);
-        // TODO: Implement meal deletion
-    };
+    // Searchable fields for meal plans
+    const searchableFields = ['name', 'description', 'ingredients', 'user.name', 'user.email'];
 
-    const actions = [
+    const actions: TableAction[] = [
         {
             label: 'Edit',
             icon: Edit,
-            onClick: handleEditMeal,
+            onClick: (row) => openEditModal(row as MealPlan),
             className: 'text-yellow-200 hover:text-yellow-100 focus:text-yellow-100 hover:bg-yellow-800/40 focus:bg-yellow-800/40 focus:outline-none focus:ring-2 focus:ring-yellow-500/50 transition-all duration-200 rounded-lg',
             ariaLabel: 'Edit meal plan'
         },
         {
             label: 'Delete',
             icon: Trash2,
-            onClick: handleDeleteMeal,
+            onClick: (row) => openDeleteModal(row as MealPlan),
             className: 'text-red-200 hover:text-red-100 focus:text-red-100 hover:bg-red-800/40 focus:bg-red-800/40 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all duration-200 rounded-lg',
             ariaLabel: 'Delete meal plan'
         }
@@ -313,7 +430,7 @@ const MealsPage: React.FC = () => {
                         {loading ? 'Loading...' : 'Refresh'}
                     </button>
                     <button
-                        onClick={handleCreateMeal}
+                        onClick={openCreateModal}
                         className="bg-primary-blue hover:bg-blue-600 focus:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 font-medium shadow-lg hover:shadow-xl"
                         aria-label="Create new meal plan"
                         title="Create new meal plan"
@@ -379,7 +496,7 @@ const MealsPage: React.FC = () => {
                         description="Get started by creating your first nutrition plan for users."
                         action={
                             <button
-                                onClick={handleCreateMeal}
+                                onClick={openCreateModal}
                                 className="bg-primary-blue hover:bg-blue-600 focus:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 font-medium shadow-lg hover:shadow-xl"
                                 aria-label="Create your first meal plan"
                                 title="Create your first meal plan"
@@ -390,15 +507,49 @@ const MealsPage: React.FC = () => {
                         }
                     />
                 ) : (
-                    <DataTable
+                    <EnhancedDataTable
                         data={mealPlans}
                         columns={columns}
                         actions={actions}
                         loading={loading}
-                        searchable={true}
-                        pageable={true}
+                        onCreateNew={openCreateModal}
+                        createButtonLabel="Create New Meal Plan"
+                        title="All Meal Plans"
+                        filterConfigs={filterConfigs}
+                        searchableFields={searchableFields}
                     />
                 )}
+
+                {/* Modals */}
+                <MealFormModal
+                    isOpen={isCreateModalOpen}
+                    onClose={() => setIsCreateModalOpen(false)}
+                    onSubmit={handleCreateMeal}
+                    isLoading={modalLoading}
+                />
+
+                <MealFormModal
+                    isOpen={isEditModalOpen}
+                    onClose={() => {
+                        setIsEditModalOpen(false);
+                        setSelectedMeal(null);
+                    }}
+                    onSubmit={handleEditMeal}
+                    meal={selectedMeal}
+                    isLoading={modalLoading}
+                />
+
+                <DeleteConfirm
+                    isOpen={isDeleteModalOpen}
+                    onClose={() => {
+                        setIsDeleteModalOpen(false);
+                        setSelectedMeal(null);
+                    }}
+                    onConfirm={handleDeleteMeal}
+                    loading={modalLoading}
+                    title="Delete Meal Plan"
+                    message={`Are you sure you want to delete "${selectedMeal?.name}"? This action cannot be undone.`}
+                />
             </div>
         </PageWrapper>
     );

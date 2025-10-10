@@ -1,9 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { PageWrapper } from '../views/layout/PageWrapper';
-import { DataTable, Loading, EmptyState, ErrorMessage } from '../views/components/ui';
-import type { Column } from '../views/components/ui';
+import { Loading, EmptyState, ErrorMessage } from '../views/components/ui';
+import { EnhancedDataTable } from '../components/ui/EnhancedDataTable';
+import type { Column, TableAction } from '../components/ui/EnhancedDataTable';
+import type { FilterConfig } from '../hooks/useAdvancedSearch';
+import { DeleteConfirm } from '../views/components/ui/DeleteConfirm';
 import { Dumbbell, Plus, RefreshCw, Edit, Trash2 } from 'lucide-react';
 import { api } from '../services/api';
+import { apiWithNotifications } from '../services/apiWithNotifications';
+import { WorkoutFormModal } from '../components/forms/WorkoutFormModal';
+import type { WorkoutFormData } from '../schemas';
 
 // WorkoutPlan data type based on Prisma schema
 interface WorkoutPlan extends Record<string, unknown> {
@@ -13,6 +19,7 @@ interface WorkoutPlan extends Record<string, unknown> {
     exercises: string;
     sets: number;
     reps: number;
+    difficulty?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
     createdAt: string;
     updatedAt: string;
     user?: {
@@ -26,6 +33,13 @@ const WorkoutsPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [refreshKey, setRefreshKey] = useState(0);
+
+    // Modal states
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [selectedWorkout, setSelectedWorkout] = useState<WorkoutPlan | null>(null);
+    const [modalLoading, setModalLoading] = useState(false);
 
     // Helper function for badge styling
     const getBadgeClasses = (type: 'sets' | 'reps'): string => {
@@ -120,33 +134,121 @@ const WorkoutsPage: React.FC = () => {
         }
     ];
 
-    const handleCreateWorkout = () => {
-        console.log('Create workout clicked');
-        // TODO: Implement workout creation
+    // CRUD handlers
+    const handleCreateWorkout = useCallback(async (data: WorkoutFormData) => {
+        try {
+            setModalLoading(true);
+            await apiWithNotifications.workouts.create(data);
+            handleRefresh();
+        } catch (error) {
+            console.error('Failed to create workout:', error);
+            throw error;
+        } finally {
+            setModalLoading(false);
+        }
+    }, []);
+
+    const handleEditWorkout = useCallback(async (data: WorkoutFormData) => {
+        if (!selectedWorkout) return;
+
+        try {
+            setModalLoading(true);
+            await apiWithNotifications.workouts.update(selectedWorkout.id, data);
+            handleRefresh();
+        } catch (error) {
+            console.error('Failed to update workout:', error);
+            throw error;
+        } finally {
+            setModalLoading(false);
+        }
+    }, [selectedWorkout]);
+
+    const handleDeleteWorkout = useCallback(async () => {
+        if (!selectedWorkout) return;
+
+        try {
+            setModalLoading(true);
+            await apiWithNotifications.workouts.delete(selectedWorkout.id);
+            handleRefresh();
+            setIsDeleteModalOpen(false);
+            setSelectedWorkout(null);
+        } catch (error) {
+            console.error('Failed to delete workout:', error);
+        } finally {
+            setModalLoading(false);
+        }
+    }, [selectedWorkout]);
+
+    // UI event handlers
+    const openCreateModal = () => setIsCreateModalOpen(true);
+    const openEditModal = (workout: WorkoutPlan) => {
+        setSelectedWorkout(workout);
+        setIsEditModalOpen(true);
+    };
+    const openDeleteModal = (workout: WorkoutPlan) => {
+        setSelectedWorkout(workout);
+        setIsDeleteModalOpen(true);
     };
 
-    const handleEditWorkout = (workout: WorkoutPlan) => {
-        console.log('Edit workout:', workout);
-        // TODO: Implement workout editing
-    };
+    // Filter configuration for workout plans
+    const filterConfigs: FilterConfig[] = [
+        {
+            key: 'difficulty',
+            label: 'Difficulty Level',
+            type: 'select',
+            options: [
+                { value: 'BEGINNER', label: 'Beginner' },
+                { value: 'INTERMEDIATE', label: 'Intermediate' },
+                { value: 'ADVANCED', label: 'Advanced' }
+            ]
+        },
+        {
+            key: 'sets',
+            label: 'Number of Sets',
+            type: 'select',
+            options: [
+                { value: '1-3', label: '1-3 Sets' },
+                { value: '4-6', label: '4-6 Sets' },
+                { value: '7+', label: '7+ Sets' }
+            ]
+        },
+        {
+            key: 'reps',
+            label: 'Repetitions',
+            type: 'select',
+            options: [
+                { value: '1-10', label: '1-10 Reps' },
+                { value: '11-20', label: '11-20 Reps' },
+                { value: '21+', label: '21+ Reps' }
+            ]
+        },
+        {
+            key: 'createdAt',
+            label: 'Created Date',
+            type: 'dateRange'
+        },
+        {
+            key: 'user',
+            label: 'Assigned User',
+            type: 'text'
+        }
+    ];
 
-    const handleDeleteWorkout = (workout: WorkoutPlan) => {
-        console.log('Delete workout:', workout);
-        // TODO: Implement workout deletion
-    };
+    // Searchable fields for workout plans
+    const searchableFields = ['name', 'description', 'exercises', 'user.name', 'user.email'];
 
-    const actions = [
+    const actions: TableAction[] = [
         {
             label: 'Edit',
             icon: Edit,
-            onClick: handleEditWorkout,
+            onClick: (row) => openEditModal(row as WorkoutPlan),
             className: 'text-yellow-300 hover:text-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-dark-bg',
             ariaLabel: 'Edit workout plan'
         },
         {
             label: 'Delete',
             icon: Trash2,
-            onClick: handleDeleteWorkout,
+            onClick: (row) => openDeleteModal(row as WorkoutPlan),
             className: 'text-red-300 hover:text-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-dark-bg',
             ariaLabel: 'Delete workout plan'
         }
@@ -188,7 +290,7 @@ const WorkoutsPage: React.FC = () => {
                         {loading ? 'Loading...' : 'Refresh'}
                     </button>
                     <button
-                        onClick={handleCreateWorkout}
+                        onClick={openCreateModal}
                         className="bg-primary-blue hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                         aria-label="Create new workout plan"
                     >
@@ -250,7 +352,7 @@ const WorkoutsPage: React.FC = () => {
                         description="Get started by creating your first workout plan for users."
                         action={
                             <button
-                                onClick={handleCreateWorkout}
+                                onClick={openCreateModal}
                                 className="bg-primary-blue hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 aria-label="Create your first workout plan"
                             >
@@ -260,18 +362,52 @@ const WorkoutsPage: React.FC = () => {
                         }
                     />
                 ) : (
-                    <DataTable
+                    <EnhancedDataTable
                         data={workoutPlans}
                         columns={columns}
                         actions={actions}
                         loading={loading}
-                        onCreateNew={handleCreateWorkout}
+                        onCreateNew={openCreateModal}
                         createButtonLabel="Create New Workout"
                         title="All Workout Plans"
-                        searchable={true}
-                        pageable={true}
+                        filterConfigs={filterConfigs}
+                        searchableFields={searchableFields}
                     />
                 )}
+
+                {/* Modals */}
+                <WorkoutFormModal
+                    isOpen={isCreateModalOpen}
+                    onClose={() => setIsCreateModalOpen(false)}
+                    onSubmit={handleCreateWorkout}
+                    isLoading={modalLoading}
+                />
+
+                <WorkoutFormModal
+                    isOpen={isEditModalOpen}
+                    onClose={() => {
+                        setIsEditModalOpen(false);
+                        setSelectedWorkout(null);
+                    }}
+                    onSubmit={handleEditWorkout}
+                    workout={selectedWorkout ? {
+                        ...selectedWorkout,
+                        difficulty: selectedWorkout.difficulty || 'BEGINNER'
+                    } : null}
+                    isLoading={modalLoading}
+                />
+
+                <DeleteConfirm
+                    isOpen={isDeleteModalOpen}
+                    onClose={() => {
+                        setIsDeleteModalOpen(false);
+                        setSelectedWorkout(null);
+                    }}
+                    onConfirm={handleDeleteWorkout}
+                    loading={modalLoading}
+                    title="Delete Workout Plan"
+                    message={`Are you sure you want to delete "${selectedWorkout?.name}"? This action cannot be undone.`}
+                />
             </div>
         </PageWrapper>
     );

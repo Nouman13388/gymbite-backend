@@ -340,3 +340,42 @@ export async function getCurrentUser(): Promise<UserProfile | null> {
 
 // Export for external usage
 export { API_BASE_URL, REQUEST_TIMEOUT, MAX_RETRIES };
+
+// Enhanced CRUD API methods
+export const crudApi = {
+  // User Management
+  users: {
+    getAll: () => api.get("/users"),
+    getById: (id: number) => api.get(`/users/${id}`),
+    create: (data: Record<string, unknown>) => api.post("/users", data),
+    update: (id: number, data: Record<string, unknown>) =>
+      api.put(`/users/${id}`, data),
+    delete: (id: number) => api.delete(`/users/${id}`),
+    search: (query: string) =>
+      api.get(`/users?search=${encodeURIComponent(query)}`),
+  },
+
+  // Workout Plans
+  workouts: {
+    getAll: () => api.get("/workout-plans"),
+    getById: (id: number) => api.get(`/workout-plans/${id}`),
+    create: (data: Record<string, unknown>) => api.post("/workout-plans", data),
+    update: (id: number, data: Record<string, unknown>) =>
+      api.put(`/workout-plans/${id}`, data),
+    delete: (id: number) => api.delete(`/workout-plans/${id}`),
+    search: (query: string) =>
+      api.get(`/workout-plans?search=${encodeURIComponent(query)}`),
+  },
+
+  // Meal Plans
+  meals: {
+    getAll: () => api.get("/meal-plans"),
+    getById: (id: number) => api.get(`/meal-plans/${id}`),
+    create: (data: Record<string, unknown>) => api.post("/meal-plans", data),
+    update: (id: number, data: Record<string, unknown>) =>
+      api.put(`/meal-plans/${id}`, data),
+    delete: (id: number) => api.delete(`/meal-plans/${id}`),
+    search: (query: string) =>
+      api.get(`/meal-plans?search=${encodeURIComponent(query)}`),
+  },
+};
