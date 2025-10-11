@@ -16,5 +16,5 @@
       "dest": "/src/index.ts"
     }
   ],
-  "buildCommand": "prisma generate && prisma migrate deploy && npm run build:server"
+  "buildCommand": "prisma generate && prisma migrate reset --force && npm run build:server"
 }
