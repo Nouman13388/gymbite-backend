@@ -40,17 +40,25 @@ const AdminLogin = () => {
   // Handle form submission
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log("🚀 Login button clicked!");
+    console.log("📝 Form data:", { username, password: password ? "[PASSWORD PROVIDED]" : "[NO PASSWORD]" });
 
     if (validateForm()) {
+      console.log("✅ Form validation passed");
       try {
+        console.log("🔄 Attempting login with Firebase...");
         setIsSuccess(null); // Reset success state
 
         const success = await login({ username, password });
 
+        console.log("🔍 Login result:", success);
+
         if (success) {
+          console.log("✅ Login successful! Navigating to:", from);
           setIsSuccess(true);
           navigate(from, { replace: true });
         } else {
+          console.log("❌ Login failed: Invalid credentials or not ADMIN user");
           setIsSuccess(false);
           setErrors({ username: "", password: "Invalid credentials or not an ADMIN user" });
         }
@@ -60,12 +68,17 @@ const AdminLogin = () => {
         setErrors({ username: "", password: "Login failed. Please try again." });
       }
     } else {
+      console.log("❌ Form validation failed");
       setIsSuccess(false);
     }
   };
 
   return (
     <div className="relative flex size-full min-h-screen flex-col bg-dark-bg dark group/design-root overflow-x-hidden font-inter">
+      {/* DEBUG: Visual indicator that component is rendering */}
+      <div style={{ position: 'fixed', top: 0, right: 0, background: 'red', color: 'white', padding: '10px', zIndex: 9999 }}>
+        AdminLogin Rendered ✅
+      </div>
 
       <div className="flex h-full grow flex-col">
         <header className="flex items-center justify-center whitespace-nowrap px-10 py-6">
@@ -166,6 +179,10 @@ const AdminLogin = () => {
                     className="flex w-full justify-center rounded-md bg-primary-blue px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-blue transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     type="submit"
                     disabled={isLoading}
+                    onClick={() => {
+                      console.log("🔴 BUTTON CLICKED DIRECTLY!");
+                      // Don't preventDefault here, let the form submit naturally
+                    }}
                   >
                     {isLoading ? "Logging in..." : "Log in"}
                   </button>

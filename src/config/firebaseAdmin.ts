@@ -1,5 +1,6 @@
 import { initializeApp, cert, getApps } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
+import { getMessaging } from "firebase-admin/messaging";
 
 // Initialize Firebase Admin SDK
 let adminApp;
@@ -18,4 +19,5 @@ if (getApps().length === 0) {
 }
 
 export const adminAuth = getAuth(adminApp);
+export const adminMessaging = getMessaging(adminApp);
 export default adminApp;

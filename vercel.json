@@ -16,5 +16,6 @@
       "dest": "/src/index.ts"
     }
   ],
-  "buildCommand": "prisma generate && prisma migrate reset --force && npm run build:server"
+  "buildCommand": "npm run vercel-build",
+  "installCommand": "npm install && npx prisma generate"
 }

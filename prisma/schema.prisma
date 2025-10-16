@@ -16,6 +16,7 @@ model User {
   password      String         @db.VarChar(255)
   id            Int            @id @default(autoincrement())
   firebaseUid   String?        @unique
+  deviceToken   String?        // FCM device token for push notifications
   clients       Client?
   feedbacks     Feedback[]
   mealPlans     MealPlan[]

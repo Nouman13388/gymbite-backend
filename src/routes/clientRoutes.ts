@@ -10,6 +10,7 @@ import {
   getClientProgress,
   getClientActivities,
   getClientByUserId,
+  getClientAppointments,
   errorHandler,
 } from "../controllers/clientController.js";
 import {
@@ -17,7 +18,6 @@ import {
   validateCreateClient,
   validateUpdateClient,
 } from "../middleware/validation.js";
-import { verify } from "crypto";
 import { verifyFirebaseToken } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -46,10 +46,9 @@ router.delete("/:id", validateClientId, deleteClient);
 router.get("/:id/complete", validateClientId, getClientCompleteProfile);
 router.get("/:id/plans", validateClientId, getClientPlans);
 router.get("/:id/progress", validateClientId, getClientProgress);
+router.get("/:id/appointments", validateClientId, getClientAppointments);
 router.get("/:id/activities", validateClientId, getClientActivities);
-router.get("/user/:userId", getClientByUserId);
 
-// Error handling middleware
 router.use(errorHandler);
 
 export default router;

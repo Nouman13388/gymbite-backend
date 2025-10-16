@@ -6,6 +6,10 @@ interface Notification {
     type: 'success' | 'error' | 'info' | 'warning';
     message: string;
     duration?: number;
+    action?: {
+        label: string;
+        onClick: () => void;
+    };
 }
 
 interface NotificationContainerProps {
@@ -64,6 +68,17 @@ export const NotificationContainer: React.FC<NotificationContainerProps> = ({
                     <span className="flex-1 text-sm font-medium">
                         {notification.message}
                     </span>
+                    {notification.action && (
+                        <button
+                            onClick={() => {
+                                notification.action?.onClick();
+                                onRemove(notification.id);
+                            }}
+                            className="ml-2 px-3 py-1 rounded bg-white/10 text-xs font-semibold hover:bg-white/20 transition-colors"
+                        >
+                            {notification.action.label}
+                        </button>
+                    )}
                     <button
                         onClick={() => onRemove(notification.id)}
                         className="flex-shrink-0 p-1 rounded-full hover:bg-white/10 transition-colors"
