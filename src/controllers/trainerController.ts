@@ -1,10 +1,14 @@
-import { Request, Response, NextFunction } from 'express';
-import prisma from '../database/prisma.js';
+import { Request, Response, NextFunction } from "express";
+import prisma from "../database/prisma.js";
 
 // Get trainer by user ID
-export const getTrainerByUserId = async (req: Request, res: Response, next: NextFunction) => {
+export const getTrainerByUserId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { userId } = req.params;
-  
+
   try {
     const trainer = await prisma.trainer.findFirst({
       where: { userId: parseInt(userId) },
@@ -12,18 +16,24 @@ export const getTrainerByUserId = async (req: Request, res: Response, next: Next
     });
 
     if (!trainer) {
-      return res.status(404).json({ error: 'Trainer not found for this user ID' });
+      return res
+        .status(404)
+        .json({ error: "Trainer not found for this user ID" });
     }
 
     res.json(trainer);
   } catch (error) {
-    console.error('Error fetching trainer by user ID:', error);
+    console.error("Error fetching trainer by user ID:", error);
     next(error);
   }
 };
 
 // Get all trainers
-export const getTrainers = async (req: Request, res: Response, next: NextFunction) => {
+export const getTrainers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const trainers = await prisma.trainer.findMany({
       include: { user: true },
@@ -35,7 +45,11 @@ export const getTrainers = async (req: Request, res: Response, next: NextFunctio
 };
 
 // Get a single trainer by ID
-export const getTrainerById = async (req: Request, res: Response, next: NextFunction) => {
+export const getTrainerById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
   try {
     const trainer = await prisma.trainer.findUnique({
@@ -43,7 +57,7 @@ export const getTrainerById = async (req: Request, res: Response, next: NextFunc
       include: { user: true },
     });
     if (!trainer) {
-      return res.status(404).json({ error: 'Trainer not found' });
+      return res.status(404).json({ error: "Trainer not found" });
     }
     res.json(trainer);
   } catch (error) {
@@ -52,7 +66,11 @@ export const getTrainerById = async (req: Request, res: Response, next: NextFunc
 };
 
 // Create a new trainer
-export const createTrainer = async (req: Request, res: Response, next: NextFunction) => {
+export const createTrainer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { userId, specialty, experienceYears } = req.body;
   try {
     const trainer = await prisma.trainer.create({
@@ -69,7 +87,11 @@ export const createTrainer = async (req: Request, res: Response, next: NextFunct
 };
 
 // Update a trainer
-export const updateTrainer = async (req: Request, res: Response, next: NextFunction) => {
+export const updateTrainer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
   const { specialty, experienceYears } = req.body;
   try {
@@ -87,7 +109,11 @@ export const updateTrainer = async (req: Request, res: Response, next: NextFunct
 };
 
 // Delete a trainer
-export const deleteTrainer = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteTrainer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
   try {
     await prisma.trainer.delete({
@@ -100,8 +126,13 @@ export const deleteTrainer = async (req: Request, res: Response, next: NextFunct
 };
 
 // Get trainer's complete profile with related data
-export const getTrainerCompleteProfile = async (req: Request, res: Response, next: NextFunction) => {
+export const getTrainerCompleteProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
+
   try {
     const trainer = await prisma.trainer.findUnique({
       where: { id: parseInt(id) },
@@ -111,166 +142,258 @@ export const getTrainerCompleteProfile = async (req: Request, res: Response, nex
             id: true,
             name: true,
             email: true,
-            role: true
-          }
+            role: true,
+            createdAt: true,
+          },
         },
-        consultations: true,
-        appointments: true,
         feedbacks: {
           include: {
             user: {
-              select: {
-                id: true,
-                name: true,
-                email: true
-              }
-            }
-          }
-        }
-      }
+              select: { name: true },
+            },
+          },
+          orderBy: { createdAt: "desc" },
+          take: 10,
+        },
+        appointments: {
+          include: {
+            client: {
+              include: {
+                user: {
+                  select: { name: true, email: true },
+                },
+              },
+            },
+          },
+          where: {
+            appointmentTime: {
+              gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Last 30 days
+            },
+          },
+          orderBy: { appointmentTime: "desc" },
+        },
+        consultations: {
+          include: {
+            client: {
+              include: {
+                user: {
+                  select: { name: true },
+                },
+              },
+            },
+          },
+          orderBy: { scheduledAt: "desc" },
+          take: 10,
+        },
+      },
     });
-    
+
     if (!trainer) {
-      return res.status(404).json({ error: 'Trainer not found' });
+      return res.status(404).json({ error: "Trainer not found" });
     }
-    
-    res.json(trainer);
+
+    // Calculate rating average
+    const avgRating =
+      trainer.feedbacks.length > 0
+        ? trainer.feedbacks.reduce((sum, f) => sum + f.rating, 0) /
+          trainer.feedbacks.length
+        : 0;
+
+    // Calculate stats
+    const stats = {
+      totalClients: new Set(trainer.appointments.map((a) => a.clientId)).size,
+      totalAppointments: trainer.appointments.length,
+      totalConsultations: trainer.consultations.length,
+      averageRating: avgRating.toFixed(2),
+      totalReviews: trainer.feedbacks.length,
+    };
+
+    res.json({
+      ...trainer,
+      stats,
+    });
   } catch (error) {
+    console.error("Error fetching complete trainer profile:", error);
     next(error);
   }
 };
 
 // Get trainer's client list
-export const getTrainerClients = async (req: Request, res: Response, next: NextFunction) => {
+export const getTrainerClients = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
+
   try {
-    const clients = await prisma.client.findMany({
-      where: {
-        consultations: {
-          some: {
-            trainerId: parseInt(id)
-          }
-        }
-      },
+    // Get unique clients from appointments
+    const appointments = await prisma.appointment.findMany({
+      where: { trainerId: parseInt(id) },
       include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            role: true
-          }
-        }
-      }
+        client: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+            progress: {
+              orderBy: { progressDate: "desc" },
+              take: 1, // Latest progress
+            },
+          },
+        },
+      },
+      distinct: ["clientId"],
     });
-    
+
+    const clients = appointments.map((a) => ({
+      ...a.client,
+      lastAppointment: a.appointmentTime,
+      appointmentStatus: a.status,
+    }));
+
     res.json(clients);
   } catch (error) {
+    console.error("Error fetching trainer clients:", error);
     next(error);
   }
 };
 
 // Get trainer's schedule
-export const getTrainerSchedule = async (req: Request, res: Response, next: NextFunction) => {
+export const getTrainerSchedule = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
+  const { startDate, endDate } = req.query;
+
   try {
-    const [consultations, appointments] = await Promise.all([
-      prisma.consultation.findMany({
-        where: { 
-          trainerId: parseInt(id),
-          status: 'Scheduled'
+    const whereClause: any = {
+      trainerId: parseInt(id),
+    };
+
+    if (startDate && endDate) {
+      whereClause.appointmentTime = {
+        gte: new Date(startDate as string),
+        lte: new Date(endDate as string),
+      };
+    }
+
+    const appointments = await prisma.appointment.findMany({
+      where: whereClause,
+      include: {
+        client: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
         },
-        include: {
-          client: {
-            include: {
-              user: {
-                select: {
-                  name: true,
-                  email: true
-                }
-              }
+      },
+      orderBy: { appointmentTime: "asc" },
+    });
+
+    const consultations = await prisma.consultation.findMany({
+      where: {
+        trainerId: parseInt(id),
+        ...(startDate && endDate
+          ? {
+              scheduledAt: {
+                gte: new Date(startDate as string),
+                lte: new Date(endDate as string),
+              },
             }
-          }
+          : {}),
+      },
+      include: {
+        client: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
         },
-        orderBy: { scheduledAt: 'asc' }
-      }),
-      prisma.appointment.findMany({
-        where: { 
-          trainerId: parseInt(id),
-          status: 'Scheduled'
-        },
-        include: {
-          client: {
-            include: {
-              user: {
-                select: {
-                  name: true,
-                  email: true
-                }
-              }
-            }
-          }
-        },
-        orderBy: { appointmentTime: 'asc' }
-      })
-    ]);
-    
+      },
+      orderBy: { scheduledAt: "asc" },
+    });
+
     res.json({
+      appointments,
       consultations,
-      appointments
+      summary: {
+        totalAppointments: appointments.length,
+        totalConsultations: consultations.length,
+        upcomingAppointments: appointments.filter(
+          (a) => new Date(a.appointmentTime) > new Date()
+        ).length,
+      },
     });
   } catch (error) {
+    console.error("Error fetching trainer schedule:", error);
     next(error);
   }
 };
 
 // Get trainer's performance metrics
-export const getTrainerMetrics = async (req: Request, res: Response, next: NextFunction) => {
+export const getTrainerMetrics = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
+  const trainerId = parseInt(id);
+
   try {
-    const [
-      clientCount,
-      feedbacks,
-      activeAppointments,
-      completedConsultations
-    ] = await Promise.all([
-      prisma.client.count({
-        where: {
-          consultations: {
-            some: {
-              trainerId: parseInt(id)
-            }
-          }
-        }
-      }),
-      prisma.feedback.findMany({
-        where: { trainerId: parseInt(id) }
-      }),
-      prisma.appointment.count({
-        where: { 
-          trainerId: parseInt(id),
-          status: 'Scheduled'
-        }
-      }),
-      prisma.consultation.count({
-        where: { 
-          trainerId: parseInt(id),
-          status: 'Completed'
-        }
-      })
+    const [feedbacks, appointments, consultations] = await Promise.all([
+      prisma.feedback.findMany({ where: { trainerId } }),
+      prisma.appointment.findMany({ where: { trainerId } }),
+      prisma.consultation.findMany({ where: { trainerId } }),
     ]);
-      const averageRating = feedbacks.length > 0
-      ? feedbacks.reduce((acc: number, curr: any) => acc + curr.rating, 0) / feedbacks.length
-      : 0;
-    
+
+    const avgRating =
+      feedbacks.length > 0
+        ? feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length
+        : 0;
+
+    const completedAppointments = appointments.filter(
+      (a) => a.status === "COMPLETED"
+    ).length;
+    const activeClients = new Set(appointments.map((a) => a.clientId)).size;
+
     res.json({
-      clientCount,
-      averageRating,
-      activeAppointments,
-      completedConsultations,
-      totalFeedbacks: feedbacks.length
+      rating: {
+        average: avgRating.toFixed(2),
+        total: feedbacks.length,
+      },
+      appointments: {
+        total: appointments.length,
+        completed: completedAppointments,
+        completionRate:
+          appointments.length > 0
+            ? ((completedAppointments / appointments.length) * 100).toFixed(2)
+            : "0.00",
+      },
+      consultations: {
+        total: consultations.length,
+      },
+      clients: {
+        active: activeClients,
+      },
     });
   } catch (error) {
+    console.error("Error fetching trainer metrics:", error);
     next(error);
   }
 };

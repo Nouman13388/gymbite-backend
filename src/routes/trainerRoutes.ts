@@ -12,6 +12,10 @@ import {
   getTrainerByUserId,
 } from "../controllers/trainerController.js";
 import { verifyFirebaseToken } from "../middleware/auth.js";
+import {
+  validateCreateTrainer,
+  validateUpdateTrainer,
+} from "../middleware/trainerValidation.js";
 
 const router = express.Router();
 
@@ -28,10 +32,10 @@ router.get("/user/:userId", getTrainerByUserId);
 router.get("/:id", getTrainerById);
 
 // POST create a new trainer
-router.post("/", createTrainer);
+router.post("/", validateCreateTrainer, createTrainer);
 
 // PUT update a trainer
-router.put("/:id", updateTrainer);
+router.put("/:id", validateUpdateTrainer, updateTrainer);
 
 // DELETE a trainer
 router.delete("/:id", deleteTrainer);

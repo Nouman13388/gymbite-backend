@@ -18,6 +18,7 @@ export const getMealPlans = async (req: Request, res: Response) => {
     });
     res.status(200).json(mealPlans);
   } catch (error) {
+    console.error("Error fetching meal plans:", error);
     res.status(500).json({ error: "Failed to fetch meal plans" });
   }
 };
