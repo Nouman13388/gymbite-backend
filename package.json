@@ -25,6 +25,11 @@
     "auth-utils": "node firebase-auth-utils.js",
     "install:all": "npm install",
     "clean": "npm --workspaces run clean && rm -rf node_modules dist",
+    "db:reset": "npx prisma migrate reset --force",
+    "db:deploy": "npx prisma migrate deploy",
+    "db:generate": "npx prisma generate",
+    "db:studio": "npx prisma studio",
+    "db:reset-prod": "node reset-production-db.js",
     "lint": "npm --workspaces run lint",
     "workspace:dashboard": "npm --workspace=dashboard"
   },
