@@ -15,7 +15,6 @@ import mealRoutes from "./routes/mealRoutes.js";
 import progressRoutes from "./routes/progressRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
-import consultationRoutes from "./routes/consultationRoutes.js";
 import appointmentRoutes from "./routes/appointmentRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 import healthRoutes from "./routes/healthRoutes.js";
@@ -111,7 +110,6 @@ app.use("/api/meals", mealRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/feedbacks", feedbackRoutes);
 app.use("/api/notifications", notificationRoutes);
-app.use("/api/consultations", consultationRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/analytics", analyticsRoutes);
 

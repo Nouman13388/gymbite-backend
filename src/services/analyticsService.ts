@@ -103,7 +103,6 @@ export const getTrainerAnalytics = async () => {
           _count: {
             select: {
               appointments: true,
-              consultations: true,
               feedbacks: true,
             },
           },
@@ -129,7 +128,6 @@ export const getTrainerAnalytics = async () => {
         experienceYears: trainer.experienceYears,
         averageRating: avgRating,
         totalAppointments: trainer._count.appointments,
-        totalConsultations: trainer._count.consultations,
         totalReviews: trainer._count.feedbacks,
       };
     })
@@ -296,7 +294,6 @@ export const getSystemHealth = async () => {
     totalTrainers,
     totalClients,
     totalAppointments,
-    totalConsultations,
     totalProgress,
     totalFeedback,
     totalNotifications,
@@ -307,7 +304,6 @@ export const getSystemHealth = async () => {
     prisma.trainer.count(),
     prisma.client.count(),
     prisma.appointment.count(),
-    prisma.consultation.count(),
     prisma.progress.count(),
     prisma.feedback.count(),
     prisma.notification.count(),
@@ -321,7 +317,6 @@ export const getSystemHealth = async () => {
       trainers: totalTrainers,
       clients: totalClients,
       appointments: totalAppointments,
-      consultations: totalConsultations,
       progressRecords: totalProgress,
       feedback: totalFeedback,
       notifications: totalNotifications,

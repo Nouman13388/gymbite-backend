@@ -172,19 +172,6 @@ export const getTrainerCompleteProfile = async (
           },
           orderBy: { appointmentTime: "desc" },
         },
-        consultations: {
-          include: {
-            client: {
-              include: {
-                user: {
-                  select: { name: true },
-                },
-              },
-            },
-          },
-          orderBy: { scheduledAt: "desc" },
-          take: 10,
-        },
       },
     });
 
@@ -203,7 +190,6 @@ export const getTrainerCompleteProfile = async (
     const stats = {
       totalClients: new Set(trainer.appointments.map((a) => a.clientId)).size,
       totalAppointments: trainer.appointments.length,
-      totalConsultations: trainer.consultations.length,
       averageRating: avgRating.toFixed(2),
       totalReviews: trainer.feedbacks.length,
     };
@@ -302,42 +288,19 @@ export const getTrainerSchedule = async (
       orderBy: { appointmentTime: "asc" },
     });
 
-    const consultations = await prisma.consultation.findMany({
-      where: {
-        trainerId: parseInt(id),
-        ...(startDate && endDate
-          ? {
-              scheduledAt: {
-                gte: new Date(startDate as string),
-                lte: new Date(endDate as string),
-              },
-            }
-          : {}),
-      },
-      include: {
-        client: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-      },
-      orderBy: { scheduledAt: "asc" },
-    });
-
     res.json({
       appointments,
-      consultations,
       summary: {
         totalAppointments: appointments.length,
-        totalConsultations: consultations.length,
         upcomingAppointments: appointments.filter(
           (a) => new Date(a.appointmentTime) > new Date()
         ).length,
+        appointmentsByType: {
+          inPerson: appointments.filter((a) => a.type === "IN_PERSON").length,
+          videoCall: appointments.filter((a) => a.type === "VIDEO_CALL").length,
+          phoneCall: appointments.filter((a) => a.type === "PHONE_CALL").length,
+          chat: appointments.filter((a) => a.type === "CHAT").length,
+        },
       },
     });
   } catch (error) {
@@ -356,21 +319,22 @@ export const getTrainerMetrics = async (
   const trainerId = parseInt(id);
 
   try {
-    const [feedbacks, appointments, consultations] = await Promise.all([
+    const [feedbacks, appointments] = await Promise.all([
       prisma.feedback.findMany({ where: { trainerId } }),
       prisma.appointment.findMany({ where: { trainerId } }),
-      prisma.consultation.findMany({ where: { trainerId } }),
     ]);
 
     const avgRating =
       feedbacks.length > 0
-        ? feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length
+        ? feedbacks.reduce((sum: number, f: any) => sum + f.rating, 0) /
+          feedbacks.length
         : 0;
 
     const completedAppointments = appointments.filter(
-      (a) => a.status === "COMPLETED"
+      (a: any) => a.status === "COMPLETED"
     ).length;
-    const activeClients = new Set(appointments.map((a) => a.clientId)).size;
+    const activeClients = new Set(appointments.map((a: any) => a.clientId))
+      .size;
 
     res.json({
       rating: {
@@ -384,9 +348,15 @@ export const getTrainerMetrics = async (
           appointments.length > 0
             ? ((completedAppointments / appointments.length) * 100).toFixed(2)
             : "0.00",
-      },
-      consultations: {
-        total: consultations.length,
+        byType: {
+          inPerson: appointments.filter((a: any) => a.type === "IN_PERSON")
+            .length,
+          videoCall: appointments.filter((a: any) => a.type === "VIDEO_CALL")
+            .length,
+          phoneCall: appointments.filter((a: any) => a.type === "PHONE_CALL")
+            .length,
+          chat: appointments.filter((a: any) => a.type === "CHAT").length,
+        },
       },
       clients: {
         active: activeClients,

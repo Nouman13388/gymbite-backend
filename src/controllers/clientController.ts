@@ -252,19 +252,6 @@ export const getClientCompleteProfile = async (
           orderBy: { appointmentTime: "desc" },
           take: 10,
         },
-        consultations: {
-          include: {
-            trainer: {
-              include: {
-                user: {
-                  select: { name: true },
-                },
-              },
-            },
-          },
-          orderBy: { scheduledAt: "desc" },
-          take: 10,
-        },
       },
     });
 
@@ -304,7 +291,6 @@ export const getClientCompleteProfile = async (
       progressStats,
       stats: {
         totalAppointments: client.appointments.length,
-        totalConsultations: client.consultations.length,
         totalProgressEntries: client.progress.length,
       },
     });
@@ -435,32 +421,25 @@ export const getClientActivities = async (
       throw new ApiError(404, "Client not found");
     }
 
-    const [consultations, appointments, progress, notifications] =
-      await Promise.all([
-        prisma.consultation.findMany({
-          where: { clientId: parseInt(id) },
-          orderBy: { scheduledAt: "desc" },
-          take: 5,
-        }),
-        prisma.appointment.findMany({
-          where: { clientId: parseInt(id) },
-          orderBy: { appointmentTime: "desc" },
-          take: 5,
-        }),
-        prisma.progress.findMany({
-          where: { clientId: parseInt(id) },
-          orderBy: { progressDate: "desc" },
-          take: 5,
-        }),
-        prisma.notification.findMany({
-          where: { userId: existingClient.userId },
-          orderBy: { createdAt: "desc" },
-          take: 5,
-        }),
-      ]);
+    const [appointments, progress, notifications] = await Promise.all([
+      prisma.appointment.findMany({
+        where: { clientId: parseInt(id) },
+        orderBy: { appointmentTime: "desc" },
+        take: 5,
+      }),
+      prisma.progress.findMany({
+        where: { clientId: parseInt(id) },
+        orderBy: { progressDate: "desc" },
+        take: 5,
+      }),
+      prisma.notification.findMany({
+        where: { userId: existingClient.userId },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+      }),
+    ]);
 
     res.json({
-      consultations,
       appointments,
       progress,
       notifications,
