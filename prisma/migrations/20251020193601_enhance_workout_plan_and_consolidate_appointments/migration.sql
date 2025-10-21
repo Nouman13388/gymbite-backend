@@ -16,24 +16,51 @@ ALTER TABLE "public"."Consultation" DROP CONSTRAINT "Consultation_clientId_fkey"
 -- DropForeignKey
 ALTER TABLE "public"."Consultation" DROP CONSTRAINT "Consultation_trainerId_fkey";
 
--- AlterTable
-ALTER TABLE "public"."Appointment" ADD COLUMN     "duration" INTEGER NOT NULL DEFAULT 60,
-ADD COLUMN     "meetingUrl" VARCHAR(500),
-ADD COLUMN     "type" VARCHAR(50) NOT NULL DEFAULT 'in-person',
-ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL;
+-- AlterTable (Appointment - Safe with defaults)
+ALTER TABLE "public"."Appointment" 
+  ADD COLUMN IF NOT EXISTS "duration" INTEGER NOT NULL DEFAULT 60,
+  ADD COLUMN IF NOT EXISTS "meetingUrl" VARCHAR(500),
+  ADD COLUMN IF NOT EXISTS "type" VARCHAR(50) NOT NULL DEFAULT 'in-person',
+  ADD COLUMN IF NOT EXISTS "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
 
--- AlterTable
-ALTER TABLE "public"."WorkoutPlan" DROP COLUMN "name",
-DROP COLUMN "reps",
-DROP COLUMN "sets",
-ADD COLUMN     "category" VARCHAR(100) NOT NULL DEFAULT 'Full Body',
-ADD COLUMN     "description" TEXT,
-ADD COLUMN     "difficulty" VARCHAR(50) NOT NULL DEFAULT 'Intermediate',
-ADD COLUMN     "duration" INTEGER NOT NULL DEFAULT 30,
-ADD COLUMN     "imageUrl" VARCHAR(500),
-ADD COLUMN     "title" VARCHAR(255) NOT NULL,
-DROP COLUMN "exercises",
-ADD COLUMN     "exercises" JSONB NOT NULL;
+-- AlterTable (WorkoutPlan - Safe approach)
+-- Step 1: Add new columns first
+ALTER TABLE "public"."WorkoutPlan" 
+  ADD COLUMN IF NOT EXISTS "category" VARCHAR(100) NOT NULL DEFAULT 'Full Body',
+  ADD COLUMN IF NOT EXISTS "description" TEXT,
+  ADD COLUMN IF NOT EXISTS "difficulty" VARCHAR(50) NOT NULL DEFAULT 'Intermediate',
+  ADD COLUMN IF NOT EXISTS "duration" INTEGER NOT NULL DEFAULT 30,
+  ADD COLUMN IF NOT EXISTS "imageUrl" VARCHAR(500),
+  ADD COLUMN IF NOT EXISTS "title" VARCHAR(255) NOT NULL DEFAULT 'Untitled Workout';
+
+-- Step 2: Copy data from name to title if name column exists
+UPDATE "public"."WorkoutPlan" SET "title" = "name" WHERE "name" IS NOT NULL AND "title" = 'Untitled Workout';
+
+-- Step 3: Handle exercises column (convert string to JSONB)
+-- Create temp column for new JSONB data
+ALTER TABLE "public"."WorkoutPlan" ADD COLUMN IF NOT EXISTS "exercises_temp" JSONB;
+
+-- Convert existing exercises data to JSON format
+UPDATE "public"."WorkoutPlan" 
+SET "exercises_temp" = 
+  CASE 
+    WHEN "exercises" IS NULL OR "exercises" = '' THEN '[]'::jsonb
+    ELSE jsonb_build_array(jsonb_build_object('name', "exercises", 'sets', 0, 'reps', 0, 'restTime', 0))
+  END
+WHERE "exercises_temp" IS NULL;
+
+-- Step 4: Drop old columns
+ALTER TABLE "public"."WorkoutPlan" 
+  DROP COLUMN IF EXISTS "name",
+  DROP COLUMN IF EXISTS "reps",
+  DROP COLUMN IF EXISTS "sets",
+  DROP COLUMN IF EXISTS "exercises";
+
+-- Step 5: Rename temp column to exercises
+ALTER TABLE "public"."WorkoutPlan" RENAME COLUMN "exercises_temp" TO "exercises";
+
+-- Step 6: Set NOT NULL constraint
+ALTER TABLE "public"."WorkoutPlan" ALTER COLUMN "exercises" SET NOT NULL;
 
 -- DropTable
 DROP TABLE "public"."Consultation";
