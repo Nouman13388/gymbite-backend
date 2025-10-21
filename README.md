@@ -1457,6 +1457,110 @@ For detailed endpoint documentation, see the [API Endpoints](#-api-endpoints-48-
 
 ---
 
+## 🚀 Deployment & Scripts
+
+### Available NPM Scripts
+
+```bash
+# Development
+npm run dev                # Start both frontend and backend in dev mode
+npm run dev:server         # Start backend only with hot reload
+npm run dev:client         # Start dashboard only
+
+# Building
+npm run build              # Build both client and server
+npm run build:server       # Build TypeScript to JavaScript
+npm run build:client       # Build dashboard
+
+# Database Management
+npm run db:generate        # Generate Prisma Client
+npm run db:push            # Push schema changes to database
+npm run db:migrate         # Deploy migrations to production
+npm run db:cleanup         # Clean failed migrations (auto-runs on deploy)
+npm run db:reset           # Reset local database
+npm run db:studio          # Open Prisma Studio
+npm run db:status          # Check migration status
+
+# Deployment
+npm run vercel-build       # Vercel deployment build (automatic cleanup included)
+npm run deploy:trigger     # Trigger new Vercel deployment
+```
+
+### Automated Production Deployment
+
+The deployment process **automatically cleans up failed migrations** before applying new ones:
+
+1. **Push to Stage Branch**:
+
+   ```bash
+   git add .
+   git commit -m "your commit message"
+   git push origin stage
+   ```
+
+2. **Automatic Cleanup** (runs during `vercel-build`):
+
+   - Removes any failed migration records from `_prisma_migrations` table
+   - Generates fresh Prisma Client
+   - Applies pending migrations
+   - Builds client and server
+
+3. **Vercel Build Process**:
+   ```bash
+   npm run db:cleanup || true    # Clean failed migrations (fails gracefully)
+   prisma generate                # Generate Prisma Client
+   prisma migrate deploy          # Apply migrations
+   npm run build:client           # Build dashboard
+   npm run build:server           # Build API
+   ```
+
+### Manual Deployment Trigger
+
+If you need to trigger a deployment without code changes:
+
+```bash
+npm run deploy:trigger
+```
+
+This creates an empty commit and pushes to trigger Vercel redeployment.
+
+### Troubleshooting Deployments
+
+**Issue: Migration fails with P3009**
+
+**Solution**: Already handled automatically! The `db:cleanup` script runs before migrations.
+
+**Manual fix** (if needed):
+
+```sql
+-- Connect to your Vercel Postgres database
+-- Go to Vercel Dashboard → Storage → Postgres → Query
+
+DELETE FROM _prisma_migrations WHERE finished_at IS NULL;
+```
+
+**Issue: Column already exists**
+
+**Solution**: Our migration files use `IF NOT EXISTS` checks to prevent this.
+
+**Issue: Need to check migration status**
+
+```bash
+npm run db:status
+```
+
+### Deployment Checklist
+
+- [ ] All tests passing locally
+- [ ] Database schema matches Prisma schema
+- [ ] Environment variables set in Vercel
+- [ ] Push to `stage` branch
+- [ ] Monitor Vercel deployment logs
+- [ ] Verify migrations applied successfully
+- [ ] Test API endpoints in production
+
+---
+
 **Status**: ✅ **PRODUCTION READY**  
 **Last Updated**: October 21, 2025  
 **API Version**: 3.0.0  
