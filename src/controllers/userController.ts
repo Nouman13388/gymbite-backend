@@ -212,14 +212,6 @@ export const updateUser = async (
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Prevent firebaseUid updates unless explicitly allowed
-    // if (firebaseUid && firebaseUid !== existingUser.firebaseUid) {
-    //   return res.status(400).json({
-    //     error:
-    //       "Firebase UID cannot be updated. Please contact support if this is necessary.",
-    //   });
-    // }
-
     // Validate request body using update schema
     const { error } = userUpdateValidationSchema.validate({
       email,
@@ -230,14 +222,29 @@ export const updateUser = async (
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
+
+    // If firebaseUid is being updated, check if it's already in use by another user
+    if (firebaseUid && firebaseUid !== existingUser.firebaseUid) {
+      const uidExists = await prisma.user.findFirst({
+        where: {
+          firebaseUid,
+          id: { not: userId },
+        } as any,
+      });
+      if (uidExists) {
+        return res.status(400).json({
+          error: "Firebase UID already exists for another user",
+        });
+      }
+    }
+
     const user = await prisma.user.update({
       where: { id: userId },
       data: {
         email,
         name,
         role: role as "CLIENT" | "TRAINER" | "ADMIN",
-        // Only update firebaseUid if it's the same as existing
-        ...(firebaseUid === existingUser.firebaseUid ? { firebaseUid } : {}),
+        ...(firebaseUid ? { firebaseUid } : {}),
       } as any,
     });
     res.json(user);
