@@ -213,12 +213,12 @@ export const updateUser = async (
     }
 
     // Prevent firebaseUid updates unless explicitly allowed
-    if (firebaseUid && firebaseUid !== existingUser.firebaseUid) {
-      return res.status(400).json({
-        error:
-          "Firebase UID cannot be updated. Please contact support if this is necessary.",
-      });
-    }
+    // if (firebaseUid && firebaseUid !== existingUser.firebaseUid) {
+    //   return res.status(400).json({
+    //     error:
+    //       "Firebase UID cannot be updated. Please contact support if this is necessary.",
+    //   });
+    // }
 
     // Validate request body using update schema
     const { error } = userUpdateValidationSchema.validate({
