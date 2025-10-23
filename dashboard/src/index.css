@@ -1,0 +1,47 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0");
+
+@import "tailwindcss";
+
+/* Global background fix */
+html {
+  background-color: #111418;
+  min-width: 100%;
+}
+
+@theme {
+  --color-primary-blue: #1173d4;
+  --color-dark-bg: #111418;
+  --color-dark-card: #181c22;
+  --color-dark-input: #283039;
+
+  --font-family-inter: Inter, "Noto Sans", sans-serif;
+}
+
+/* Custom styles */
+body {
+  margin: 0;
+  font-family: "Inter", "Noto Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #111418;
+  min-width: 100vw;
+}
+
+/* Form input styles */
+.form-input {
+  appearance: none;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+.form-input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Material Icons */
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}

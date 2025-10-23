@@ -1,0 +1,2073 @@
+{
+    "info": {
+        "_postman_id": "gymbite-complete-api-v3",
+        "name": "GymBite Backend API v3.0.0 - Complete Collection",
+        "description": "Complete API collection for GymBite - AI-powered fitness management platform\n\n**Features:**\n- 48+ Endpoints across 11 modules\n- Firebase Authentication\n- Role-based Access Control (Client/Trainer/Admin)\n- Push Notifications via FCM\n- Real-time Analytics\n\n**Base URLs:**\n- Production: https://gymbite-backend.vercel.app/api\n- Local: http://localhost:3000/api\n\n**Version:** 3.0.0\n**Last Updated:** October 21, 2025",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "gymbite"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{firebase_token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:3000/api",
+            "type": "string"
+        },
+        {
+            "key": "prod_url",
+            "value": "https://gymbite-backend.vercel.app/api",
+            "type": "string"
+        },
+        {
+            "key": "firebase_token",
+            "value": "YOUR_FIREBASE_TOKEN_HERE",
+            "type": "string"
+        },
+        {
+            "key": "user_id",
+            "value": "1",
+            "type": "string"
+        },
+        {
+            "key": "client_id",
+            "value": "1",
+            "type": "string"
+        },
+        {
+            "key": "trainer_id",
+            "value": "1",
+            "type": "string"
+        },
+        {
+            "key": "meal_plan_id",
+            "value": "1",
+            "type": "string"
+        },
+        {
+            "key": "workout_plan_id",
+            "value": "1",
+            "type": "string"
+        },
+        {
+            "key": "appointment_id",
+            "value": "1",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "🏥 Health Check",
+            "item": [
+                {
+                    "name": "Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/health",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "health"
+                            ]
+                        },
+                        "description": "Check if API is running"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Readiness Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/ready",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "ready"
+                            ]
+                        },
+                        "description": "Check if database connection is ready"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Liveness Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/alive",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "alive"
+                            ]
+                        },
+                        "description": "Check if service is alive"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "👤 Users",
+            "item": [
+                {
+                    "name": "Create User",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"firebaseUid\": \"unique-firebase-uid-123\",\n  \"email\": \"user@example.com\",\n  \"name\": \"John Doe\",\n  \"role\": \"CLIENT\",\n  \"phone\": \"+1234567890\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/users",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "users"
+                            ]
+                        },
+                        "description": "Create a new user account"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Users",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{firebase_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/users",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "users"
+                            ]
+                        },
+                        "description": "Get all users (requires authentication)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Current User",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{firebase_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/users/me",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "users",
+                                "me"
+                            ]
+                        },
+                        "description": "Get currently authenticated user's profile"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get User by ID",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{firebase_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/users/{{user_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "users",
+                                "{{user_id}}"
+                            ]
+                        },
+                        "description": "Get user by ID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get User by Firebase UID",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{firebase_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/users/firebase/:firebaseUid",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "users",
+                                "firebase",
+                                ":firebaseUid"
+                            ]
+                        },
+                        "description": "Get user by Firebase UID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get User by Email",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{firebase_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/users/email/:email",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "users",
+                                "email",
+                                ":email"
+                            ]
+                        },
+                        "description": "Get user by email address"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update User",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{firebase_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Jane Doe Updated\",\n  \"phone\": \"+0987654321\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/users/{{user_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "users",
+                                "{{user_id}}"
+                            ]
+                        },
+                        "description": "Update user information"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete User",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{firebase_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/users/{{user_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "users",
+                                "{{user_id}}"
+                            ]
+                        },
+                        "description": "Delete user account"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "🏋️ Trainers",
+            "item": [
+                {
+                    "name": "Get All Trainers",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/trainers",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "trainers"
+                            ]
+                        },
+                        "description": "Get list of all trainers"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Trainer by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/trainers/{{trainer_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "trainers",
+                                "{{trainer_id}}"
+                            ]
+                        },
+                        "description": "Get trainer details by ID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Trainer by User ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/trainers/user/{{user_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "trainers",
+                                "user",
+                                "{{user_id}}"
+                            ]
+                        },
+                        "description": "Get trainer profile by user ID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Trainer",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"userId\": 1,\n  \"specialization\": \"Strength Training\",\n  \"certifications\": \"NASM-CPT, ISSA\",\n  \"experience\": 5,\n  \"bio\": \"Certified personal trainer with 5 years experience\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/trainers",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "trainers"
+                            ]
+                        },
+                        "description": "Create new trainer profile"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Trainer",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"specialization\": \"Strength & Conditioning\",\n  \"experience\": 6\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/trainers/{{trainer_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "trainers",
+                                "{{trainer_id}}"
+                            ]
+                        },
+                        "description": "Update trainer profile"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Trainer",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/trainers/{{trainer_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "trainers",
+                                "{{trainer_id}}"
+                            ]
+                        },
+                        "description": "Delete trainer profile"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Trainer Complete Profile",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/trainers/{{trainer_id}}/complete",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "trainers",
+                                "{{trainer_id}}",
+                                "complete"
+                            ]
+                        },
+                        "description": "Get complete trainer profile with all related data"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Trainer Clients",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/trainers/{{trainer_id}}/clients",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "trainers",
+                                "{{trainer_id}}",
+                                "clients"
+                            ]
+                        },
+                        "description": "Get all clients assigned to trainer"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Trainer Schedule",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/trainers/{{trainer_id}}/schedule",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "trainers",
+                                "{{trainer_id}}",
+                                "schedule"
+                            ]
+                        },
+                        "description": "Get trainer's appointment schedule"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Trainer Metrics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/trainers/{{trainer_id}}/metrics",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "trainers",
+                                "{{trainer_id}}",
+                                "metrics"
+                            ]
+                        },
+                        "description": "Get trainer performance metrics"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "👥 Clients",
+            "item": [
+                {
+                    "name": "Get All Clients",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/clients",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "clients"
+                            ]
+                        },
+                        "description": "Get list of all clients"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Client by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/clients/{{client_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "clients",
+                                "{{client_id}}"
+                            ]
+                        },
+                        "description": "Get client details by ID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Client by User ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/clients/user/{{user_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "clients",
+                                "user",
+                                "{{user_id}}"
+                            ]
+                        },
+                        "description": "Get client profile by user ID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Client",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"userId\": 2,\n  \"trainerId\": 1,\n  \"fitnessGoal\": \"Weight Loss\",\n  \"dietaryPreferences\": \"Vegetarian\",\n  \"healthConditions\": \"None\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/clients",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "clients"
+                            ]
+                        },
+                        "description": "Create new client profile"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Client",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"fitnessGoal\": \"Muscle Gain\",\n  \"dietaryPreferences\": \"High Protein\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/clients/{{client_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "clients",
+                                "{{client_id}}"
+                            ]
+                        },
+                        "description": "Update client profile"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Client",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/clients/{{client_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "clients",
+                                "{{client_id}}"
+                            ]
+                        },
+                        "description": "Delete client profile"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Client Complete Profile",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/clients/{{client_id}}/complete",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "clients",
+                                "{{client_id}}",
+                                "complete"
+                            ]
+                        },
+                        "description": "Get complete client profile with all related data"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Client Plans",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/clients/{{client_id}}/plans",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "clients",
+                                "{{client_id}}",
+                                "plans"
+                            ]
+                        },
+                        "description": "Get all meal and workout plans for client"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Client Progress",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/clients/{{client_id}}/progress",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "clients",
+                                "{{client_id}}",
+                                "progress"
+                            ]
+                        },
+                        "description": "Get client progress tracking data"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Client Appointments",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/clients/{{client_id}}/appointments",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "clients",
+                                "{{client_id}}",
+                                "appointments"
+                            ]
+                        },
+                        "description": "Get all appointments for client"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Client Activities",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/clients/{{client_id}}/activities",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "clients",
+                                "{{client_id}}",
+                                "activities"
+                            ]
+                        },
+                        "description": "Get recent activities for client"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "🍽️ Meal Plans",
+            "item": [
+                {
+                    "name": "Get All Meal Plans",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/meal-plans?userId={{user_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "meal-plans"
+                            ],
+                            "query": [
+                                {
+                                    "key": "userId",
+                                    "value": "{{user_id}}"
+                                }
+                            ]
+                        },
+                        "description": "Get all meal plans, optionally filtered by userId"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Meal Plan by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/meal-plans/{{meal_plan_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "meal-plans",
+                                "{{meal_plan_id}}"
+                            ]
+                        },
+                        "description": "Get specific meal plan by ID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Meal Plan",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"userId\": 1,\n  \"name\": \"Weight Loss Plan\",\n  \"description\": \"High protein, low carb meal plan\",\n  \"calorieTarget\": 1800,\n  \"proteinTarget\": 150,\n  \"carbsTarget\": 100,\n  \"fatTarget\": 60,\n  \"startDate\": \"2025-10-21\",\n  \"endDate\": \"2025-11-21\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/meal-plans",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "meal-plans"
+                            ]
+                        },
+                        "description": "Create new meal plan"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Meal Plan",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Updated Weight Loss Plan\",\n  \"calorieTarget\": 1700\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/meal-plans/{{meal_plan_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "meal-plans",
+                                "{{meal_plan_id}}"
+                            ]
+                        },
+                        "description": "Update existing meal plan"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Meal Plan",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/meal-plans/{{meal_plan_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "meal-plans",
+                                "{{meal_plan_id}}"
+                            ]
+                        },
+                        "description": "Delete meal plan"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "🥗 Meals",
+            "item": [
+                {
+                    "name": "Get Meals by Meal Plan ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/meals/meal-plan/{{meal_plan_id}}/meals",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "meals",
+                                "meal-plan",
+                                "{{meal_plan_id}}",
+                                "meals"
+                            ]
+                        },
+                        "description": "Get all meals for a specific meal plan"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Meal by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/meals/:id",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "meals",
+                                ":id"
+                            ]
+                        },
+                        "description": "Get specific meal by ID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Meal",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"mealPlanId\": 1,\n  \"name\": \"Grilled Chicken Salad\",\n  \"description\": \"Fresh greens with grilled chicken breast\",\n  \"mealType\": \"lunch\",\n  \"calories\": 450,\n  \"protein\": 45,\n  \"carbs\": 25,\n  \"fat\": 18,\n  \"ingredients\": \"Chicken breast, lettuce, tomatoes, cucumber, olive oil\",\n  \"instructions\": \"Grill chicken, chop vegetables, mix with dressing\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/meals",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "meals"
+                            ]
+                        },
+                        "description": "Create new meal"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Meal",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Updated Grilled Chicken Salad\",\n  \"calories\": 400\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/meals/:id",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "meals",
+                                ":id"
+                            ]
+                        },
+                        "description": "Update existing meal"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Meal",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/meals/:id",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "meals",
+                                ":id"
+                            ]
+                        },
+                        "description": "Delete meal"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "💪 Workout Plans",
+            "item": [
+                {
+                    "name": "Get All Workout Plans",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/workout-plans?userId={{user_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "workout-plans"
+                            ],
+                            "query": [
+                                {
+                                    "key": "userId",
+                                    "value": "{{user_id}}"
+                                }
+                            ]
+                        },
+                        "description": "Get all workout plans, optionally filtered by userId"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Workout Plan by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/workout-plans/{{workout_plan_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "workout-plans",
+                                "{{workout_plan_id}}"
+                            ]
+                        },
+                        "description": "Get specific workout plan by ID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Workout Plan (v3.0.0)",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"userId\": 1,\n  \"title\": \"Beginner Strength Program\",\n  \"description\": \"Full body workout routine for beginners\",\n  \"category\": \"Strength Training\",\n  \"duration\": 60,\n  \"difficulty\": \"Beginner\",\n  \"imageUrl\": \"https://example.com/workout.jpg\",\n  \"exercises\": [\n    {\n      \"name\": \"Barbell Squat\",\n      \"description\": \"Compound leg exercise\",\n      \"sets\": 4,\n      \"reps\": 8,\n      \"restTime\": 120,\n      \"videoUrl\": \"https://youtube.com/squat\",\n      \"imageUrl\": \"assets/images/squat.png\"\n    },\n    {\n      \"name\": \"Bench Press\",\n      \"description\": \"Upper body compound exercise\",\n      \"sets\": 4,\n      \"reps\": 8,\n      \"restTime\": 90,\n      \"videoUrl\": \"https://youtube.com/bench\",\n      \"imageUrl\": \"assets/images/bench.png\"\n    }\n  ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/workout-plans",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "workout-plans"
+                            ]
+                        },
+                        "description": "Create new workout plan with enhanced v3.0.0 fields"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Workout Plan",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Updated Beginner Program\",\n  \"duration\": 75,\n  \"difficulty\": \"Intermediate\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/workout-plans/{{workout_plan_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "workout-plans",
+                                "{{workout_plan_id}}"
+                            ]
+                        },
+                        "description": "Update existing workout plan"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Workout Plan",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/workout-plans/{{workout_plan_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "workout-plans",
+                                "{{workout_plan_id}}"
+                            ]
+                        },
+                        "description": "Delete workout plan"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "📅 Appointments",
+            "item": [
+                {
+                    "name": "Get All Appointments",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/appointments?type=IN_PERSON&status=scheduled",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "appointments"
+                            ],
+                            "query": [
+                                {
+                                    "key": "type",
+                                    "value": "IN_PERSON",
+                                    "description": "Filter by type: IN_PERSON, VIDEO_CALL, PHONE_CALL, CHAT"
+                                },
+                                {
+                                    "key": "status",
+                                    "value": "scheduled",
+                                    "description": "Filter by status"
+                                }
+                            ]
+                        },
+                        "description": "Get all appointments with optional filters"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Appointment by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/appointments/{{appointment_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "appointments",
+                                "{{appointment_id}}"
+                            ]
+                        },
+                        "description": "Get specific appointment by ID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Appointment (v3.0.0)",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"clientId\": 1,\n  \"trainerId\": 1,\n  \"appointmentTime\": \"2025-10-25T10:00:00Z\",\n  \"type\": \"VIDEO_CALL\",\n  \"status\": \"scheduled\",\n  \"duration\": 60,\n  \"meetingLink\": \"https://meet.google.com/abc-defg-hij\",\n  \"notes\": \"Initial consultation session\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/appointments",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "appointments"
+                            ]
+                        },
+                        "description": "Create new appointment with v3.0.0 enum types"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Appointment",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"status\": \"completed\",\n  \"type\": \"PHONE_CALL\",\n  \"notes\": \"Session completed successfully\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/appointments/{{appointment_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "appointments",
+                                "{{appointment_id}}"
+                            ]
+                        },
+                        "description": "Update existing appointment"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Appointment",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/appointments/{{appointment_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "appointments",
+                                "{{appointment_id}}"
+                            ]
+                        },
+                        "description": "Delete appointment"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "📈 Progress Tracking",
+            "item": [
+                {
+                    "name": "Get All Progress",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/progress",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "progress"
+                            ]
+                        },
+                        "description": "Get all progress records"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Progress by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/progress/:id",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "progress",
+                                ":id"
+                            ]
+                        },
+                        "description": "Get specific progress record"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Progress by Client ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/progress/client/{{client_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "progress",
+                                "client",
+                                "{{client_id}}"
+                            ]
+                        },
+                        "description": "Get all progress records for a client"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Progress Summary",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/progress/client/{{client_id}}/summary",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "progress",
+                                "client",
+                                "{{client_id}}",
+                                "summary"
+                            ]
+                        },
+                        "description": "Get progress summary for a client"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Progress",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"clientId\": 1,\n  \"weight\": 75.5,\n  \"bodyFat\": 18.5,\n  \"muscleMass\": 55.2,\n  \"notes\": \"Feeling stronger, energy levels up\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/progress",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "progress"
+                            ]
+                        },
+                        "description": "Create new progress record"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Progress",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"weight\": 74.8,\n  \"notes\": \"Updated measurement\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/progress/:id",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "progress",
+                                ":id"
+                            ]
+                        },
+                        "description": "Update progress record"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Progress",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/progress/:id",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "progress",
+                                ":id"
+                            ]
+                        },
+                        "description": "Delete progress record"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "🔔 Notifications",
+            "item": [
+                {
+                    "name": "Register Device Token",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"userId\": 1,\n  \"deviceToken\": \"fcm-device-token-here\",\n  \"deviceType\": \"android\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/notifications/device/register",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "notifications",
+                                "device",
+                                "register"
+                            ]
+                        },
+                        "description": "Register device for push notifications"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Unregister Device Token",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/notifications/device/unregister/{{user_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "notifications",
+                                "device",
+                                "unregister",
+                                "{{user_id}}"
+                            ]
+                        },
+                        "description": "Unregister device from push notifications"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get User Notifications",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/notifications/user/{{user_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "notifications",
+                                "user",
+                                "{{user_id}}"
+                            ]
+                        },
+                        "description": "Get all notifications for a user"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Mark Notification as Read",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/notifications/:id/read",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "notifications",
+                                ":id",
+                                "read"
+                            ]
+                        },
+                        "description": "Mark single notification as read"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Mark All Notifications as Read",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/notifications/user/{{user_id}}/read-all",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "notifications",
+                                "user",
+                                "{{user_id}}",
+                                "read-all"
+                            ]
+                        },
+                        "description": "Mark all user notifications as read"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Send Single Notification",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"userId\": 1,\n  \"title\": \"New Workout Plan\",\n  \"body\": \"Your trainer has assigned you a new workout plan\",\n  \"data\": {\n    \"workoutPlanId\": 5,\n    \"action\": \"view_workout\"\n  }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/notifications/send",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "notifications",
+                                "send"
+                            ]
+                        },
+                        "description": "Send notification to single user"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Send Bulk Notifications",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"userIds\": [1, 2, 3],\n  \"title\": \"Group Class Tomorrow\",\n  \"body\": \"Don't forget our group training session at 6 PM\",\n  \"data\": {\n    \"classId\": 10\n  }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/notifications/send/bulk",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "notifications",
+                                "send",
+                                "bulk"
+                            ]
+                        },
+                        "description": "Send notifications to multiple users"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Broadcast Notification",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"System Maintenance\",\n  \"body\": \"The app will be under maintenance tonight from 2-4 AM\",\n  \"data\": {\n    \"priority\": \"high\"\n  }\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/notifications/send/broadcast",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "notifications",
+                                "send",
+                                "broadcast"
+                            ]
+                        },
+                        "description": "Broadcast notification to all users"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Notifications (Admin)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/notifications",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "notifications"
+                            ]
+                        },
+                        "description": "Get all notifications (admin)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Notification by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/notifications/:id",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "notifications",
+                                ":id"
+                            ]
+                        },
+                        "description": "Get specific notification by ID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Notification",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"userId\": 1,\n  \"title\": \"Welcome!\",\n  \"message\": \"Welcome to GymBite\",\n  \"type\": \"info\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/notifications",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "notifications"
+                            ]
+                        },
+                        "description": "Create notification record"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Notification",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Updated Title\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/notifications/:id",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "notifications",
+                                ":id"
+                            ]
+                        },
+                        "description": "Update notification"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Notification",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/notifications/:id",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "notifications",
+                                ":id"
+                            ]
+                        },
+                        "description": "Delete notification"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "💬 Feedback",
+            "item": [
+                {
+                    "name": "Get All Feedback",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/feedback",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "feedback"
+                            ]
+                        },
+                        "description": "Get all feedback submissions"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Feedback by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/feedback/:id",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "feedback",
+                                ":id"
+                            ]
+                        },
+                        "description": "Get specific feedback by ID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Feedback",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"userId\": 1,\n  \"subject\": \"App Performance\",\n  \"message\": \"The app is running smoothly, great work!\",\n  \"rating\": 5,\n  \"category\": \"general\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/feedback",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "feedback"
+                            ]
+                        },
+                        "description": "Submit new feedback"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Feedback",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"status\": \"resolved\",\n  \"response\": \"Thank you for your feedback!\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/feedback/:id",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "feedback",
+                                ":id"
+                            ]
+                        },
+                        "description": "Update feedback record"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Feedback",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/feedback/:id",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "feedback",
+                                ":id"
+                            ]
+                        },
+                        "description": "Delete feedback"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "📊 Analytics",
+            "item": [
+                {
+                    "name": "Get Dashboard Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/analytics/dashboard",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "dashboard"
+                            ]
+                        },
+                        "description": "Get overall dashboard statistics"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get User Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/analytics/users",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "users"
+                            ]
+                        },
+                        "description": "Get user statistics"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get User Growth",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/analytics/users/growth?period=month",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "users",
+                                "growth"
+                            ],
+                            "query": [
+                                {
+                                    "key": "period",
+                                    "value": "month"
+                                }
+                            ]
+                        },
+                        "description": "Get user growth trends"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Trainer Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/analytics/trainers",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "trainers"
+                            ]
+                        },
+                        "description": "Get trainer statistics"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Client Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/analytics/clients",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "clients"
+                            ]
+                        },
+                        "description": "Get client statistics"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Appointment Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/analytics/appointments",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "appointments"
+                            ]
+                        },
+                        "description": "Get appointment statistics"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Appointment Trends",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/analytics/appointments/trends?period=week",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "appointments",
+                                "trends"
+                            ],
+                            "query": [
+                                {
+                                    "key": "period",
+                                    "value": "week"
+                                }
+                            ]
+                        },
+                        "description": "Get appointment trend data"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get System Health",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/analytics/system/health",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "analytics",
+                                "system",
+                                "health"
+                            ]
+                        },
+                        "description": "Get system health metrics"
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}

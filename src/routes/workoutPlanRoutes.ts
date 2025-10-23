@@ -6,7 +6,12 @@ import {
   updateWorkoutPlan,
   deleteWorkoutPlan,
 } from "../controllers/workoutPlanController.js";
+import { verifyFirebaseToken } from "../middleware/auth.js";
+
 const router = express.Router();
+
+// All workout plan routes require authentication
+router.use(verifyFirebaseToken);
 
 // Get all workout plans
 router.get("/", getWorkoutPlans);
