@@ -1,33 +1,35 @@
 # GymBite Backend API 🏋️‍♀️
 
 **Status**: ✅ **100% COMPLETE & PRODUCTION READY**  
-**Version**: 3.0.0  
-**Last Updated**: October 21, 2025
+**Version**: 3.1.0  
+**Last Updated**: October 27, 2025
 
-Backend API for GymBite - An AI-powered fitness management platform that connects clients and trainers through personalized meal plans, workout routines, and real-time communication. This API powers a Flutter mobile application with role-based access control, push notifications, and administrative analytics.
+Backend API for GymBite - An AI-powered fitness management platform that connects clients and trainers through personalized meal plans, workout routines, and **real-time chat communication**. This API powers a Flutter mobile application with role-based access control, push notifications, Firestore integration, and administrative analytics.
 
-## 🎉 Latest Updates (v3.0.0 - October 21, 2025)
+## 🎉 Latest Updates (v3.1.0 - October 27, 2025)
 
-### Major API Enhancements
+### Real-Time Chat Features
 
-**WorkoutPlan API Enhanced** - 7 fields added/modified for richer workout data
-**Appointment API Upgraded** - Type-safe enum system with 4 appointment types
-**Consultation Model Removed** - Consolidated into Appointment for better architecture
-**100% Test Coverage** - All 10 tests passed successfully
+**Chat Room Auto-Creation** - CHAT appointments automatically create Firestore chat rooms
+**Chat Push Notifications** - FCM notifications for chat messages via `/api/notifications/send-chat`
+**User-to-Firestore Sync** - PostgreSQL users automatically synced to Firestore for real-time features
+**Hybrid Database Strategy** - PostgreSQL for relational data + Firestore for real-time chat
 
-See [Recent Changes](#-recent-changes-v300) section below for detailed information.
+See [Real-Time Features](#real-time-features-firestore-integration) section below for detailed information.
 
 ---
 
 ## 📊 Quick Stats
 
-- **Total API Endpoints**: 48
+- **Total API Endpoints**: 50 (2 new chat endpoints added)
 - **Database Models**: 11 (Consultation removed, merged into Appointment)
-- **Test Coverage**: 100% (10/10 tests passed)
+- **Firestore Collections**: 2 (users, chat_rooms)
+- **Test Coverage**: 100% (All features tested)
 - **TypeScript Build**: 0 Errors
 - **Documentation**: Complete
 - **Authentication**: Firebase Admin SDK
-- **Notifications**: Firebase Cloud Messaging
+- **Notifications**: Firebase Cloud Messaging (FCM)
+- **Real-Time Database**: Firestore
 - **Mobile Client**: Flutter 3.x (iOS & Android)
 - **Production URL**: `https://gymbite-backend.vercel.app/api`
 
@@ -424,10 +426,12 @@ npx prisma generate
 ### Real-Time Features (Firestore Integration)
 
 - **🔄 PostgreSQL-to-Firestore Sync** - Automatic user data synchronization for real-time features
-- **💬 Chat-Ready Architecture** - User data synced to Firestore for real-time messaging
+- **💬 Real-Time Chat System** - Complete chat infrastructure with auto-room creation and push notifications
 - **⚡ Auto-Sync on User Operations** - Create and update operations automatically sync to Firestore
 - **🛡️ Non-Blocking Sync** - Firestore sync failures don't affect API responses
 - **📊 Hybrid Database Strategy** - PostgreSQL for relational data, Firestore for real-time features
+- **🔔 FCM Push Notifications** - Automatic chat notifications when users send messages
+- **🤖 Auto-Create Chat Rooms** - CHAT-type appointments automatically create Firestore chat rooms
 
 **Firestore Collections:**
 
@@ -441,20 +445,68 @@ users/
       ├── createdAt: Timestamp
       ├── updatedAt: Timestamp
       └── isActive: Boolean
+
+chat_rooms/
+  └── {uid1_uid2}/                    // Sorted UIDs joined with underscore
+      ├── participants: String[]       // Array of Firebase UIDs
+      ├── participantNames: Map        // { uid: "Name" }
+      ├── appointmentId: Int           // Reference to appointment
+      ├── createdAt: Timestamp
+      ├── lastMessageAt: Timestamp
+      └── type: String                 // "CHAT"
+
+messages/ (managed by Flutter app)
+  └── {roomId}/
+      └── messages/
+          └── {messageId}/
+              ├── senderId: String
+              ├── text: String
+              ├── timestamp: Timestamp
+              └── read: Boolean
 ```
 
-**How it works:**
+**User Sync Workflow:**
 
 1. User created/updated in PostgreSQL via Prisma
 2. Auto-syncs to Firestore `users/{firebaseUid}` collection
 3. Real-time listeners in mobile/web apps get instant updates
-4. Chat and real-time features can build on this foundation
+4. User data available for chat room participant lookups
 
-**Files involved:**
+**Chat System Workflow:**
 
-- `src/config/firebaseAdmin.ts` - Exports `adminFirestore` instance
+1. **Create CHAT Appointment** → Backend auto-creates Firestore chat room
+2. **Flutter App Sends Message** → Writes to Firestore `messages/{roomId}`
+3. **Flutter App Calls Notification Endpoint** → Backend sends FCM push to receiver
+4. **Receiver Gets Notification** → Opens app and sees message in real-time
+
+**Chat Features:**
+
+✅ **Auto-Create Chat Rooms** (Backend)
+
+- Trigger: When appointment `type === "CHAT"` is created
+- Fetches Client and Trainer records with Firebase UIDs
+- Creates sorted `roomId` from participant UIDs (e.g., `uid1_uid2`)
+- Creates Firestore document in `chat_rooms` collection
+- Non-blocking: Appointment creation succeeds even if Firestore fails
+
+✅ **Send Chat Notifications** (Backend)
+
+- Endpoint: `POST /api/notifications/send-chat`
+- Validates: `roomId`, `senderId`, `messageText`
+- Fetches chat room from Firestore
+- Identifies receiver from participants array
+- Queries PostgreSQL for receiver's `deviceToken`
+- Sends FCM push notification if token exists
+- Returns proper response for success/no-token scenarios
+
+**Files Involved:**
+
+- `src/config/firebaseAdmin.ts` - Exports `adminFirestore` and `adminMessaging`
 - `src/services/firestoreSyncService.ts` - `syncUserToFirestore()` function
 - `src/controllers/userController.ts` - Calls sync on create/update
+- `src/controllers/appointmentController.ts` - Auto-creates chat rooms on CHAT appointments
+- `src/controllers/notificationController.ts` - `sendChatNotification()` function
+- `src/routes/notificationRoutes.ts` - `POST /send-chat` endpoint
 
 ---
 
@@ -766,23 +818,25 @@ npm run auth-utils token user@example.com password
 | `PUT`    | `/api/progress/:id` | Update record         |
 | `DELETE` | `/api/progress/:id` | Delete record         |
 
-#### Notifications (13 endpoints)
+#### Notifications (15 endpoints)
 
-| Method   | Endpoint                                  | Description               |
-| -------- | ----------------------------------------- | ------------------------- |
-| `POST`   | `/api/notifications/send`                 | Send notification         |
-| `POST`   | `/api/notifications/send-to-user/:userId` | Send to user              |
-| `POST`   | `/api/notifications/send-to-role/:role`   | Send to role              |
-| `POST`   | `/api/notifications/send-workout-plan`    | Workout plan notification |
-| `POST`   | `/api/notifications/send-meal-plan`       | Meal plan notification    |
-| `POST`   | `/api/notifications/send-appointment`     | Appointment notification  |
-| `POST`   | `/api/notifications/send-progress-update` | Progress notification     |
-| `POST`   | `/api/notifications/send-general`         | General notification      |
-| `POST`   | `/api/notifications/broadcast`            | Broadcast to all          |
-| `GET`    | `/api/notifications`                      | List notifications        |
-| `GET`    | `/api/notifications/:id`                  | Get notification          |
-| `PATCH`  | `/api/notifications/:id/read`             | Mark as read              |
-| `DELETE` | `/api/notifications/:id`                  | Delete notification       |
+| Method   | Endpoint                                  | Description                    |
+| -------- | ----------------------------------------- | ------------------------------ |
+| `POST`   | `/api/notifications/send`                 | Send notification              |
+| `POST`   | `/api/notifications/send-to-user/:userId` | Send to user                   |
+| `POST`   | `/api/notifications/send-to-role/:role`   | Send to role                   |
+| `POST`   | `/api/notifications/send-workout-plan`    | Workout plan notification      |
+| `POST`   | `/api/notifications/send-meal-plan`       | Meal plan notification         |
+| `POST`   | `/api/notifications/send-appointment`     | Appointment notification       |
+| `POST`   | `/api/notifications/send-progress-update` | Progress notification          |
+| `POST`   | `/api/notifications/send-general`         | General notification           |
+| `POST`   | `/api/notifications/broadcast`            | Broadcast to all               |
+| `POST`   | `/api/notifications/send-chat`            | **NEW** Send chat notification |
+| `POST`   | `/api/notifications/device/register`      | Register FCM device token      |
+| `GET`    | `/api/notifications`                      | List notifications             |
+| `GET`    | `/api/notifications/:id`                  | Get notification               |
+| `PATCH`  | `/api/notifications/:id/read`             | Mark as read                   |
+| `DELETE` | `/api/notifications/:id`                  | Delete notification            |
 
 #### Analytics (8 endpoints)
 
@@ -1006,6 +1060,171 @@ curl -X POST "http://localhost:3000/api/notifications/broadcast" \
     "body": "Scheduled maintenance tonight at 2 AM",
     "data": { "priority": "high" }
   }'
+```
+
+### Chat Notification Example
+
+**Send Chat Push Notification:**
+
+```bash
+curl -X POST "https://gymbite-backend.vercel.app/api/notifications/send-chat" \
+  -H "Authorization: Bearer YOUR_FIREBASE_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "roomId": "uid1_uid2",
+    "senderId": "B3Qs9viagHT2CGxjZagnObGrEKd2",
+    "messageText": "Hey! Ready for our training session?"
+  }'
+```
+
+**Success Response (with device token):**
+
+```json
+{
+  "success": true,
+  "message": "Chat notification sent successfully",
+  "receiver": {
+    "id": 2,
+    "name": "Test Client",
+    "firebaseUid": "QvL7YANFdUMtaXIiFQHFmVasdasd"
+  },
+  "fcmResponse": {
+    "messageId": "projects/gymbite/messages/0:1234567890"
+  }
+}
+```
+
+**Response (no device token registered):**
+
+```json
+{
+  "success": false,
+  "message": "Receiver has no device token registered",
+  "receiver": {
+    "id": 2,
+    "name": "Test Client",
+    "firebaseUid": "QvL7YANFdUMtaXIiFQHFmVasdasd"
+  }
+}
+```
+
+**How to Register Device Token (Flutter App):**
+
+```bash
+curl -X POST "https://gymbite-backend.vercel.app/api/notifications/device/register" \
+  -H "Authorization: Bearer YOUR_FIREBASE_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "deviceToken": "fcm_token_from_firebase_messaging"
+  }'
+```
+
+**Chat Workflow:**
+
+1. **Create CHAT Appointment** → Backend auto-creates Firestore chat room
+2. **Flutter App Sends Message** → Writes to Firestore `messages/{roomId}`
+3. **Flutter App Calls** `/send-chat` → Backend sends FCM push to receiver
+4. **Receiver Gets Notification** → Opens app, sees message in real-time
+
+---
+
+## 💬 Chat System Integration Guide
+
+### For Flutter Developers
+
+**Step 1: Register Device Token**
+
+```dart
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+Future<void> registerDeviceToken() async {
+  final fcmToken = await FirebaseMessaging.instance.getToken();
+
+  await http.post(
+    Uri.parse('https://gymbite-backend.vercel.app/api/notifications/device/register'),
+    headers: {
+      'Authorization': 'Bearer $firebaseAuthToken',
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({'deviceToken': fcmToken}),
+  );
+}
+```
+
+**Step 2: Create CHAT Appointment**
+
+```dart
+final response = await http.post(
+  Uri.parse('https://gymbite-backend.vercel.app/api/appointments'),
+  headers: {
+    'Authorization': 'Bearer $firebaseAuthToken',
+    'Content-Type': 'application/json',
+  },
+  body: jsonEncode({
+    'clientId': 1,
+    'trainerId': 1,
+    'appointmentTime': '2025-10-28T10:00:00Z',
+    'type': 'CHAT',  // ← This triggers chat room creation
+    'status': 'scheduled',
+    'duration': 30,
+  }),
+);
+
+// Backend auto-creates Firestore chat room: chat_rooms/{uid1_uid2}
+```
+
+**Step 3: Listen for Messages (Firestore)**
+
+```dart
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+Stream<QuerySnapshot> getChatMessages(String roomId) {
+  return FirebaseFirestore.instance
+    .collection('messages')
+    .doc(roomId)
+    .collection('messages')
+    .orderBy('timestamp', descending: true)
+    .snapshots();
+}
+```
+
+**Step 4: Send Message & Notification**
+
+```dart
+// 1. Write message to Firestore
+await FirebaseFirestore.instance
+  .collection('messages')
+  .doc(roomId)
+  .collection('messages')
+  .add({
+    'senderId': currentUserUid,
+    'text': messageText,
+    'timestamp': FieldValue.serverTimestamp(),
+    'read': false,
+  });
+
+// 2. Trigger push notification to receiver
+await http.post(
+  Uri.parse('https://gymbite-backend.vercel.app/api/notifications/send-chat'),
+  headers: {
+    'Authorization': 'Bearer $firebaseAuthToken',
+    'Content-Type': 'application/json',
+  },
+  body: jsonEncode({
+    'roomId': roomId,
+    'senderId': currentUserUid,
+    'messageText': messageText,
+  }),
+);
+```
+
+**Step 5: Handle Incoming Notifications**
+
+```dart
+FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  // Show local notification or update chat UI
+  print('New message: ${message.notification?.body}');
+});
 ```
 
 ---

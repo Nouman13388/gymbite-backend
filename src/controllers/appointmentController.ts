@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from "../database/prisma.js";
+import { adminFirestore } from "../config/firebaseAdmin.js";
 
 // Get all appointments
 export const getAppointments = async (
@@ -68,6 +69,65 @@ export const createAppointment = async (
         notes,
       },
     });
+
+    // If appointment type is CHAT, create Firestore chat room
+    if (appointment.type === "CHAT") {
+      try {
+        // Fetch client and trainer with their user records to get firebaseUids
+        const client = await prisma.client.findUnique({
+          where: { id: clientId },
+          include: { user: true },
+        });
+
+        const trainer = await prisma.trainer.findUnique({
+          where: { id: trainerId },
+          include: { user: true },
+        });
+
+        if (client?.user?.firebaseUid && trainer?.user?.firebaseUid) {
+          // Create sorted roomId by combining firebaseUids
+          const uids = [
+            client.user.firebaseUid,
+            trainer.user.firebaseUid,
+          ].sort();
+          const roomId = `${uids[0]}_${uids[1]}`;
+
+          // Create/merge chat room document in Firestore
+          await adminFirestore
+            .collection("chat_rooms")
+            .doc(roomId)
+            .set(
+              {
+                participants: [
+                  client.user.firebaseUid,
+                  trainer.user.firebaseUid,
+                ],
+                participantNames: {
+                  [client.user.firebaseUid]: client.user.name,
+                  [trainer.user.firebaseUid]: trainer.user.name,
+                },
+                appointmentId: appointment.id,
+                createdAt: new Date(),
+                lastMessageAt: new Date(),
+                type: "CHAT_APPOINTMENT",
+              },
+              { merge: true }
+            );
+
+          console.log(
+            `Created chat room ${roomId} for appointment ${appointment.id}`
+          );
+        } else {
+          console.warn(
+            `Cannot create chat room: Missing firebaseUid for client ${clientId} or trainer ${trainerId}`
+          );
+        }
+      } catch (firestoreError) {
+        console.error("Error creating Firestore chat room:", firestoreError);
+        // Don't fail the appointment creation if Firestore fails
+      }
+    }
+
     res.status(201).json(appointment);
   } catch (error) {
     next(error);
