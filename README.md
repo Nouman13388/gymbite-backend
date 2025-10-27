@@ -421,6 +421,41 @@ npx prisma generate
 - **🚫 Token Verification** - Server-side Firebase Admin SDK validation
 - **🔑 Bearer Tokens** - Secure API authentication for mobile app
 
+### Real-Time Features (Firestore Integration)
+
+- **🔄 PostgreSQL-to-Firestore Sync** - Automatic user data synchronization for real-time features
+- **💬 Chat-Ready Architecture** - User data synced to Firestore for real-time messaging
+- **⚡ Auto-Sync on User Operations** - Create and update operations automatically sync to Firestore
+- **🛡️ Non-Blocking Sync** - Firestore sync failures don't affect API responses
+- **📊 Hybrid Database Strategy** - PostgreSQL for relational data, Firestore for real-time features
+
+**Firestore Collections:**
+
+```
+users/
+  └── {firebaseUid}/
+      ├── id: Int
+      ├── name: String
+      ├── email: String
+      ├── role: String
+      ├── createdAt: Timestamp
+      ├── updatedAt: Timestamp
+      └── isActive: Boolean
+```
+
+**How it works:**
+
+1. User created/updated in PostgreSQL via Prisma
+2. Auto-syncs to Firestore `users/{firebaseUid}` collection
+3. Real-time listeners in mobile/web apps get instant updates
+4. Chat and real-time features can build on this foundation
+
+**Files involved:**
+
+- `src/config/firebaseAdmin.ts` - Exports `adminFirestore` instance
+- `src/services/firestoreSyncService.ts` - `syncUserToFirestore()` function
+- `src/controllers/userController.ts` - Calls sync on create/update
+
 ---
 
 ## 🛠️ Tech Stack
