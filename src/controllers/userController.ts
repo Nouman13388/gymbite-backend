@@ -3,6 +3,7 @@ import { AuthRequest } from "../middleware/auth.js";
 import prisma from "../database/prisma.js";
 import bcrypt from "bcrypt";
 import Joi from "joi";
+import { syncUserToFirestore } from "../services/firestoreSyncService.js";
 
 // Define validation schema
 const userValidationSchema = Joi.object({
@@ -171,6 +172,10 @@ export const createUser = async (
         password: "", // Empty password since authentication is handled by Firebase
       } as any,
     });
+
+    // Sync user to Firestore for real-time chat
+    syncUserToFirestore(user).catch(console.error);
+
     res.status(201).json(user);
   } catch (error: any) {
     if (error.code === "P2002") {
@@ -247,6 +252,10 @@ export const updateUser = async (
         ...(firebaseUid ? { firebaseUid } : {}),
       } as any,
     });
+
+    // Sync updated user to Firestore for real-time chat
+    syncUserToFirestore(user).catch(console.error);
+
     res.json(user);
   } catch (error: any) {
     if (error.code === "P2002") {
