@@ -5,6 +5,8 @@ import {
   sendNotificationToMultipleUsers,
   broadcastNotification,
 } from "../services/fcmService.js";
+import { adminFirestore } from "../config/firebaseAdmin.js";
+import { adminMessaging } from "../config/firebaseAdmin.js";
 
 // Get all notifications
 export const getNotifications = async (
@@ -360,6 +362,129 @@ export const broadcastNotificationToAll = async (
     });
   } catch (error) {
     console.error("Error broadcasting notification:", error);
+    next(error);
+  }
+};
+
+// Send chat notification
+export const sendChatNotification = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { roomId, senderId, messageText } = req.body;
+
+  try {
+    // Validate required fields
+    if (!roomId || !senderId || !messageText) {
+      return res.status(400).json({
+        error: "Missing required fields: roomId, senderId, messageText",
+      });
+    }
+
+    // Fetch chat room document from Firestore
+    const chatRoomDoc = await adminFirestore
+      .collection("chat_rooms")
+      .doc(roomId)
+      .get();
+
+    if (!chatRoomDoc.exists) {
+      return res.status(404).json({ error: "Chat room not found" });
+    }
+
+    const chatRoomData = chatRoomDoc.data();
+    const participants = chatRoomData?.participants || [];
+    const participantNames = chatRoomData?.participantNames || {};
+
+    // Identify the receiver (the participant who is not the sender)
+    const receiverUid = participants.find((uid: string) => uid !== senderId);
+
+    if (!receiverUid) {
+      return res.status(400).json({ error: "Receiver not found in chat room" });
+    }
+
+    // Query PostgreSQL User table to get receiver's deviceToken
+    const receiver = await prisma.user.findFirst({
+      where: { firebaseUid: receiverUid },
+      select: { id: true, name: true, deviceToken: true, firebaseUid: true },
+    });
+
+    if (!receiver) {
+      return res
+        .status(404)
+        .json({ error: "Receiver user not found in database" });
+    }
+
+    // Get sender name from participantNames
+    const senderName = participantNames[senderId] || "Someone";
+
+    // If deviceToken exists, send push notification
+    if (receiver.deviceToken) {
+      try {
+        await adminMessaging.send({
+          token: receiver.deviceToken,
+          notification: {
+            title: senderName,
+            body: messageText,
+          },
+          data: {
+            type: "CHAT_MESSAGE",
+            roomId: roomId,
+            senderId: senderId,
+            senderName: senderName,
+            messageText: messageText,
+          },
+          android: {
+            priority: "high",
+            notification: {
+              channelId: "chat_messages",
+              sound: "default",
+            },
+          },
+          apns: {
+            payload: {
+              aps: {
+                sound: "default",
+                badge: 1,
+              },
+            },
+          },
+        });
+
+        console.log(
+          `Chat notification sent to ${receiver.name} (${receiver.firebaseUid})`
+        );
+
+        res.status(200).json({
+          success: true,
+          message: "Chat notification sent successfully",
+          receiver: {
+            id: receiver.id,
+            name: receiver.name,
+            firebaseUid: receiver.firebaseUid,
+          },
+        });
+      } catch (fcmError: any) {
+        console.error("Error sending FCM notification:", fcmError);
+        return res.status(500).json({
+          error: "Failed to send push notification",
+          details: fcmError.message,
+        });
+      }
+    } else {
+      // No device token - notification cannot be sent
+      res.status(200).json({
+        success: false,
+        message: "Receiver has no device token registered",
+        receiver: {
+          id: receiver.id,
+          name: receiver.name,
+          firebaseUid: receiver.firebaseUid,
+        },
+      });
+    }
+  } catch (error) {
+    console.error("Error sending chat notification:", error);
     next(error);
   }
 };

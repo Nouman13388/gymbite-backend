@@ -13,6 +13,7 @@ import {
   createAndSendNotification,
   sendBulkNotification,
   broadcastNotificationToAll,
+  sendChatNotification,
 } from "../controllers/notificationController.js";
 import { verifyFirebaseToken } from "../middleware/auth.js";
 
@@ -33,6 +34,7 @@ router.put("/user/:userId/read-all", markAllAsRead);
 router.post("/send", createAndSendNotification);
 router.post("/send/bulk", sendBulkNotification);
 router.post("/send/broadcast", broadcastNotificationToAll);
+router.post("/send-chat", sendChatNotification);
 
 // Basic CRUD (existing)
 router.get("/", getNotifications);
