@@ -147,3 +147,9 @@ export const mealFormSchema = z.object({
 export type UserFormData = z.infer<typeof userFormSchema>;
 export type WorkoutFormData = z.infer<typeof workoutFormSchema>;
 export type MealFormData = z.infer<typeof mealFormSchema>;
+
+// Export appointment schema and types
+export * from "./appointment.schema";
+
+// Export progress schema and types
+export * from "./progress.schema";

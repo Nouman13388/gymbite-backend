@@ -5,7 +5,10 @@ import {
     Users,
     Dumbbell,
     Utensils,
+    Calendar,
+    TrendingUp,
     BarChart3,
+    Bell,
     Settings
 } from 'lucide-react';
 
@@ -52,6 +55,27 @@ const navigationItems: NavItem[] = [
         icon: Utensils,
         iconSize: 20,
         ariaLabel: 'Navigate to Meal Plans - Design and oversee nutrition plans',
+    },
+    {
+        path: '/appointments',
+        label: 'Appointments',
+        icon: Calendar,
+        iconSize: 20,
+        ariaLabel: 'Navigate to Appointments - Manage trainer and client appointments',
+    },
+    {
+        path: '/progress',
+        label: 'Progress',
+        icon: TrendingUp,
+        iconSize: 20,
+        ariaLabel: 'Navigate to Progress - Track client fitness progress and metrics',
+    },
+    {
+        path: '/notifications',
+        label: 'Notifications',
+        icon: Bell,
+        iconSize: 20,
+        ariaLabel: 'Navigate to Notifications - Send and manage push notifications',
     },
     {
         path: '/analytics',

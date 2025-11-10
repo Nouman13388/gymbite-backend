@@ -5,6 +5,9 @@ import Users from "./pages/Users.tsx";
 import Workouts from "./pages/Workouts.tsx";
 import Meals from "./pages/Meals.tsx";
 import Analytics from "./pages/Analytics.tsx";
+import Appointments from "./pages/Appointments.tsx";
+import Progress from "./pages/Progress.tsx";
+import Notifications from "./pages/Notifications.tsx";
 import Layout from "./components/layout/Layout.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ROUTES } from "./types/routes";
@@ -46,6 +49,18 @@ export const routes: RouteObject[] = [
             {
                 path: "meals",
                 element: <Meals />,
+            },
+            {
+                path: "appointments",
+                element: <Appointments />,
+            },
+            {
+                path: "progress",
+                element: <Progress />,
+            },
+            {
+                path: "notifications",
+                element: <Notifications />,
             },
             {
                 path: "analytics",

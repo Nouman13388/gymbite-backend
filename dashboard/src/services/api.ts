@@ -378,4 +378,92 @@ export const crudApi = {
     search: (query: string) =>
       api.get(`/meal-plans?search=${encodeURIComponent(query)}`),
   },
+
+  // Trainers
+  trainers: {
+    getAll: () => api.get("/trainers"),
+    getById: (id: number) => api.get(`/trainers/${id}`),
+    getComplete: (id: number) => api.get(`/trainers/${id}/complete`),
+    getClients: (id: number) => api.get(`/trainers/${id}/clients`),
+    getSchedule: (id: number) => api.get(`/trainers/${id}/schedule`),
+    getMetrics: (id: number) => api.get(`/trainers/${id}/metrics`),
+    create: (data: Record<string, unknown>) => api.post("/trainers", data),
+    update: (id: number, data: Record<string, unknown>) =>
+      api.put(`/trainers/${id}`, data),
+    delete: (id: number) => api.delete(`/trainers/${id}`),
+  },
+
+  // Clients
+  clients: {
+    getAll: () => api.get("/clients"),
+    getById: (id: number) => api.get(`/clients/${id}`),
+    getComplete: (id: number) => api.get(`/clients/${id}/complete`),
+    create: (data: Record<string, unknown>) => api.post("/clients", data),
+    update: (id: number, data: Record<string, unknown>) =>
+      api.put(`/clients/${id}`, data),
+    delete: (id: number) => api.delete(`/clients/${id}`),
+  },
+
+  // Appointments
+  appointments: {
+    getAll: () => api.get("/appointments"),
+    getById: (id: number) => api.get(`/appointments/${id}`),
+    create: (data: Record<string, unknown>) => api.post("/appointments", data),
+    update: (id: number, data: Record<string, unknown>) =>
+      api.put(`/appointments/${id}`, data),
+    delete: (id: number) => api.delete(`/appointments/${id}`),
+  },
+
+  // Progress Tracking
+  progress: {
+    getAll: () => api.get("/progress"),
+    getById: (id: number) => api.get(`/progress/${id}`),
+    create: (data: Record<string, unknown>) => api.post("/progress", data),
+    update: (id: number, data: Record<string, unknown>) =>
+      api.put(`/progress/${id}`, data),
+    delete: (id: number) => api.delete(`/progress/${id}`),
+  },
+
+  // Feedback
+  feedback: {
+    getAll: () => api.get("/feedback"),
+    getById: (id: number) => api.get(`/feedback/${id}`),
+    delete: (id: number) => api.delete(`/feedback/${id}`),
+  },
+
+  // Notifications
+  notifications: {
+    send: (data: Record<string, unknown>) =>
+      api.post("/notifications/send", data),
+    sendToUser: (userId: number, data: Record<string, unknown>) =>
+      api.post(`/notifications/send-to-user/${userId}`, data),
+    sendToRole: (role: string, data: Record<string, unknown>) =>
+      api.post(`/notifications/send-to-role/${role}`, data),
+    broadcast: (data: Record<string, unknown>) =>
+      api.post("/notifications/send/broadcast", data),
+    sendWorkoutPlan: (data: Record<string, unknown>) =>
+      api.post("/notifications/send-workout-plan", data),
+    sendMealPlan: (data: Record<string, unknown>) =>
+      api.post("/notifications/send-meal-plan", data),
+    sendAppointment: (data: Record<string, unknown>) =>
+      api.post("/notifications/send-appointment", data),
+    getAll: () => api.get("/notifications"),
+    getById: (id: number) => api.get(`/notifications/${id}`),
+    markAsRead: (id: number) => api.patch(`/notifications/${id}/read`, {}),
+    delete: (id: number) => api.delete(`/notifications/${id}`),
+  },
+
+  // Analytics
+  analytics: {
+    dashboard: () => api.get("/analytics/dashboard"),
+    users: () => api.get("/analytics/users"),
+    userGrowth: (days: number) =>
+      api.get(`/analytics/users/growth?days=${days}`),
+    trainers: () => api.get("/analytics/trainers"),
+    clients: () => api.get("/analytics/clients"),
+    appointments: () => api.get("/analytics/appointments"),
+    appointmentTrends: (days: number) =>
+      api.get(`/analytics/appointments/trends?days=${days}`),
+    systemHealth: () => api.get("/analytics/system/health"),
+  },
 };

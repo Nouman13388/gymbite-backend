@@ -4,10 +4,11 @@ import { Loading, EmptyState, ErrorMessage, DeleteConfirm } from '../views/compo
 import { EnhancedDataTable } from '../components/ui/EnhancedDataTable';
 import type { Column, TableAction } from '../components/ui/EnhancedDataTable';
 import type { FilterConfig } from '../hooks/useAdvancedSearch';
-import { Users, UserPlus, RefreshCw, Edit, Trash2 } from 'lucide-react';
+import { Users, UserPlus, RefreshCw, Edit, Trash2, Eye } from 'lucide-react';
 import { crudApi } from '../services/api';
 import { apiWithNotifications } from '../services/apiWithNotifications';
 import { UserFormModal } from '../components/forms/UserFormModal';
+import { UserProfileModal } from '../components/modals/UserProfileModal';
 import type { UserFormData } from '../schemas';
 
 // User data type based on Prisma schema
@@ -30,6 +31,7 @@ const UsersPage: React.FC = () => {
     // Modal states
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -79,6 +81,11 @@ const UsersPage: React.FC = () => {
     const handleEditUser = (user: User) => {
         setSelectedUser(user);
         setIsFormModalOpen(true);
+    };
+
+    const handleViewProfile = (user: User) => {
+        setSelectedUser(user);
+        setIsProfileModalOpen(true);
     };
 
     const handleDeleteUser = (user: User) => {
@@ -146,6 +153,13 @@ const UsersPage: React.FC = () => {
     ];
 
     const actions: TableAction<User>[] = [
+        {
+            label: 'View Profile',
+            icon: Eye,
+            onClick: handleViewProfile,
+            className: 'text-blue-300 hover:text-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-dark-bg',
+            ariaLabel: 'View user profile'
+        },
         {
             label: 'Edit',
             icon: Edit,
@@ -330,6 +344,20 @@ const UsersPage: React.FC = () => {
                 user={selectedUser}
                 isLoading={isSubmitting}
             />
+
+            {/* User Profile Modal */}
+            {selectedUser && (
+                <UserProfileModal
+                    isOpen={isProfileModalOpen}
+                    onClose={() => {
+                        setIsProfileModalOpen(false);
+                        setSelectedUser(null);
+                    }}
+                    userId={selectedUser.id}
+                    userName={selectedUser.name}
+                    userRole={selectedUser.role}
+                />
+            )}
 
             {/* Delete Confirmation Modal */}
             <DeleteConfirm

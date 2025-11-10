@@ -1,18 +1,39 @@
 # GymBite Backend API 🏋️‍♀️
 
 **Status**: ✅ **100% COMPLETE & PRODUCTION READY**  
-**Version**: 3.1.0  
-**Last Updated**: October 27, 2025
+**Version**: 3.2.0  
+**Last Updated**: November 6, 2025
 
 Backend API for GymBite - An AI-powered fitness management platform that connects clients and trainers through personalized meal plans, workout routines, and **real-time chat communication**. This API powers a Flutter mobile application with role-based access control, push notifications, Firestore integration, and administrative analytics.
 
-## 🎉 Latest Updates (v3.1.0 - October 27, 2025)
+## 🎉 Latest Updates (v3.2.0 - November 6, 2025)
 
-### Real-Time Chat Features
+### Progress Tracking API Enhancement
 
-**Chat Room Auto-Creation** - CHAT appointments automatically create Firestore chat rooms
-**Chat Push Notifications** - FCM notifications for chat messages via `/api/notifications/send-chat`
-**User-to-Firestore Sync** - PostgreSQL users automatically synced to Firestore for real-time features
+**Dashboard Integration** - Progress API updated to support dashboard with simplified schema  
+**Auto-calculated BMI** - Backend automatically calculates BMI from weight  
+**Auto-generated Date** - Progress date automatically set to current timestamp  
+**Field Mapping** - Body fat & muscle mass mapped to workoutPerformance for backward compatibility
+
+**New Request Schema:**
+
+```json
+{
+  "clientId": 2,
+  "weight": 75.5,
+  "bodyFat": 18.5,
+  "muscleMass": 55.2,
+  "notes": "Feeling stronger!"
+}
+```
+
+See [Progress Tracking](#progress-tracking-5-endpoints---updated-nov-6-2025) section for complete API details.
+
+### Previous Updates (v3.1.0 - October 27, 2025)
+
+**Chat Room Auto-Creation** - CHAT appointments automatically create Firestore chat rooms  
+**Chat Push Notifications** - FCM notifications for chat messages via `/api/notifications/send-chat`  
+**User-to-Firestore Sync** - PostgreSQL users automatically synced to Firestore for real-time features  
 **Hybrid Database Strategy** - PostgreSQL for relational data + Firestore for real-time chat
 
 See [Real-Time Features](#real-time-features-firestore-integration) section below for detailed information.
@@ -808,7 +829,43 @@ npm run auth-utils token user@example.com password
 - `PHONE_CALL` - Phone consultation
 - `CHAT` - Text-based coaching session
 
-#### Progress Tracking (5 endpoints)
+#### Progress Tracking (5 endpoints) - ✨ UPDATED Nov 6, 2025
+
+**API Contract Update**: Dashboard now uses simplified request schema
+
+**Request Body (Dashboard → Backend):**
+
+```json
+{
+  "clientId": 2,
+  "weight": 75.5,
+  "bodyFat": 18.5,
+  "muscleMass": 55.2,
+  "notes": "Feeling stronger, completed all workouts this week!"
+}
+```
+
+**Backend Processing:**
+
+- Auto-generates `progressDate` (current timestamp)
+- Auto-calculates `BMI` from weight (using default height 1.7m)
+- Maps `bodyFat` + `muscleMass` → `workoutPerformance` field
+- Maps `notes` → `mealPlanCompliance` field
+
+**Response (Backend → Dashboard):**
+
+```json
+{
+  "id": 1,
+  "clientId": 2,
+  "weight": "75.5",
+  "BMI": "26.12456747404845",
+  "progressDate": "2025-11-06T17:56:06.897Z",
+  "workoutPerformance": "Body Fat: 18.5%, Muscle Mass: 55.2kg",
+  "mealPlanCompliance": "Feeling stronger, completed all workouts this week!",
+  "createdAt": "2025-11-06T17:56:06.902Z"
+}
+```
 
 | Method   | Endpoint            | Description           |
 | -------- | ------------------- | --------------------- |

@@ -95,6 +95,68 @@ class ApiWithNotifications {
           error: "Failed to delete meal plan",
         },
       },
+      trainer: {
+        create: {
+          success: "Trainer created successfully",
+          error: "Failed to create trainer",
+        },
+        update: {
+          success: "Trainer updated successfully",
+          error: "Failed to update trainer",
+        },
+        delete: {
+          success: "Trainer deleted successfully",
+          error: "Failed to delete trainer",
+        },
+      },
+      client: {
+        create: {
+          success: "Client created successfully",
+          error: "Failed to create client",
+        },
+        update: {
+          success: "Client updated successfully",
+          error: "Failed to update client",
+        },
+        delete: {
+          success: "Client deleted successfully",
+          error: "Failed to delete client",
+        },
+      },
+      appointment: {
+        create: {
+          success: "Appointment created successfully",
+          error: "Failed to create appointment",
+        },
+        update: {
+          success: "Appointment updated successfully",
+          error: "Failed to update appointment",
+        },
+        delete: {
+          success: "Appointment deleted successfully",
+          error: "Failed to delete appointment",
+        },
+      },
+      progress: {
+        create: {
+          success: "Progress record created successfully",
+          error: "Failed to create progress record",
+        },
+        update: {
+          success: "Progress record updated successfully",
+          error: "Failed to update progress record",
+        },
+        delete: {
+          success: "Progress record deleted successfully",
+          error: "Failed to delete progress record",
+        },
+      },
+      feedback: {
+        delete: {
+          success: "Feedback deleted successfully",
+          error: "Failed to delete feedback",
+        },
+      },
     };
   }
 
@@ -298,6 +360,255 @@ class ApiWithNotifications {
 
     getAll: (): Promise<MealPlan[]> => api.get("/meal-plans"),
     getById: (id: number): Promise<MealPlan> => api.get(`/meal-plans/${id}`),
+  };
+
+  // Trainer API with notifications
+  trainers = {
+    create: async (
+      data: Record<string, unknown>,
+      options?: ApiWithNotificationsOptions
+    ): Promise<unknown> => {
+      const defaultMessages = this.getDefaultMessages().trainer.create;
+      return this.withNotifications(() => api.post("/trainers", data), {
+        notifications: {
+          showSuccess: true,
+          showError: true,
+          successMessage: defaultMessages.success,
+          errorMessage: defaultMessages.error,
+          ...options?.notifications,
+        },
+      });
+    },
+
+    update: async (
+      id: number,
+      data: Record<string, unknown>,
+      options?: ApiWithNotificationsOptions
+    ): Promise<unknown> => {
+      const defaultMessages = this.getDefaultMessages().trainer.update;
+      return this.withNotifications(() => api.put(`/trainers/${id}`, data), {
+        notifications: {
+          showSuccess: true,
+          showError: true,
+          successMessage: defaultMessages.success,
+          errorMessage: defaultMessages.error,
+          ...options?.notifications,
+        },
+      });
+    },
+
+    delete: async (
+      id: number,
+      options?: ApiWithNotificationsOptions
+    ): Promise<void> => {
+      const defaultMessages = this.getDefaultMessages().trainer.delete;
+      return this.withNotifications(() => api.delete(`/trainers/${id}`), {
+        notifications: {
+          showSuccess: true,
+          showError: true,
+          successMessage: defaultMessages.success,
+          errorMessage: defaultMessages.error,
+          ...options?.notifications,
+        },
+      });
+    },
+
+    getAll: (): Promise<unknown[]> => api.get("/trainers"),
+    getById: (id: number): Promise<unknown> => api.get(`/trainers/${id}`),
+    getComplete: (id: number): Promise<unknown> =>
+      api.get(`/trainers/${id}/complete`),
+  };
+
+  // Client API with notifications
+  clients = {
+    create: async (
+      data: Record<string, unknown>,
+      options?: ApiWithNotificationsOptions
+    ): Promise<unknown> => {
+      const defaultMessages = this.getDefaultMessages().client.create;
+      return this.withNotifications(() => api.post("/clients", data), {
+        notifications: {
+          showSuccess: true,
+          showError: true,
+          successMessage: defaultMessages.success,
+          errorMessage: defaultMessages.error,
+          ...options?.notifications,
+        },
+      });
+    },
+
+    update: async (
+      id: number,
+      data: Record<string, unknown>,
+      options?: ApiWithNotificationsOptions
+    ): Promise<unknown> => {
+      const defaultMessages = this.getDefaultMessages().client.update;
+      return this.withNotifications(() => api.put(`/clients/${id}`, data), {
+        notifications: {
+          showSuccess: true,
+          showError: true,
+          successMessage: defaultMessages.success,
+          errorMessage: defaultMessages.error,
+          ...options?.notifications,
+        },
+      });
+    },
+
+    delete: async (
+      id: number,
+      options?: ApiWithNotificationsOptions
+    ): Promise<void> => {
+      const defaultMessages = this.getDefaultMessages().client.delete;
+      return this.withNotifications(() => api.delete(`/clients/${id}`), {
+        notifications: {
+          showSuccess: true,
+          showError: true,
+          successMessage: defaultMessages.success,
+          errorMessage: defaultMessages.error,
+          ...options?.notifications,
+        },
+      });
+    },
+
+    getAll: (): Promise<unknown[]> => api.get("/clients"),
+    getById: (id: number): Promise<unknown> => api.get(`/clients/${id}`),
+    getComplete: (id: number): Promise<unknown> =>
+      api.get(`/clients/${id}/complete`),
+  };
+
+  // Appointment API with notifications
+  appointments = {
+    create: async (
+      data: Record<string, unknown>,
+      options?: ApiWithNotificationsOptions
+    ): Promise<unknown> => {
+      const defaultMessages = this.getDefaultMessages().appointment.create;
+      return this.withNotifications(() => api.post("/appointments", data), {
+        notifications: {
+          showSuccess: true,
+          showError: true,
+          successMessage: defaultMessages.success,
+          errorMessage: defaultMessages.error,
+          ...options?.notifications,
+        },
+      });
+    },
+
+    update: async (
+      id: number,
+      data: Record<string, unknown>,
+      options?: ApiWithNotificationsOptions
+    ): Promise<unknown> => {
+      const defaultMessages = this.getDefaultMessages().appointment.update;
+      return this.withNotifications(
+        () => api.put(`/appointments/${id}`, data),
+        {
+          notifications: {
+            showSuccess: true,
+            showError: true,
+            successMessage: defaultMessages.success,
+            errorMessage: defaultMessages.error,
+            ...options?.notifications,
+          },
+        }
+      );
+    },
+
+    delete: async (
+      id: number,
+      options?: ApiWithNotificationsOptions
+    ): Promise<void> => {
+      const defaultMessages = this.getDefaultMessages().appointment.delete;
+      return this.withNotifications(() => api.delete(`/appointments/${id}`), {
+        notifications: {
+          showSuccess: true,
+          showError: true,
+          successMessage: defaultMessages.success,
+          errorMessage: defaultMessages.error,
+          ...options?.notifications,
+        },
+      });
+    },
+
+    getAll: (): Promise<unknown[]> => api.get("/appointments"),
+    getById: (id: number): Promise<unknown> => api.get(`/appointments/${id}`),
+  };
+
+  // Progress API with notifications
+  progress = {
+    create: async (
+      data: Record<string, unknown>,
+      options?: ApiWithNotificationsOptions
+    ): Promise<unknown> => {
+      const defaultMessages = this.getDefaultMessages().progress.create;
+      return this.withNotifications(() => api.post("/progress", data), {
+        notifications: {
+          showSuccess: true,
+          showError: true,
+          successMessage: defaultMessages.success,
+          errorMessage: defaultMessages.error,
+          ...options?.notifications,
+        },
+      });
+    },
+
+    update: async (
+      id: number,
+      data: Record<string, unknown>,
+      options?: ApiWithNotificationsOptions
+    ): Promise<unknown> => {
+      const defaultMessages = this.getDefaultMessages().progress.update;
+      return this.withNotifications(() => api.put(`/progress/${id}`, data), {
+        notifications: {
+          showSuccess: true,
+          showError: true,
+          successMessage: defaultMessages.success,
+          errorMessage: defaultMessages.error,
+          ...options?.notifications,
+        },
+      });
+    },
+
+    delete: async (
+      id: number,
+      options?: ApiWithNotificationsOptions
+    ): Promise<void> => {
+      const defaultMessages = this.getDefaultMessages().progress.delete;
+      return this.withNotifications(() => api.delete(`/progress/${id}`), {
+        notifications: {
+          showSuccess: true,
+          showError: true,
+          successMessage: defaultMessages.success,
+          errorMessage: defaultMessages.error,
+          ...options?.notifications,
+        },
+      });
+    },
+
+    getAll: (): Promise<unknown[]> => api.get("/progress"),
+    getById: (id: number): Promise<unknown> => api.get(`/progress/${id}`),
+  };
+
+  // Feedback API with notifications
+  feedback = {
+    delete: async (
+      id: number,
+      options?: ApiWithNotificationsOptions
+    ): Promise<void> => {
+      const defaultMessages = this.getDefaultMessages().feedback.delete;
+      return this.withNotifications(() => api.delete(`/feedback/${id}`), {
+        notifications: {
+          showSuccess: true,
+          showError: true,
+          successMessage: defaultMessages.success,
+          errorMessage: defaultMessages.error,
+          ...options?.notifications,
+        },
+      });
+    },
+
+    getAll: (): Promise<unknown[]> => api.get("/feedback"),
+    getById: (id: number): Promise<unknown> => api.get(`/feedback/${id}`),
   };
 }
 

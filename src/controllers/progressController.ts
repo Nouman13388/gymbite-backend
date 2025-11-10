@@ -31,27 +31,51 @@ export const getProgressById = async (req: Request, res: Response) => {
 
 // Create a new progress record
 export const createProgress = async (req: Request, res: Response) => {
-  const {
-    clientId,
-    weight,
-    BMI,
-    progressDate,
-    workoutPerformance,
-    mealPlanCompliance,
-  } = req.body;
+  const { clientId, weight, bodyFat, muscleMass, notes } = req.body;
+
   try {
+    // Validate required fields
+    if (!clientId || !weight) {
+      return res
+        .status(400)
+        .json({ error: "clientId and weight are required" });
+    }
+
+    // Get client to verify existence and get height for BMI calculation
+    const client = await prisma.client.findUnique({
+      where: { userId: clientId },
+    });
+
+    if (!client) {
+      return res.status(404).json({ error: "Client not found" });
+    }
+
+    // Calculate BMI using client's actual height
+    // BMI = weight (kg) / (height in meters)^2
+    const heightInMeters = Number(client.height) / 100; // Convert cm to meters
+    const calculatedBMI = Number(weight) / (heightInMeters * heightInMeters);
+
+    // Create progress record
     const newProgress = await prisma.progress.create({
       data: {
         clientId,
         weight,
-        BMI,
-        progressDate,
-        workoutPerformance,
-        mealPlanCompliance,
+        BMI: calculatedBMI,
+        progressDate: new Date(),
+        workoutPerformance: bodyFat
+          ? `Body Fat: ${bodyFat}%${
+              muscleMass ? `, Muscle Mass: ${muscleMass}kg` : ""
+            }`
+          : muscleMass
+          ? `Muscle Mass: ${muscleMass}kg`
+          : null,
+        mealPlanCompliance: notes || null,
       },
     });
+
     res.status(201).json(newProgress);
   } catch (error) {
+    console.error("Error creating progress record:", error);
     res.status(500).json({ error: "Failed to create progress record" });
   }
 };

@@ -14,6 +14,8 @@ import {
   sendBulkNotification,
   broadcastNotificationToAll,
   sendChatNotification,
+  sendNotificationToSingleUser,
+  sendNotificationByRole,
 } from "../controllers/notificationController.js";
 import { verifyFirebaseToken } from "../middleware/auth.js";
 
@@ -32,6 +34,8 @@ router.put("/user/:userId/read-all", markAllAsRead);
 
 // Notification sending
 router.post("/send", createAndSendNotification);
+router.post("/send-to-user/:userId", sendNotificationToSingleUser);
+router.post("/send-to-role/:role", sendNotificationByRole);
 router.post("/send/bulk", sendBulkNotification);
 router.post("/send/broadcast", broadcastNotificationToAll);
 router.post("/send-chat", sendChatNotification);

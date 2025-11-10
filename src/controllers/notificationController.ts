@@ -239,6 +239,101 @@ export const markAllAsRead = async (
   }
 };
 
+// Send notification to a single user
+export const sendNotificationToSingleUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId } = req.params;
+  const { message, title, notificationType } = req.body;
+
+  try {
+    // Create notification in database
+    const notification = await prisma.notification.create({
+      data: {
+        userId: parseInt(userId),
+        message,
+        notificationType: notificationType || "INFO",
+        status: "UNREAD",
+      },
+    });
+
+    // Send push notification
+    const sent = await sendNotificationToUser(parseInt(userId), {
+      title: title || "New Notification",
+      body: message,
+      data: {
+        notificationId: notification.id.toString(),
+        type: notificationType || "INFO",
+      },
+    });
+
+    res.status(201).json({
+      notification,
+      pushSent: sent,
+    });
+  } catch (error) {
+    console.error("Error sending notification to user:", error);
+    next(error);
+  }
+};
+
+// Send notification to users by role
+export const sendNotificationByRole = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { role } = req.params;
+  const { message, title, notificationType } = req.body;
+
+  try {
+    // Get all users with the specified role
+    const users = await prisma.user.findMany({
+      where: { role: role.toUpperCase() as "CLIENT" | "TRAINER" | "ADMIN" },
+      select: { id: true },
+    });
+
+    if (users.length === 0) {
+      return res
+        .status(404)
+        .json({ error: `No users found with role: ${role}` });
+    }
+
+    // Create notifications in database
+    const notifications = await prisma.notification.createMany({
+      data: users.map((user) => ({
+        userId: user.id,
+        message,
+        notificationType: notificationType || "INFO",
+        status: "UNREAD",
+      })),
+    });
+
+    // Send push notifications
+    const result = await sendNotificationToMultipleUsers(
+      users.map((u) => u.id),
+      {
+        title: title || "New Notification",
+        body: message,
+        data: {
+          type: notificationType || "INFO",
+        },
+      }
+    );
+
+    res.status(201).json({
+      created: notifications.count,
+      pushSent: result,
+      role,
+    });
+  } catch (error) {
+    console.error("Error sending notification by role:", error);
+    next(error);
+  }
+};
+
 // Create notification and send push
 export const createAndSendNotification = async (
   req: Request,
