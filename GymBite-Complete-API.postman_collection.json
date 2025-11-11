@@ -1,8 +1,8 @@
 {
     "info": {
         "_postman_id": "gymbite-complete-api-v3",
-        "name": "GymBite Backend API v3.3.0 - Complete Collection",
-        "description": "Complete API collection for GymBite - AI-powered fitness management platform\n\n**Features:**\n- 50+ Endpoints across 11 modules\n- Firebase Authentication\n- Role-based Access Control (Client/Trainer/Admin)\n- Push Notifications via FCM\n- Real-time Analytics\n\n**Base URLs:**\n- Production: https://gymbite-backend.vercel.app/api\n- Local: http://localhost:3000/api\n\n**Latest Updates (v3.3.0 - Nov 10, 2025):**\n- Notifications: Added dashboard endpoints for targeted notifications\n  - Send to single user: `/notifications/send-to-user/:userId`\n  - Send to role: `/notifications/send-to-role/:role`\n  - Broadcast to all: `/notifications/send/broadcast`\n- Enhanced notification templates and types\n\n**Previous Updates (v3.2.0 - Nov 6, 2025):**\n- Progress API: Simplified request schema (auto-generates BMI and progressDate)\n- Dashboard integration optimized\n\n**Version:** 3.3.0\n**Last Updated:** November 10, 2025",
+        "name": "GymBite Backend API v3.4.0 - Complete Collection",
+        "description": "Complete API collection for GymBite - AI-powered fitness management platform\n\n**Features:**\n- 50+ Endpoints across 11 modules\n- Firebase Authentication\n- Role-based Access Control (Client/Trainer/Admin)\n- Push Notifications via FCM\n- Real-time Analytics\n\n**Base URLs:**\n- Production: https://gymbite-backend.vercel.app/api\n- Local: http://localhost:3000/api\n\n**Latest Updates (v3.4.0 - Nov 11, 2025):**\n- Feedback: Updated request schema to match Prisma model\n  - Create: Uses `userId`, `trainerId`, `rating`, `comments`\n  - Update: Supports updating `rating` and `comments`\n  - Dashboard integration optimized for trainer reviews\n\n**Previous Updates (v3.3.0 - Nov 10, 2025):**\n- Notifications: Added dashboard endpoints for targeted notifications\n  - Send to single user: `/notifications/send-to-user/:userId`\n  - Send to role: `/notifications/send-to-role/:role`\n  - Broadcast to all: `/notifications/send/broadcast`\n\n**Version:** 3.4.0\n**Last Updated:** November 11, 2025",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
         "_exporter_id": "gymbite"
     },
@@ -1856,7 +1856,7 @@
                                 "feedback"
                             ]
                         },
-                        "description": "Get all feedback submissions"
+                        "description": "Get all trainer feedback/reviews with user and trainer details"
                     },
                     "response": []
                 },
@@ -1886,7 +1886,7 @@
                         "header": [],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"userId\": 1,\n  \"subject\": \"App Performance\",\n  \"message\": \"The app is running smoothly, great work!\",\n  \"rating\": 5,\n  \"category\": \"general\"\n}",
+                            "raw": "{\n  \"userId\": 1,\n  \"trainerId\": 1,\n  \"rating\": 5,\n  \"comments\": \"Great trainer! Very knowledgeable and supportive.\"\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -1902,7 +1902,7 @@
                                 "feedback"
                             ]
                         },
-                        "description": "Submit new feedback"
+                        "description": "Submit new feedback/review for a trainer. Required fields: userId (client ID), trainerId, rating (1-5). Optional: comments."
                     },
                     "response": []
                 },
@@ -1913,7 +1913,7 @@
                         "header": [],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"status\": \"resolved\",\n  \"response\": \"Thank you for your feedback!\"\n}",
+                            "raw": "{\n  \"rating\": 4,\n  \"comments\": \"Updated review: Good trainer overall.\"\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -1930,7 +1930,7 @@
                                 ":id"
                             ]
                         },
-                        "description": "Update feedback record"
+                        "description": "Update feedback rating and/or comments"
                     },
                     "response": []
                 },
@@ -1949,7 +1949,7 @@
                                 ":id"
                             ]
                         },
-                        "description": "Delete feedback"
+                        "description": "Delete trainer feedback (admin only)"
                     },
                     "response": []
                 }

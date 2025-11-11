@@ -153,3 +153,9 @@ export * from "./appointment.schema";
 
 // Export progress schema and types
 export * from "./progress.schema";
+
+// Export trainer schema and types
+export * from "./trainer.schema";
+
+// Export client schema and types
+export * from "./client.schema";

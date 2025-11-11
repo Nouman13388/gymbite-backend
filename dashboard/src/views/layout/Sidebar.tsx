@@ -3,13 +3,17 @@ import { Link, useLocation, matchPath } from 'react-router-dom';
 import {
     Home,
     Users,
+    UserCog,
+    UserCheck,
     Dumbbell,
     Utensils,
     Calendar,
     TrendingUp,
     BarChart3,
     Bell,
-    Settings
+    MessageSquare,
+    Settings,
+    User
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -41,6 +45,20 @@ const navigationItems: NavItem[] = [
         icon: Users,
         iconSize: 20,
         ariaLabel: 'Navigate to User Management - Manage platform users and roles',
+    },
+    {
+        path: '/trainers',
+        label: 'Trainers',
+        icon: UserCog,
+        iconSize: 20,
+        ariaLabel: 'Navigate to Trainer Management - Manage trainers and client assignments',
+    },
+    {
+        path: '/clients',
+        label: 'Clients',
+        icon: UserCheck,
+        iconSize: 20,
+        ariaLabel: 'Navigate to Client Management - Manage clients and trainer assignments',
     },
     {
         path: '/workouts',
@@ -78,6 +96,13 @@ const navigationItems: NavItem[] = [
         ariaLabel: 'Navigate to Notifications - Send and manage push notifications',
     },
     {
+        path: '/feedback',
+        label: 'Feedback',
+        icon: MessageSquare,
+        iconSize: 20,
+        ariaLabel: 'Navigate to Feedback - View and manage trainer reviews and ratings',
+    },
+    {
         path: '/analytics',
         label: 'Analytics',
         icon: BarChart3,
@@ -90,6 +115,13 @@ const navigationItems: NavItem[] = [
         icon: Settings,
         iconSize: 20,
         ariaLabel: 'Navigate to Settings - Configure application preferences'
+    },
+    {
+        path: '/profile',
+        label: 'Profile',
+        icon: User,
+        iconSize: 20,
+        ariaLabel: 'Navigate to Profile - Manage your account'
     },
 ];
 

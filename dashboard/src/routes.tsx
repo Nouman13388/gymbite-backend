@@ -2,12 +2,17 @@ import type { RouteObject } from 'react-router-dom';
 import AdminLogin from "./pages/auth/AdminLogin.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import Users from "./pages/Users.tsx";
+import Trainers from "./pages/Trainers.tsx";
+import Clients from "./pages/Clients.tsx";
 import Workouts from "./pages/Workouts.tsx";
 import Meals from "./pages/Meals.tsx";
 import Analytics from "./pages/Analytics.tsx";
 import Appointments from "./pages/Appointments.tsx";
 import Progress from "./pages/Progress.tsx";
 import Notifications from "./pages/Notifications.tsx";
+import Feedback from "./pages/Feedback.tsx";
+import Settings from "./pages/Settings.tsx";
+import Profile from "./pages/Profile.tsx";
 import Layout from "./components/layout/Layout.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ROUTES } from "./types/routes";
@@ -43,6 +48,14 @@ export const routes: RouteObject[] = [
                 element: <Users />,
             },
             {
+                path: "trainers",
+                element: <Trainers />,
+            },
+            {
+                path: "clients",
+                element: <Clients />,
+            },
+            {
                 path: "workouts",
                 element: <Workouts />,
             },
@@ -63,8 +76,20 @@ export const routes: RouteObject[] = [
                 element: <Notifications />,
             },
             {
+                path: "feedback",
+                element: <Feedback />,
+            },
+            {
                 path: "analytics",
                 element: <Analytics />,
+            },
+            {
+                path: "settings",
+                element: <Settings />,
+            },
+            {
+                path: "profile",
+                element: <Profile />,
             },
         ],
     },
