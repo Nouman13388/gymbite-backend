@@ -4,9 +4,19 @@ import { notificationSchema, type NotificationFormData } from "../../schemas/not
 import { useEffect, useState } from "react";
 import { crudApi } from "../../services/api";
 
+interface NotificationTemplate {
+    id: string;
+    type: NotificationFormData['notificationType'];
+    title: string;
+    message: string;
+    icon: string;
+    color: string;
+}
+
 interface NotificationFormProps {
     onSuccess: () => void;
     onCancel: () => void;
+    selectedTemplate?: NotificationTemplate | null;
 }
 
 interface User {
@@ -17,7 +27,7 @@ interface User {
     role: string;
 }
 
-export default function NotificationForm({ onSuccess, onCancel }: NotificationFormProps) {
+export default function NotificationForm({ onSuccess, onCancel, selectedTemplate }: NotificationFormProps) {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(false);
     const [loadingUsers, setLoadingUsers] = useState(true);
@@ -51,6 +61,15 @@ export default function NotificationForm({ onSuccess, onCancel }: NotificationFo
         };
         fetchUsers();
     }, []);
+
+    // Auto-populate form when template is selected
+    useEffect(() => {
+        if (selectedTemplate) {
+            setValue("notificationType", selectedTemplate.type);
+            setValue("title", selectedTemplate.title);
+            setValue("message", selectedTemplate.message);
+        }
+    }, [selectedTemplate, setValue]);
 
     const onSubmit = async (data: NotificationFormData) => {
         setLoading(true);
@@ -89,7 +108,7 @@ export default function NotificationForm({ onSuccess, onCancel }: NotificationFo
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Target Type Selection */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                     Target Audience *
                 </label>
                 <div className="grid grid-cols-3 gap-3">
@@ -97,8 +116,8 @@ export default function NotificationForm({ onSuccess, onCancel }: NotificationFo
                         type="button"
                         onClick={() => setValue("targetType", "SINGLE")}
                         className={`px-4 py-3 rounded-lg border-2 text-sm font-medium transition-all ${targetType === "SINGLE"
-                                ? "border-blue-500 bg-blue-50 text-blue-700"
-                                : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
+                            ? "border-blue-500 bg-blue-600/20 text-blue-400"
+                            : "border-gray-600 bg-dark-input text-white/80 hover:border-gray-500"
                             }`}
                     >
                         👤 Single User
@@ -107,8 +126,8 @@ export default function NotificationForm({ onSuccess, onCancel }: NotificationFo
                         type="button"
                         onClick={() => setValue("targetType", "ROLE")}
                         className={`px-4 py-3 rounded-lg border-2 text-sm font-medium transition-all ${targetType === "ROLE"
-                                ? "border-blue-500 bg-blue-50 text-blue-700"
-                                : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
+                            ? "border-blue-500 bg-blue-600/20 text-blue-400"
+                            : "border-gray-600 bg-dark-input text-white/80 hover:border-gray-500"
                             }`}
                     >
                         👥 By Role
@@ -117,8 +136,8 @@ export default function NotificationForm({ onSuccess, onCancel }: NotificationFo
                         type="button"
                         onClick={() => setValue("targetType", "BROADCAST")}
                         className={`px-4 py-3 rounded-lg border-2 text-sm font-medium transition-all ${targetType === "BROADCAST"
-                                ? "border-blue-500 bg-blue-50 text-blue-700"
-                                : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
+                            ? "border-blue-500 bg-blue-600/20 text-blue-400"
+                            : "border-gray-600 bg-dark-input text-white/80 hover:border-gray-500"
                             }`}
                     >
                         📢 Broadcast All
@@ -132,15 +151,15 @@ export default function NotificationForm({ onSuccess, onCancel }: NotificationFo
             {/* Conditional Selectors */}
             {targetType === "SINGLE" && (
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-white/80 mb-2">
                         Select User *
                     </label>
                     {loadingUsers ? (
-                        <div className="text-gray-500 text-sm">Loading users...</div>
+                        <div className="text-white/60 text-sm">Loading users...</div>
                     ) : (
                         <select
                             {...register("userId", { valueAsNumber: true })}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className="w-full px-4 py-2 bg-dark-input border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                             <option value="">-- Select a user --</option>
                             {users.map((user) => (
@@ -158,12 +177,12 @@ export default function NotificationForm({ onSuccess, onCancel }: NotificationFo
 
             {targetType === "ROLE" && (
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-white/80 mb-2">
                         Select Role *
                     </label>
                     <select
                         {...register("role")}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-2 bg-dark-input border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                         <option value="">-- Select a role --</option>
                         <option value="CLIENT">Clients</option>
@@ -178,12 +197,12 @@ export default function NotificationForm({ onSuccess, onCancel }: NotificationFo
 
             {/* Notification Type */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-white/80 mb-2">
                     Notification Type *
                 </label>
                 <select
                     {...register("notificationType")}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 bg-dark-input border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                     <option value="INFO">ℹ️ Info</option>
                     <option value="WORKOUT">💪 Workout</option>
@@ -202,15 +221,15 @@ export default function NotificationForm({ onSuccess, onCancel }: NotificationFo
 
             {/* Title */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Title * <span className="text-gray-500 text-xs">(max 60 characters)</span>
+                <label className="block text-sm font-medium text-white/80 mb-2">
+                    Title * <span className="text-white/40 text-xs">(max 60 characters)</span>
                 </label>
                 <input
                     type="text"
                     {...register("title")}
                     placeholder="Enter notification title"
                     maxLength={60}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 bg-dark-input border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 {errors.title && (
                     <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
@@ -219,15 +238,15 @@ export default function NotificationForm({ onSuccess, onCancel }: NotificationFo
 
             {/* Message */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Message * <span className="text-gray-500 text-xs">(max 240 characters)</span>
+                <label className="block text-sm font-medium text-white/80 mb-2">
+                    Message * <span className="text-white/40 text-xs">(max 240 characters)</span>
                 </label>
                 <textarea
                     {...register("message")}
                     placeholder="Enter notification message"
                     maxLength={240}
                     rows={4}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    className="w-full px-4 py-2 bg-dark-input border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                 />
                 {errors.message && (
                     <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>
@@ -235,12 +254,12 @@ export default function NotificationForm({ onSuccess, onCancel }: NotificationFo
             </div>
 
             {/* Form Actions */}
-            <div className="flex justify-end gap-3 pt-4 border-t">
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-700/30">
                 <button
                     type="button"
                     onClick={onCancel}
                     disabled={loading}
-                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                    className="px-6 py-2 border border-gray-600 rounded-lg text-white/80 hover:bg-gray-800/40 transition-colors disabled:opacity-50"
                 >
                     Cancel
                 </button>

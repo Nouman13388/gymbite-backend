@@ -40,6 +40,13 @@ const navigationItems: NavItem[] = [
         matchExact: true
     },
     {
+        path: '/analytics',
+        label: 'Analytics',
+        icon: BarChart3,
+        iconSize: 20,
+        ariaLabel: 'Navigate to Analytics - Platform usage statistics and insights',
+    },
+    {
         path: '/users',
         label: 'Users',
         icon: Users,
@@ -101,13 +108,6 @@ const navigationItems: NavItem[] = [
         icon: MessageSquare,
         iconSize: 20,
         ariaLabel: 'Navigate to Feedback - View and manage trainer reviews and ratings',
-    },
-    {
-        path: '/analytics',
-        label: 'Analytics',
-        icon: BarChart3,
-        iconSize: 20,
-        ariaLabel: 'Navigate to Analytics - Platform usage statistics and insights',
     },
     {
         path: '/settings',

@@ -245,14 +245,6 @@ const UsersPage: React.FC = () => {
                         <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                         {loading ? 'Loading...' : 'Refresh'}
                     </button>
-                    <button
-                        onClick={handleCreateUser}
-                        className="bg-primary-blue hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        aria-label="Add new user to the system"
-                    >
-                        <UserPlus className="w-4 h-4" />
-                        Add User
-                    </button>
                 </div>
             }
         >

@@ -141,8 +141,7 @@ export default function Profile() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
-                    <p className="text-gray-600 mt-1">
+                    <p className="text-white/60 mt-1">
                         Manage your admin account settings
                     </p>
                 </div>
@@ -159,8 +158,8 @@ export default function Profile() {
             {message && (
                 <div
                     className={`p-4 rounded-lg flex items-center gap-3 ${message.type === "success"
-                            ? "bg-green-50 border border-green-200"
-                            : "bg-red-50 border border-red-200"
+                        ? "bg-green-50 border border-green-200"
+                        : "bg-red-50 border border-red-200"
                         }`}
                 >
                     {message.type === "success" ? (
@@ -184,10 +183,10 @@ export default function Profile() {
             )}
 
             {/* Profile Information */}
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-dark-card rounded-lg shadow-md p-6">
                 <div className="flex items-center gap-3 mb-6">
-                    <User className="text-blue-600" size={24} />
-                    <h2 className="text-xl font-bold text-gray-900">
+                    <User className="text-blue-400" size={24} />
+                    <h2 className="text-xl font-bold text-white">
                         Profile Information
                     </h2>
                 </div>
@@ -195,7 +194,7 @@ export default function Profile() {
                 <div className="space-y-6">
                     {/* Display Name */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        <label className="block text-sm font-semibold text-white/80 mb-2">
                             Display Name
                         </label>
                         {isEditingName ? (
@@ -220,19 +219,19 @@ export default function Profile() {
                                         setIsEditingName(false);
                                         setDisplayName(user?.displayName || "");
                                     }}
-                                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                                    className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
                                 >
                                     <X size={16} />
                                 </button>
                             </div>
                         ) : (
-                            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                <p className="text-gray-900 font-medium">
+                            <div className="flex items-center justify-between p-4 bg-gray-800/40 rounded-lg">
+                                <p className="text-white font-medium">
                                     {user?.displayName || "Not set"}
                                 </p>
                                 <button
                                     onClick={() => setIsEditingName(true)}
-                                    className="text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                                    className="text-blue-400 hover:text-blue-300 flex items-center gap-1"
                                 >
                                     <Edit size={16} />
                                     Edit
@@ -243,23 +242,23 @@ export default function Profile() {
 
                     {/* Email */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        <label className="block text-sm font-semibold text-white/80 mb-2">
                             Email Address
                         </label>
-                        <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-                            <Mail size={18} className="text-gray-600" />
-                            <p className="text-gray-900 font-medium">{user?.email}</p>
-                            <span className="ml-auto text-xs text-gray-500">(Read-only)</span>
+                        <div className="flex items-center gap-3 p-4 bg-gray-800/40 rounded-lg">
+                            <Mail size={18} className="text-gray-400" />
+                            <p className="text-white font-medium">{user?.email}</p>
+                            <span className="ml-auto text-xs text-white/60">(Read-only)</span>
                         </div>
                     </div>
 
                     {/* Role */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        <label className="block text-sm font-semibold text-white/80 mb-2">
                             Role
                         </label>
-                        <div className="flex items-center gap-3 p-4 bg-purple-50 rounded-lg">
-                            <Shield size={18} className="text-purple-600" />
+                        <div className="flex items-center gap-3 p-4 bg-purple-600/10 rounded-lg">
+                            <Shield size={18} className="text-purple-400" />
                             <span className="px-3 py-1 bg-purple-600 text-white rounded-full text-sm font-medium">
                                 {user?.role}
                             </span>
@@ -268,11 +267,11 @@ export default function Profile() {
 
                     {/* Firebase UID */}
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        <label className="block text-sm font-semibold text-white/80 mb-2">
                             Firebase UID
                         </label>
-                        <div className="p-4 bg-gray-50 rounded-lg">
-                            <p className="text-gray-700 font-mono text-sm break-all">
+                        <div className="p-4 bg-gray-800/40 rounded-lg">
+                            <p className="text-white/80 font-mono text-sm break-all">
                                 {user?.firebaseUid || firebaseUser?.uid || "N/A"}
                             </p>
                         </div>
@@ -281,12 +280,12 @@ export default function Profile() {
                     {/* Account Created */}
                     {firebaseUser?.metadata?.creationTime && (
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            <label className="block text-sm font-semibold text-white/80 mb-2">
                                 Account Created
                             </label>
-                            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-                                <Calendar size={18} className="text-gray-600" />
-                                <p className="text-gray-900">
+                            <div className="flex items-center gap-3 p-4 bg-gray-800/40 rounded-lg">
+                                <Calendar size={18} className="text-gray-400" />
+                                <p className="text-white">
                                     {format(
                                         new Date(firebaseUser.metadata.creationTime),
                                         "MMMM dd, yyyy 'at' hh:mm a"
@@ -299,12 +298,12 @@ export default function Profile() {
                     {/* Last Sign In */}
                     {firebaseUser?.metadata?.lastSignInTime && (
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            <label className="block text-sm font-semibold text-white/80 mb-2">
                                 Last Sign In
                             </label>
-                            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-                                <Calendar size={18} className="text-gray-600" />
-                                <p className="text-gray-900">
+                            <div className="flex items-center gap-3 p-4 bg-gray-800/40 rounded-lg">
+                                <Calendar size={18} className="text-gray-400" />
+                                <p className="text-white">
                                     {format(
                                         new Date(firebaseUser.metadata.lastSignInTime),
                                         "MMMM dd, yyyy 'at' hh:mm a"
@@ -317,11 +316,11 @@ export default function Profile() {
             </div>
 
             {/* Change Password */}
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-dark-card rounded-lg shadow-md p-6">
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
-                        <Key className="text-orange-600" size={24} />
-                        <h2 className="text-xl font-bold text-gray-900">Change Password</h2>
+                        <Key className="text-orange-400" size={24} />
+                        <h2 className="text-xl font-bold text-white">Change Password</h2>
                     </div>
                     {!isChangingPassword && (
                         <button
@@ -338,7 +337,7 @@ export default function Profile() {
                     <form onSubmit={handleChangePassword} className="space-y-4">
                         {/* Current Password */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            <label className="block text-sm font-semibold text-white/80 mb-2">
                                 Current Password
                             </label>
                             <input
@@ -350,7 +349,7 @@ export default function Profile() {
                                         currentPassword: e.target.value,
                                     }))
                                 }
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                className="w-full px-4 py-2 bg-dark-input border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                                 placeholder="Enter current password"
                                 required
                             />
@@ -358,7 +357,7 @@ export default function Profile() {
 
                         {/* New Password */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            <label className="block text-sm font-semibold text-white/80 mb-2">
                                 New Password
                             </label>
                             <input
@@ -370,7 +369,7 @@ export default function Profile() {
                                         newPassword: e.target.value,
                                     }))
                                 }
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                className="w-full px-4 py-2 bg-dark-input border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                                 placeholder="Enter new password (min 6 characters)"
                                 required
                                 minLength={6}
@@ -379,7 +378,7 @@ export default function Profile() {
 
                         {/* Confirm New Password */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            <label className="block text-sm font-semibold text-white/80 mb-2">
                                 Confirm New Password
                             </label>
                             <input
@@ -391,7 +390,7 @@ export default function Profile() {
                                         confirmPassword: e.target.value,
                                     }))
                                 }
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                className="w-full px-4 py-2 bg-dark-input border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                                 placeholder="Confirm new password"
                                 required
                             />
@@ -418,14 +417,14 @@ export default function Profile() {
                                     });
                                     setMessage(null);
                                 }}
-                                className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                                className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
                             >
                                 Cancel
                             </button>
                         </div>
                     </form>
                 ) : (
-                    <p className="text-gray-600">
+                    <p className="text-white/60">
                         Click "Change Password" to update your account password. You'll need
                         to provide your current password for security.
                     </p>
@@ -433,14 +432,14 @@ export default function Profile() {
             </div>
 
             {/* Security Info */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-blue-600/10 border border-blue-600/30 rounded-lg p-4">
                 <div className="flex items-start gap-3">
-                    <Shield className="text-blue-600 flex-shrink-0 mt-0.5" size={20} />
+                    <Shield className="text-blue-400 flex-shrink-0 mt-0.5" size={20} />
                     <div>
-                        <p className="text-sm font-semibold text-blue-900 mb-1">
+                        <p className="text-sm font-semibold text-white mb-1">
                             Security Notice
                         </p>
-                        <p className="text-sm text-blue-700">
+                        <p className="text-sm text-white/80">
                             Your account is protected by Firebase Authentication. Always use a
                             strong, unique password and never share your credentials with
                             anyone.

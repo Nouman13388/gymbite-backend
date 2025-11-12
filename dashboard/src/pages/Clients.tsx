@@ -183,8 +183,7 @@ export default function Clients() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Clients</h1>
-                    <p className="text-gray-600 mt-1">Manage clients and trainer assignments</p>
+                    <p className="text-white/60 mt-1">Manage clients and trainer assignments</p>
                 </div>
                 <button
                     onClick={handleRefresh}
@@ -197,60 +196,60 @@ export default function Clients() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200">
+                <div className="bg-dark-card p-6 rounded-lg border border-gray-700/30">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm text-gray-600 mb-1">Total Clients</p>
-                            <p className="text-3xl font-bold text-purple-700">{stats.total}</p>
+                            <p className="text-sm text-white/60 mb-1">Total Clients</p>
+                            <p className="text-3xl font-bold text-white">{stats.total}</p>
                         </div>
-                        <div className="bg-purple-200 p-3 rounded-full">
-                            <Users size={24} className="text-purple-700" />
+                        <div className="bg-purple-600/20 p-3 rounded-full">
+                            <Users size={24} className="text-purple-400" />
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg border border-green-200">
+                <div className="bg-dark-card p-6 rounded-lg border border-gray-700/30">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm text-gray-600 mb-1">Active Clients</p>
-                            <p className="text-3xl font-bold text-green-700">{stats.active}</p>
-                            <p className="text-xs text-gray-600 mt-1">With assigned trainer</p>
+                            <p className="text-sm text-white/60 mb-1">Active Clients</p>
+                            <p className="text-3xl font-bold text-white">{stats.active}</p>
+                            <p className="text-xs text-white/40 mt-1">With assigned trainer</p>
                         </div>
-                        <div className="bg-green-200 p-3 rounded-full">
-                            <UserCheck size={24} className="text-green-700" />
+                        <div className="bg-green-600/20 p-3 rounded-full">
+                            <UserCheck size={24} className="text-green-400" />
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-lg border border-yellow-200">
+                <div className="bg-dark-card p-6 rounded-lg border border-gray-700/30">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm text-gray-600 mb-1">Unassigned</p>
-                            <p className="text-3xl font-bold text-yellow-700">{stats.unassigned}</p>
-                            <p className="text-xs text-gray-600 mt-1">Need trainer</p>
+                            <p className="text-sm text-white/60 mb-1">Unassigned</p>
+                            <p className="text-3xl font-bold text-white">{stats.unassigned}</p>
+                            <p className="text-xs text-white/40 mt-1">Need trainer</p>
                         </div>
-                        <div className="bg-yellow-200 p-3 rounded-full">
-                            <UserX size={24} className="text-yellow-700" />
+                        <div className="bg-yellow-600/20 p-3 rounded-full">
+                            <UserX size={24} className="text-yellow-400" />
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200">
+                <div className="bg-dark-card p-6 rounded-lg border border-gray-700/30">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm text-gray-600 mb-1">Progress Entries</p>
-                            <p className="text-3xl font-bold text-blue-700">{stats.progressEntries}</p>
-                            <p className="text-xs text-gray-600 mt-1">Total records</p>
+                            <p className="text-sm text-white/60 mb-1">Progress Entries</p>
+                            <p className="text-3xl font-bold text-white">{stats.progressEntries}</p>
+                            <p className="text-xs text-white/40 mt-1">Total records</p>
                         </div>
-                        <div className="bg-blue-200 p-3 rounded-full">
-                            <TrendingUp size={24} className="text-blue-700" />
+                        <div className="bg-blue-600/20 p-3 rounded-full">
+                            <TrendingUp size={24} className="text-blue-400" />
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Filters */}
-            <div className="bg-white rounded-lg shadow-md p-4">
+            <div className="bg-dark-card rounded-lg shadow-md p-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                     {/* Search */}
                     <div className="relative">
@@ -263,7 +262,7 @@ export default function Clients() {
                             placeholder="Search clients..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="w-full pl-10 pr-4 py-2 bg-dark-input border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         />
                     </div>
 
@@ -271,7 +270,7 @@ export default function Clients() {
                     <select
                         value={trainerFilter}
                         onChange={(e) => setTrainerFilter(e.target.value)}
-                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="px-4 py-2 bg-dark-input border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     >
                         <option value="all">All Trainers</option>
                         <option value="unassigned">Unassigned</option>
@@ -286,7 +285,7 @@ export default function Clients() {
                     <select
                         value={activityFilter}
                         onChange={(e) => setActivityFilter(e.target.value)}
-                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="px-4 py-2 bg-dark-input border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     >
                         <option value="all">All Activity Levels</option>
                         {ACTIVITY_LEVELS.map((level) => (
@@ -300,7 +299,7 @@ export default function Clients() {
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
-                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="px-4 py-2 bg-dark-input border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     >
                         <option value="all">All Status</option>
                         <option value="active">Active (Has Trainer)</option>
@@ -311,7 +310,7 @@ export default function Clients() {
                     <select
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="px-4 py-2 bg-dark-input border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     >
                         <option value="name">Sort by Name</option>
                         <option value="trainer">Sort by Trainer</option>
@@ -323,38 +322,38 @@ export default function Clients() {
             </div>
 
             {/* Clients Table */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div className="bg-dark-card rounded-lg shadow-md overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full">
-                        <thead className="bg-gray-50 border-b border-gray-200">
+                        <thead className="bg-gray-800/40 border-b border-gray-700/30">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
                                     Client
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
                                     Trainer
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
                                     Activity Level
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
                                     Current Stats
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-white/60 uppercase tracking-wider">
                                     Progress
                                 </th>
-                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-white/60 uppercase tracking-wider">
                                     Actions
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
+                        <tbody className="divide-y divide-gray-700/30">
                             {filteredClients.length === 0 ? (
                                 <tr>
                                     <td colSpan={6} className="px-6 py-12 text-center">
                                         <Users size={48} className="mx-auto text-gray-400 mb-4" />
-                                        <p className="text-gray-600 text-lg">No clients found</p>
-                                        <p className="text-gray-500 text-sm mt-1">
+                                        <p className="text-white/80 text-lg">No clients found</p>
+                                        <p className="text-white/60 text-sm mt-1">
                                             {searchTerm || trainerFilter !== "all" || activityFilter !== "all" || statusFilter !== "all"
                                                 ? "Try adjusting your filters"
                                                 : "No clients have been created yet"}
@@ -366,33 +365,33 @@ export default function Clients() {
                                     const bmiCategory = getBMICategory(client.latestProgress?.bmi || null);
 
                                     return (
-                                        <tr key={client.id} className="hover:bg-gray-50 transition-colors">
+                                        <tr key={client.id} className="hover:bg-gray-700/20 transition-colors">
                                             <td className="px-6 py-4">
                                                 <div>
-                                                    <p className="font-medium text-gray-900">{client.user.name}</p>
-                                                    <p className="text-sm text-gray-600">{client.user.email}</p>
+                                                    <p className="font-medium text-white">{client.user.name}</p>
+                                                    <p className="text-sm text-white/60">{client.user.email}</p>
                                                     {client.goals && (
-                                                        <p className="text-xs text-gray-500 mt-1 line-clamp-1">{client.goals}</p>
+                                                        <p className="text-xs text-white/40 mt-1 line-clamp-1">{client.goals}</p>
                                                     )}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
                                                 {client.trainer ? (
                                                     <div>
-                                                        <p className="font-medium text-gray-900">{client.trainer.user.name}</p>
+                                                        <p className="font-medium text-white">{client.trainer.user.name}</p>
                                                         {client.trainer.specialty && (
-                                                            <p className="text-xs text-purple-600">{client.trainer.specialty}</p>
+                                                            <p className="text-xs text-purple-400">{client.trainer.specialty}</p>
                                                         )}
                                                     </div>
                                                 ) : (
-                                                    <span className="inline-flex px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
+                                                    <span className="inline-flex px-2 py-1 text-xs font-medium bg-yellow-600/20 text-yellow-400 rounded-full">
                                                         Unassigned
                                                     </span>
                                                 )}
                                             </td>
                                             <td className="px-6 py-4">
                                                 {client.activityLevel ? (
-                                                    <span className="inline-flex px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                                                    <span className="inline-flex px-2 py-1 text-xs font-medium bg-blue-600/20 text-blue-400 rounded-full">
                                                         {client.activityLevel}
                                                     </span>
                                                 ) : (
@@ -403,14 +402,14 @@ export default function Clients() {
                                                 {client.latestProgress ? (
                                                     <div className="text-sm">
                                                         {client.latestProgress.weight && (
-                                                            <p className="text-gray-900">
+                                                            <p className="text-white">
                                                                 <span className="font-medium">{client.latestProgress.weight}</span> kg
                                                             </p>
                                                         )}
                                                         {client.latestProgress.bmi && (
                                                             <div className="flex items-center gap-1 mt-1">
-                                                                <span className="text-gray-600">BMI:</span>
-                                                                <span className="font-medium text-gray-900">
+                                                                <span className="text-white/60">BMI:</span>
+                                                                <span className="font-medium text-white">
                                                                     {client.latestProgress.bmi.toFixed(1)}
                                                                 </span>
                                                                 {bmiCategory && (
@@ -428,31 +427,31 @@ export default function Clients() {
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
                                                     <TrendingUp size={16} className="text-gray-400" />
-                                                    <p className="font-medium text-gray-900">
+                                                    <p className="font-medium text-white">
                                                         {client._count?.progressRecords || 0}
                                                     </p>
-                                                    <span className="text-xs text-gray-500">records</span>
+                                                    <span className="text-xs text-white/60">records</span>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <button
                                                         onClick={() => handleViewDetails(client)}
-                                                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                        className="p-2 text-blue-400 hover:bg-blue-600/20 rounded-lg transition-colors"
                                                         title="View Details"
                                                     >
                                                         <Eye size={18} />
                                                     </button>
                                                     <button
                                                         onClick={() => handleEdit(client)}
-                                                        className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                                                        className="p-2 text-orange-400 hover:bg-orange-600/20 rounded-lg transition-colors"
                                                         title="Edit"
                                                     >
                                                         <Edit size={18} />
                                                     </button>
                                                     <button
                                                         onClick={() => handleAssignTrainer(client)}
-                                                        className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                                        className="p-2 text-green-400 hover:bg-green-600/20 rounded-lg transition-colors"
                                                         title="Assign Trainer"
                                                     >
                                                         <UserPlus size={18} />
@@ -467,7 +466,7 @@ export default function Clients() {
                                                             </button>
                                                             <button
                                                                 onClick={() => setDeleteConfirm(null)}
-                                                                className="px-3 py-1 bg-gray-200 text-gray-700 rounded text-xs hover:bg-gray-300"
+                                                                className="px-3 py-1 bg-gray-600 text-white rounded text-xs hover:bg-gray-700"
                                                             >
                                                                 Cancel
                                                             </button>
@@ -475,7 +474,7 @@ export default function Clients() {
                                                     ) : (
                                                         <button
                                                             onClick={() => setDeleteConfirm(client.id)}
-                                                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                            className="p-2 text-red-400 hover:bg-red-600/20 rounded-lg transition-colors"
                                                             title="Delete"
                                                         >
                                                             <Trash2 size={18} />

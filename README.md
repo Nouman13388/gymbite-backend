@@ -1,137 +1,1193 @@
-# GymBite Backend API 🏋️‍♀️
+# GymBite - Complete Fitness Management Platform 🏋️‍♀️# GymBite - Complete Fitness Management Platform 🏋️‍♀️
 
-**Status**: ✅ **100% COMPLETE & PRODUCTION READY**  
-**Version**: 3.2.0  
-**Last Updated**: November 6, 2025
-
-Backend API for GymBite - An AI-powered fitness management platform that connects clients and trainers through personalized meal plans, workout routines, and **real-time chat communication**. This API powers a Flutter mobile application with role-based access control, push notifications, Firestore integration, and administrative analytics.
-
-## 🎉 Latest Updates (v3.2.0 - November 6, 2025)
-
-### Progress Tracking API Enhancement
-
-**Dashboard Integration** - Progress API updated to support dashboard with simplified schema  
-**Auto-calculated BMI** - Backend automatically calculates BMI from weight  
-**Auto-generated Date** - Progress date automatically set to current timestamp  
-**Field Mapping** - Body fat & muscle mass mapped to workoutPerformance for backward compatibility
-
-**New Request Schema:**
-
-```json
-{
-  "clientId": 2,
-  "weight": 75.5,
-  "bodyFat": 18.5,
-  "muscleMass": 55.2,
-  "notes": "Feeling stronger!"
-}
-```
-
-See [Progress Tracking](#progress-tracking-5-endpoints---updated-nov-6-2025) section for complete API details.
-
-### Previous Updates (v3.1.0 - October 27, 2025)
-
-**Chat Room Auto-Creation** - CHAT appointments automatically create Firestore chat rooms  
-**Chat Push Notifications** - FCM notifications for chat messages via `/api/notifications/send-chat`  
-**User-to-Firestore Sync** - PostgreSQL users automatically synced to Firestore for real-time features  
-**Hybrid Database Strategy** - PostgreSQL for relational data + Firestore for real-time chat
-
-See [Real-Time Features](#real-time-features-firestore-integration) section below for detailed information.
+A modern, full-stack fitness management platform connecting trainers and clients through personalized workout plans, meal tracking, real-time chat, and push notifications. Built with TypeScript, Express, Prisma, PostgreSQL, Firestore, and React.A modern, full-stack fitness management platform connecting trainers and clients through personalized workout plans, meal tracking, real-time chat, and push notifications. Built with TypeScript, Express, Prisma, PostgreSQL, Firestore, and React.
 
 ---
 
-## 📊 Quick Stats
+## 📦 What's Included## 📦 What's Included
 
-- **Total API Endpoints**: 50 (2 new chat endpoints added)
-- **Database Models**: 11 (Consultation removed, merged into Appointment)
-- **Firestore Collections**: 2 (users, chat_rooms)
-- **Test Coverage**: 100% (All features tested)
-- **TypeScript Build**: 0 Errors
-- **Documentation**: Complete
-- **Authentication**: Firebase Admin SDK
-- **Notifications**: Firebase Cloud Messaging (FCM)
-- **Real-Time Database**: Firestore
-- **Mobile Client**: Flutter 3.x (iOS & Android)
-- **Production URL**: `https://gymbite-backend.vercel.app/api`
+This repository contains:This repository contains:
+
+- **Backend API** - Express.js REST API with TypeScript- **Admin Dashboard** - React + Vite frontend for managing the platform
+
+- **Admin Dashboard** - React + Vite frontend for managing the platform
+
+- **Database** - PostgreSQL with Prisma ORM + Firestore for real-time features
+
+- **Authentication** - Firebase Admin SDK
+
+- **Push Notifications** - Firebase Cloud Messaging (FCM)
+
+- **Real-Time Chat** - Firestore integration
 
 ---
 
-## 🚀 Recent Changes (v3.0.0)
+## 🎯 Key Features
 
-### WorkoutPlan API - Enhanced with 7 Field Changes
+### Backend API- ✅ 50+ RESTful API endpoints
 
-**Previous Structure:**
+- ✅ Role-based access control (Admin, Trainer, Client)
 
-```typescript
-{
-  id: number;
-  userId: number;
-  name: string; // ❌ Basic field
-  exercises: string; // ❌ Comma-separated string
-  createdAt: DateTime;
-  updatedAt: DateTime;
+- ✅ 50+ RESTful API endpoints- ✅ Firebase authentication integration
+
+- ✅ Role-based access control (Admin, Trainer, Client)- ✅ Push notifications via FCM
+
+- ✅ Firebase authentication integration- ✅ Real-time chat rooms with Firestore
+
+- ✅ Push notifications via FCM- ✅ Comprehensive error handling
+
+- ✅ Real-time chat rooms with Firestore- ✅ Request validation with Zod
+
+- ✅ Comprehensive error handling- ✅ TypeScript for type safety
+
+- ✅ Request validation with Zod
+
+- ✅ TypeScript for type safety### Admin Dashboard
+
+- ✅ Modern dark-themed UI
+
+### Admin Dashboard- ✅ User management (Users, Trainers, Clients)
+
+- ✅ Workout & Meal plan management
+
+- ✅ Modern dark-themed UI- ✅ Appointment scheduling
+
+- ✅ User management (Users, Trainers, Clients)- ✅ Progress tracking & analytics
+
+- ✅ Workout & Meal plan management- ✅ Notification system with templates
+
+- ✅ Appointment scheduling- ✅ Real-time search functionality
+
+- ✅ Progress tracking & analytics- ✅ Feedback management
+
+- ✅ Notification system with templates- ✅ Settings & profile pages
+
+- ✅ Real-time search functionality
+
+- ✅ Feedback management---
+
+- ✅ Settings & profile pages
+
+## 🚀 Quick Start
+
+### Prerequisites- PostgreSQL database
+
+- Firebase project (for auth & notifications)
+
+- Node.js 18+ and npm
+
+- PostgreSQL database### Installation
+
+- Firebase project (for auth & notifications)
+
+1. **Clone the repository**
+
+### Installation ```bash
+
+git clone https://github.com/Nouman13388/gymbite-backend.git
+
+1. **Clone the repository** cd gymbite-backend
+
+   ````
+
+   ```bash
+
+   git clone https://github.com/Nouman13388/gymbite-backend.git2. **Install backend dependencies**
+
+   cd gymbite-backend   ```bash
+
+   ```   npm install
+
+   ````
+
+2. **Install backend dependencies**
+
+3. **Install dashboard dependencies**
+
+   `bash   `bash
+
+   npm install cd dashboard
+
+   ```npm install
+
+   cd ..
+
+   ```
+
+4. **Install dashboard dependencies** ```
+
+   ````bash4. **Set up environment variables**
+
+   cd dashboard
+
+   npm install   Create `.env` in root:
+
+   cd ..   ```bash
+
+   ```   DATABASE_URL="postgresql://user:password@localhost:5432/gymbite"
+
+   PORT=3000
+
+   ````
+
+5. **Set up environment variables** NODE_ENV=development
+
+   CORS_ORIGIN=http://localhost:5173
+
+   Create `.env` in root:
+
+   # Firebase Admin SDK
+
+   ````bash FIREBASE_PROJECT_ID=your_project_id
+
+   DATABASE_URL="postgresql://user:password@localhost:5432/gymbite"   FIREBASE_CLIENT_EMAIL=your_service_account_email
+
+   PORT=3000   FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
+
+   NODE_ENV=development   ```
+
+   CORS_ORIGIN=http://localhost:5173
+
+      Create `dashboard/.env`:
+
+   # Firebase Admin SDK   ```bash
+
+   FIREBASE_PROJECT_ID=your_project_id   VITE_API_URL=http://localhost:3000
+
+   FIREBASE_CLIENT_EMAIL=your_service_account_email
+
+   FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"   # Firebase Client SDK
+
+   ```   VITE_FIREBASE_API_KEY=your_api_key
+
+   VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+
+   Create `dashboard/.env`:   VITE_FIREBASE_PROJECT_ID=your_project_id
+
+   VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+
+   ```bash   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+
+   VITE_API_URL=http://localhost:3000   VITE_FIREBASE_APP_ID=your_app_id
+
+   ````
+
+   # Firebase Client SDK
+
+   VITE_FIREBASE_API_KEY=your_api_key5. **Run database migrations**
+
+   VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com ```bash
+
+   VITE_FIREBASE_PROJECT_ID=your_project_id npx prisma migrate deploy
+
+   VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com npx prisma generate
+
+   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id ```
+
+   VITE_FIREBASE_APP_ID=your_app_id
+
+   ```6. **Start development servers**
+
+   ```
+
+6. **Run database migrations** Terminal 1 - Backend:
+
+   ````bash
+
+   ```bash   npm run dev
+
+   npx prisma migrate deploy   ```
+
+   npx prisma generate
+
+   ```   Terminal 2 - Dashboard:
+
+   ```bash
+
+   ````
+
+7. **Start development servers** cd dashboard
+
+   npm run dev
+
+   Terminal 1 - Backend: ```
+
+   ````bash7. **Access the application**
+
+   npm run dev   - Dashboard: http://localhost:5173
+
+   ```   - API: http://localhost:3000/api
+
+
+
+   Terminal 2 - Dashboard:---
+
+
+
+   ```bash## 📚 API Documentation
+
+   cd dashboard
+
+   npm run dev### Authentication
+
+   ````
+
+All API endpoints require Firebase authentication token in the Authorization header:
+
+7. **Access the application**```
+
+   - Dashboard: <http://localhost:5173>Authorization: Bearer <firebase_id_token>
+
+   - API: <http://localhost:3000/api>```
+
+---### Base URL
+
+- Development: `http://localhost:3000/api`
+
+## 📚 API Documentation- Production: `https://gymbite-backend.vercel.app/api`
+
+### Authentication### API Endpoints Overview
+
+All API endpoints require Firebase authentication token in the Authorization header:#### Users (7 endpoints)
+
+- `GET /users` - Get all users
+
+```http- `GET /users/:id` - Get user by ID
+
+Authorization: Bearer <firebase_id_token>- `POST /users` - Create new user
+
+```- `PUT /users/:id` - Update user
+
+- `DELETE /users/:id` - Delete user
+
+### Base URL- `GET /users/me` - Get current authenticated user
+
+- `POST /users/sync-firestore` - Sync user to Firestore
+
+- Development: `http://localhost:3000/api`
+
+- Production: `https://gymbite-backend.vercel.app/api`#### Trainers (5 endpoints)
+
+- `GET /trainers` - Get all trainers
+
+### API Endpoints Overview- `GET /trainers/:id` - Get trainer details
+
+- `POST /trainers` - Create trainer
+
+#### Users (7 endpoints)- `PUT /trainers/:id` - Update trainer
+
+- `DELETE /trainers/:id` - Delete trainer
+
+- `GET /users` - Get all users
+
+- `GET /users/:id` - Get user by ID#### Clients (5 endpoints)
+
+- `POST /users` - Create new user- `GET /clients` - Get all clients
+
+- `PUT /users/:id` - Update user- `GET /clients/:id` - Get client details
+
+- `DELETE /users/:id` - Delete user- `POST /clients` - Create client
+
+- `GET /users/me` - Get current authenticated user- `PUT /clients/:id` - Update client
+
+- `POST /users/sync-firestore` - Sync user to Firestore- `DELETE /clients/:id` - Delete client
+
+#### Trainers (5 endpoints)#### Workout Plans (5 endpoints)
+
+- `GET /workout-plans` - Get all workout plans
+
+- `GET /trainers` - Get all trainers- `GET /workout-plans/:id` - Get workout plan details
+
+- `GET /trainers/:id` - Get trainer details- `POST /workout-plans` - Create workout plan
+
+- `POST /trainers` - Create trainer- `PUT /workout-plans/:id` - Update workout plan
+
+- `PUT /trainers/:id` - Update trainer- `DELETE /workout-plans/:id` - Delete workout plan
+
+- `DELETE /trainers/:id` - Delete trainer
+
+#### Meal Plans (5 endpoints)
+
+#### Clients (5 endpoints)- `GET /meal-plans` - Get all meal plans
+
+- `GET /meal-plans/:id` - Get meal plan details
+
+- `GET /clients` - Get all clients- `POST /meal-plans` - Create meal plan
+
+- `GET /clients/:id` - Get client details- `PUT /meal-plans/:id` - Update meal plan
+
+- `POST /clients` - Create client- `DELETE /meal-plans/:id` - Delete meal plan
+
+- `PUT /clients/:id` - Update client
+
+- `DELETE /clients/:id` - Delete client#### Appointments (6 endpoints)
+
+- `GET /appointments` - Get all appointments
+
+#### Workout Plans (5 endpoints)- `GET /appointments/:id` - Get appointment details
+
+- `POST /appointments` - Create appointment
+
+- `GET /workout-plans` - Get all workout plans- `PUT /appointments/:id` - Update appointment
+
+- `GET /workout-plans/:id` - Get workout plan details- `DELETE /appointments/:id` - Delete appointment
+
+- `POST /workout-plans` - Create workout plan- `PATCH /appointments/:id/status` - Update appointment status
+
+- `PUT /workout-plans/:id` - Update workout plan
+
+- `DELETE /workout-plans/:id` - Delete workout plan#### Progress Tracking (5 endpoints)
+
+- `GET /progress` - Get all progress records
+
+#### Meal Plans (5 endpoints)- `GET /progress/:id` - Get progress record
+
+- `POST /progress` - Create progress record
+
+- `GET /meal-plans` - Get all meal plans- `PUT /progress/:id` - Update progress record
+
+- `GET /meal-plans/:id` - Get meal plan details- `DELETE /progress/:id` - Delete progress record
+
+- `POST /meal-plans` - Create meal plan
+
+- `PUT /meal-plans/:id` - Update meal plan#### Notifications (5 endpoints)
+
+- `DELETE /meal-plans/:id` - Delete meal plan- `GET /notifications` - Get all notifications
+
+- `POST /notifications/broadcast` - Send to all users
+
+#### Appointments (6 endpoints)- `POST /notifications/role/:role` - Send to role
+
+- `POST /notifications/user/:userId` - Send to specific user
+
+- `GET /appointments` - Get all appointments- `POST /notifications/send-chat` - Send chat notification
+
+- `GET /appointments/:id` - Get appointment details
+
+- `POST /appointments` - Create appointment#### Feedback (5 endpoints)
+
+- `PUT /appointments/:id` - Update appointment- `GET /feedback` - Get all feedback
+
+- `DELETE /appointments/:id` - Delete appointment- `GET /feedback/:id` - Get feedback details
+
+- `PATCH /appointments/:id/status` - Update appointment status- `POST /feedback` - Submit feedback
+
+- `PUT /feedback/:id` - Update feedback
+
+#### Progress Tracking (5 endpoints)- `DELETE /feedback/:id` - Delete feedback
+
+- `GET /progress` - Get all progress records#### Analytics (2 endpoints)
+
+- `GET /progress/:id` - Get progress record- `GET /analytics/dashboard` - Dashboard statistics
+
+- `POST /progress` - Create progress record- `GET /analytics/user-activity` - User activity metrics
+
+- `PUT /progress/:id` - Update progress record
+
+- `DELETE /progress/:id` - Delete progress record#### Health Check
+
+- `GET /health` - API health status
+
+#### Notifications (5 endpoints)
+
+---
+
+- `GET /notifications` - Get all notifications
+
+- `POST /notifications/broadcast` - Send to all users## 🗄️ Database Schema
+
+- `POST /notifications/role/:role` - Send to role
+
+- `POST /notifications/user/:userId` - Send to specific user### PostgreSQL Models
+
+- `POST /notifications/send-chat` - Send chat notification
+
+````prisma
+
+#### Feedback (5 endpoints)model User {
+
+  id            Int       @id @default(autoincrement())
+
+- `GET /feedback` - Get all feedback  email         String    @unique
+
+- `GET /feedback/:id` - Get feedback details  firebaseUid   String    @unique
+
+- `POST /feedback` - Submit feedback  firstName     String
+
+- `PUT /feedback/:id` - Update feedback  lastName      String
+
+- `DELETE /feedback/:id` - Delete feedback  role          Role      @default(CLIENT)
+
+  deviceToken   String?
+
+#### Analytics (2 endpoints)  createdAt     DateTime  @default(now())
+
+  updatedAt     DateTime  @updatedAt
+
+- `GET /analytics/dashboard` - Dashboard statistics}
+
+- `GET /analytics/user-activity` - User activity metrics
+
+model Trainer {
+
+#### Health Check  id              Int       @id @default(autoincrement())
+
+  name            String
+
+- `GET /health` - API health status  email           String    @unique
+
+  specialization  String?
+
+---  bio             String?
+
+  imageUrl        String?
+
+## 🗄️ Database Schema  createdAt       DateTime  @default(now())
+
+  updatedAt       DateTime  @updatedAt
+
+### PostgreSQL Models}
+
+
+
+```prismamodel Client {
+
+model User {  id            Int       @id @default(autoincrement())
+
+  id            Int       @id @default(autoincrement())  name          String
+
+  email         String    @unique  email         String    @unique
+
+  firebaseUid   String    @unique  goal          String?
+
+  firstName     String  age           Int?
+
+  lastName      String  weight        Float?
+
+  role          Role      @default(CLIENT)  height        Float?
+
+  deviceToken   String?  imageUrl      String?
+
+  createdAt     DateTime  @default(now())  trainerId     Int?
+
+  updatedAt     DateTime  @updatedAt  createdAt     DateTime  @default(now())
+
+}  updatedAt     DateTime  @updatedAt
+
 }
-```
 
-**New Enhanced Structure:**
+model Trainer {
 
-```typescript
-{
-  id: number
-  userId: number
-  title: string             // ✅ Renamed from "name"
-  description?: string      // ✅ NEW - Detailed program description
-  category: string          // ✅ NEW - "Strength Training", "Cardio", etc.
-  duration: number          // ✅ NEW - Duration in minutes (default: 30)
-  difficulty: string        // ✅ NEW - "Beginner", "Intermediate", "Advanced"
-  imageUrl?: string         // ✅ NEW - Program cover image
-  exercises: Json           // ✅ CHANGED - Structured JSON array
-  createdAt: DateTime
-  updatedAt: DateTime
+  id              Int       @id @default(autoincrement())model WorkoutPlan {
+
+  name            String  id          Int       @id @default(autoincrement())
+
+  email           String    @unique  userId      Int
+
+  specialization  String?  title       String
+
+  bio             String?  description String?
+
+  imageUrl        String?  category    String
+
+  createdAt       DateTime  @default(now())  duration    Int       @default(30)
+
+  updatedAt       DateTime  @updatedAt  difficulty  String
+
+}  imageUrl    String?
+
+  exercises   Json
+
+model Client {  createdAt   DateTime  @default(now())
+
+  id            Int       @id @default(autoincrement())  updatedAt   DateTime  @updatedAt
+
+  name          String}
+
+  email         String    @unique
+
+  goal          String?model MealPlan {
+
+  age           Int?  id          Int       @id @default(autoincrement())
+
+  weight        Float?  userId      Int
+
+  height        Float?  name        String
+
+  imageUrl      String?  description String?
+
+  trainerId     Int?  meals       Json
+
+  createdAt     DateTime  @default(now())  createdAt   DateTime  @default(now())
+
+  updatedAt     DateTime  @updatedAt  updatedAt   DateTime  @updatedAt
+
+}}
+
+
+
+model WorkoutPlan {model Appointment {
+
+  id          Int       @id @default(autoincrement())  id          Int             @id @default(autoincrement())
+
+  userId      Int  clientId    Int
+
+  title       String  trainerId   Int
+
+  description String?  type        AppointmentType
+
+  category    String  dateTime    DateTime
+
+  duration    Int       @default(30)  duration    Int             @default(60)
+
+  difficulty  String  status      String          @default("SCHEDULED")
+
+  imageUrl    String?  notes       String?
+
+  exercises   Json  chatRoomId  String?
+
+  createdAt   DateTime  @default(now())  createdAt   DateTime        @default(now())
+
+  updatedAt   DateTime  @updatedAt  updatedAt   DateTime        @updatedAt
+
+}}
+
+
+
+model MealPlan {model Progress {
+
+  id          Int       @id @default(autoincrement())  id          Int       @id @default(autoincrement())
+
+  userId      Int  clientId    Int
+
+  name        String  date        DateTime  @default(now())
+
+  description String?  weight      Float
+
+  meals       Json  bmi         Float
+
+  createdAt   DateTime  @default(now())  bodyFat     Float?
+
+  updatedAt   DateTime  @updatedAt  muscleMass  Float?
+
+}  notes       String?
+
+  createdAt   DateTime  @default(now())
+
+model Appointment {  updatedAt   DateTime  @updatedAt
+
+  id          Int             @id @default(autoincrement())}
+
+  clientId    Int
+
+  trainerId   Intmodel Notification {
+
+  type        AppointmentType  id               Int       @id @default(autoincrement())
+
+  dateTime    DateTime  userId           Int
+
+  duration    Int             @default(60)  title            String
+
+  status      String          @default("SCHEDULED")  message          String
+
+  notes       String?  notificationType String
+
+  chatRoomId  String?  status           String    @default("UNREAD")
+
+  createdAt   DateTime        @default(now())  createdAt        DateTime  @default(now())
+
+  updatedAt   DateTime        @updatedAt}
+
 }
-```
 
-**Exercise JSON Structure:**
+model Feedback {
 
-```json
-[
-  {
-    "name": "Barbell Squat",
-    "description": "Perform with proper depth and form",
-    "sets": 4,
-    "reps": 8,
-    "restTime": 120,
-    "videoUrl": "https://youtube.com/squat-form",
-    "imageUrl": "assets/images/squat.png"
-  },
-  {
-    "name": "Bench Press",
-    "description": "Keep shoulder blades retracted",
-    "sets": 4,
-    "reps": 8,
-    "restTime": 90,
-    "videoUrl": "https://youtube.com/bench-form",
-    "imageUrl": "assets/images/bench.png"
+model Progress {  id          Int       @id @default(autoincrement())
+
+  id          Int       @id @default(autoincrement())  userId      Int
+
+  clientId    Int  rating      Int
+
+  date        DateTime  @default(now())  comment     String?
+
+  weight      Float  category    String
+
+  bmi         Float  status      String    @default("PENDING")
+
+  bodyFat     Float?  createdAt   DateTime  @default(now())
+
+  muscleMass  Float?  updatedAt   DateTime  @updatedAt
+
+  notes       String?}
+
+  createdAt   DateTime  @default(now())```
+
+  updatedAt   DateTime  @updatedAt
+
+}### Firestore Collections
+
+
+
+model Notification {```typescript
+
+  id               Int       @id @default(autoincrement())// users collection
+
+  userId           Int{
+
+  title            String  uid: string,
+
+  message          String  email: string,
+
+  notificationType String  firstName: string,
+
+  status           String    @default("UNREAD")  lastName: string,
+
+  createdAt        DateTime  @default(now())  role: string,
+
+}  deviceToken?: string
+
+}
+
+model Feedback {
+
+  id          Int       @id @default(autoincrement())// chat_rooms collection
+
+  userId      Int{
+
+  rating      Int  id: string,
+
+  comment     String?  appointmentId: number,
+
+  category    String  clientId: number,
+
+  status      String    @default("PENDING")  trainerId: number,
+
+  createdAt   DateTime  @default(now())  participants: string[],
+
+  updatedAt   DateTime  @updatedAt  createdAt: Timestamp,
+
+}  lastMessage?: {
+
+```    text: string,
+
+    senderId: string,
+
+### Firestore Collections    timestamp: Timestamp
+
   }
-]
-```
+
+```typescript}
+
+// users collection```
+
+{
+
+  uid: string,---
+
+  email: string,
+
+  firstName: string,## 🎨 Dashboard Features
+
+  lastName: string,
+
+  role: string,### Implemented Pages
+
+  deviceToken?: string1. **Dashboard** - Overview with stats and recent activity
+
+}2. **Users** - User management with role-based filtering
+
+3. **Trainers** - Trainer profiles and specializations
+
+// chat_rooms collection4. **Clients** - Client management and progress tracking
+
+{5. **Workouts** - Workout plan creation and management
+
+  id: string,6. **Meals** - Meal plan management
+
+  appointmentId: number,7. **Appointments** - Scheduling and calendar view
+
+  clientId: number,8. **Progress** - Client progress tracking and analytics
+
+  trainerId: number,9. **Notifications** - Send notifications with templates
+
+  participants: string[],10. **Feedback** - Review and manage user feedback
+
+  createdAt: Timestamp,11. **Analytics** - Platform statistics and insights
+
+  lastMessage?: {12. **Settings** - Database statistics and configuration
+
+    text: string,13. **Profile** - User profile management
+
+    senderId: string,
+
+    timestamp: Timestamp### UI/UX Features
+
+  }- 🎨 Modern dark theme with consistent styling
+
+}- 🔍 Global search across users, trainers, and clients
+
+```- 🔔 Real-time notification count
+
+- 👤 User menu with profile, settings, and logout
+
+---- 📱 Responsive design
+
+- ⚡ Fast navigation with React Router
+
+## 🎨 Dashboard Features- 🎯 Quick action templates for notifications
+
+- 📊 Interactive charts and statistics
+
+### Implemented Pages
+
+---
+
+1. **Dashboard** - Overview with stats and recent activity
+
+2. **Users** - User management with role-based filtering## � Deployment
+
+3. **Trainers** - Trainer profiles and specializations
+
+4. **Clients** - Client management and progress tracking### Vercel Deployment (Recommended)
+
+5. **Workouts** - Workout plan creation and management
+
+6. **Meals** - Meal plan management#### Backend Deployment
+
+7. **Appointments** - Scheduling and calendar view
+
+8. **Progress** - Client progress tracking and analytics1. **Install Vercel CLI**
+
+9. **Notifications** - Send notifications with templates   ```bash
+
+10. **Feedback** - Review and manage user feedback   npm i -g vercel
+
+11. **Analytics** - Platform statistics and insights   ```
+
+12. **Settings** - Database statistics and configuration
+
+13. **Profile** - User profile management2. **Deploy Backend**
+
+   ```bash
+
+### UI/UX Features   vercel --prod
+
+````
+
+- 🎨 Modern dark theme with consistent styling
+
+- 🔍 Global search across users, trainers, and clients3. **Set Environment Variables in Vercel Dashboard**
+
+- 🔔 Real-time notification count - `DATABASE_URL` - PostgreSQL connection string
+
+- 👤 User menu with profile, settings, and logout - `NODE_ENV=production`
+
+- 📱 Responsive design - `CORS_ORIGIN` - Your dashboard URL
+
+- ⚡ Fast navigation with React Router - Firebase Admin SDK variables
+
+- 🎯 Quick action templates for notifications
+
+- 📊 Interactive charts and statistics4. **Run Migrations**
+
+  ```bash
+
+  ```
+
+--- npx prisma migrate deploy
+
+````
+
+## 🚢 Deployment
+
+#### Dashboard Deployment
+
+### Vercel Deployment (Recommended)
+
+1. **Build and Deploy**
+
+#### Backend Deployment   ```bash
+
+cd dashboard
+
+1. **Install Vercel CLI**   vercel --prod
+
+````
+
+````bash
+
+npm i -g vercel2. **Set Environment Variables**
+
+```   - `VITE_API_URL` - Your backend URL
+
+- All Firebase Client SDK variables
+
+2. **Deploy Backend**
+
+### Post-Deployment Checklist
+
+```bash
+
+vercel --prod- ✅ Backend health check: `https://your-backend.vercel.app/api/health`
+
+```- ✅ Dashboard loads correctly
+
+- ✅ Authentication works
+
+3. **Set Environment Variables in Vercel Dashboard**- ✅ API calls successful
+
+- `DATABASE_URL` - PostgreSQL connection string- ✅ Notifications working
+
+- `NODE_ENV=production`- ✅ Database connections stable
+
+- `CORS_ORIGIN` - Your dashboard URL
+
+- Firebase Admin SDK variables---
+
+
+
+4. **Run Migrations**## 🔒 Security
+
+
+
+```bash- Firebase authentication for all requests
+
+npx prisma migrate deploy- Environment variables for sensitive data
+
+```- Role-based access control
+
+- Input validation with Zod schemas
+
+#### Dashboard Deployment- CORS protection
+
+- SQL injection prevention via Prisma ORM
+
+1. **Build and Deploy**
+
+---
+
+```bash
+
+cd dashboard## 🛠️ Tech Stack
+
+vercel --prod
+
+```### Backend
+
+- **Runtime**: Node.js 18+
+
+2. **Set Environment Variables**- **Framework**: Express.js
+
+- `VITE_API_URL` - Your backend URL- **Language**: TypeScript
+
+- All Firebase Client SDK variables- **Database**: PostgreSQL
+
+- **ORM**: Prisma
+
+### Post-Deployment Checklist- **Real-time**: Firestore
+
+- **Authentication**: Firebase Admin SDK
+
+- ✅ Backend health check: `https://your-backend.vercel.app/api/health`- **Notifications**: Firebase Cloud Messaging
+
+- ✅ Dashboard loads correctly- **Validation**: Zod
+
+- ✅ Authentication works
+
+- ✅ API calls successful### Frontend (Dashboard)
+
+- ✅ Notifications working- **Framework**: React 18
+
+- ✅ Database connections stable- **Build Tool**: Vite
+
+- **Language**: TypeScript
+
+---- **Routing**: React Router v6
+
+- **Styling**: Tailwind CSS v4
+
+## 🔒 Security- **Icons**: Lucide React
+
+- **Forms**: React Hook Form + Zod
+
+- Firebase authentication for all requests- **HTTP Client**: Axios
+
+- Environment variables for sensitive data
+
+- Role-based access control---
+
+- Input validation with Zod schemas
+
+- CORS protection## 📝 Project Structure
+
+- SQL injection prevention via Prisma ORM
+
+````
+
+---gymbite-backend/
+
+├── src/
+
+## 🛠️ Tech Stack│ ├── config/ # Configuration files
+
+│ ├── controllers/ # Request handlers
+
+### Backend│ ├── middleware/ # Auth, validation
+
+│ ├── routes/ # API routes
+
+- **Runtime**: Node.js 18+│ ├── services/ # Business logic
+
+- **Framework**: Express.js│ ├── types/ # TypeScript types
+
+- **Language**: TypeScript│ └── index.ts # Entry point
+
+- **Database**: PostgreSQL├── dashboard/
+
+- **ORM**: Prisma│ ├── src/
+
+- **Real-time**: Firestore│ │ ├── components/ # Reusable components
+
+- **Authentication**: Firebase Admin SDK│ │ ├── pages/ # Page components
+
+- **Notifications**: Firebase Cloud Messaging│ │ ├── views/ # Layout components
+
+- **Validation**: Zod│ │ ├── context/ # React context
+
+│ │ ├── hooks/ # Custom hooks
+
+### Frontend (Dashboard)│ │ ├── services/ # API services
+
+│ │ ├── schemas/ # Validation schemas
+
+- **Framework**: React 18│ │ └── utils/ # Utility functions
+
+- **Build Tool**: Vite│ ├── public/ # Static assets
+
+- **Language**: TypeScript│ └── package.json
+
+- **Routing**: React Router v6├── prisma/
+
+- **Styling**: Tailwind CSS v4│ ├── schema.prisma # Database schema
+
+- **Icons**: Lucide React│ └── migrations/ # Migration history
+
+- **Forms**: React Hook Form + Zod├── vercel.json # Vercel configuration
+
+- **HTTP Client**: Axios└── package.json
+
+````
+
+---
+
+---
+
+## 📝 Project Structure
+
+## 🧪 Testing
+
+```text
+
+gymbite-backend/```bash
+
+├── src/# Run backend in development
+
+│   ├── config/          # Configuration filesnpm run dev
+
+│   ├── controllers/     # Request handlers
+
+│   ├── middleware/      # Auth, validation# Build backend
+
+│   ├── routes/          # API routesnpm run build
+
+│   ├── services/        # Business logic
+
+│   ├── types/           # TypeScript types# Run dashboard development server
+
+│   └── index.ts         # Entry pointcd dashboard && npm run dev
+
+├── dashboard/
+
+│   ├── src/# Build dashboard for production
+
+│   │   ├── components/  # Reusable componentscd dashboard && npm run build
+
+│   │   ├── pages/       # Page components
+
+│   │   ├── views/       # Layout components# Database operations
+
+│   │   ├── context/     # React contextnpx prisma studio          # Database GUI
+
+│   │   ├── hooks/       # Custom hooksnpx prisma migrate dev     # Create migration
+
+│   │   ├── services/    # API servicesnpx prisma generate        # Generate client
+
+│   │   ├── schemas/     # Validation schemas```
+
+│   │   └── utils/       # Utility functions
+
+│   ├── public/          # Static assets---
+
+│   └── package.json
+
+├── prisma/## 📊 API Stats
+
+│   ├── schema.prisma    # Database schema
+
+│   └── migrations/      # Migration history- **Total Endpoints**: 50+
+
+├── vercel.json          # Vercel configuration- **Database Models**: 11
+
+└── package.json- **Firestore Collections**: 2
+
+```- **Authentication**: Required for all endpoints
+
+- **Response Format**: JSON
+
+---- **Error Handling**: Standardized error responses
+
+- **Documentation**: Complete inline comments
+
+## 🧪 Testing
+
+---
+
+```bash
+
+# Run backend in development## 🤝 Contributing
+
+npm run dev
+
+1. Fork the repository
+
+# Build backend2. Create a feature branch
+
+npm run build3. Make your changes
+
+4. Test thoroughly
+
+# Run dashboard development server5. Submit a pull request
+
+cd dashboard && npm run dev
+
+---
+
+# Build dashboard for production
+
+cd dashboard && npm run build## 📄 License
+
+
+
+# Database operationsThis project is private and proprietary.
+
+npx prisma studio          # Database GUI
+
+npx prisma migrate dev     # Create migration---
+
+npx prisma generate        # Generate client
+
+```## 👨‍💻 Author
+
+
+
+---**Nouman13388**
+
+- GitHub: [@Nouman13388](https://github.com/Nouman13388)
+
+## 📊 API Stats
+
+---
+
+- **Total Endpoints**: 50+
+
+- **Database Models**: 11## 🆘 Support
+
+- **Firestore Collections**: 2
+
+- **Authentication**: Required for all endpointsFor issues or questions:
+
+- **Response Format**: JSON1. Check existing issues on GitHub
+
+- **Error Handling**: Standardized error responses2. Create a new issue with detailed description
+
+- **Documentation**: Complete inline comments3. Include error logs and screenshots if applicable
+
+
+
+------
+
+
+
+## 🤝 Contributing**Built with ❤️ for the fitness community**
+
+    "sets": 4,
+
+1. Fork the repository    "reps": 8,
+
+2. Create a feature branch    "restTime": 120,
+
+3. Make your changes    "videoUrl": "https://youtube.com/squat-form",
+
+4. Test thoroughly    "imageUrl": "assets/images/squat.png"
+
+5. Submit a pull request  },
+
+  {
+
+---    "name": "Bench Press",
+
+    "description": "Keep shoulder blades retracted",
+
+## 📄 License    "sets": 4,
+
+    "reps": 8,
+
+This project is private and proprietary.    "restTime": 90,
+
+    "videoUrl": "https://youtube.com/bench-form",
+
+---    "imageUrl": "assets/images/bench.png"
+
+  }
+
+## 👨‍💻 Author]
+
+````
+
+**Nouman13388**
 
 **✅ Backward Compatibility:** The API still accepts `name` field and automatically maps it to `title`
 
+- GitHub: [@Nouman13388](https://github.com/Nouman13388)
+
 **Example Request:**
 
+---
+
 ```json
-{
+
+## 🆘 Support{
+
   "userId": 1,
-  "title": "Advanced Strength Program",
+
+For issues or questions:  "title": "Advanced Strength Program",
+
   "description": "A comprehensive 12-week strength building program",
-  "category": "Strength Training",
-  "duration": 60,
-  "difficulty": "Advanced",
+
+1. Check existing issues on GitHub  "category": "Strength Training",
+
+2. Create a new issue with detailed description  "duration": 60,
+
+3. Include error logs and screenshots if applicable  "difficulty": "Advanced",
+
   "imageUrl": "https://example.com/images/strength.jpg",
-  "exercises": [
+
+---  "exercises": [
+
     {
-      "name": "Barbell Squat",
+
+**Built with ❤️ for the fitness community**      "name": "Barbell Squat",
+
       "description": "Proper depth and form",
       "sets": 4,
       "reps": 8,
@@ -1658,7 +2714,6 @@ export default defineConfig({
 - ✅ Real-time updates
 - ✅ AI-powered meal plan generation
 - ✅ Trainer-client communication
-- 🔄 Offline support (in progress)
 - ✅ AI-powered recommendations (meal plans implemented) //WIP
 
 ### Optional Enhancements
@@ -1718,8 +2773,6 @@ MIT License - See LICENSE file for details
 - Mobile Platforms: iOS & Android (Flutter)
 - Latest Enhancement: WorkoutPlan & Appointment API v3.0.0
 
-**Built with** ❤️ **using:**
-
 **Backend:**
 
 - Node.js + Express
@@ -1737,11 +2790,10 @@ MIT License - See LICENSE file for details
 
 **Web Dashboard:**
 
-- React 18 + Vite
+- React + Vite
 - TypeScript
-- Tailwind CSS v4
-
-**Infrastructure:**
+- Tailwind CSS
+  **Infrastructure:**
 
 - Vercel (Backend)
 - Firebase (Auth + FCM)
@@ -1870,14 +2922,6 @@ npm run db:status
 - [ ] Verify migrations applied successfully
 - [ ] Test API endpoints in production
 
----
-
-**Status**: ✅ **PRODUCTION READY**  
-**Last Updated**: October 21, 2025  
-**API Version**: 3.0.0  
-**Mobile App**: Flutter 3.x (iOS & Android)  
-**Production URL**: `https://gymbite-backend.vercel.app/api`
-
 **Latest Changes (v3.0.0)**:
 
 - ✨ WorkoutPlan API enhanced with 7 new fields
@@ -1885,10 +2929,3 @@ npm run db:status
 - ✨ Consultation model consolidated into Appointments
 - ✅ 100% test coverage maintained (10/10 tests passed)
 - ✅ Zero breaking changes - backward compatible
-
-For questions or support:
-
-- Backend issues: Check server logs and Firebase configuration
-- Mobile app issues: Visit [gym_bite repository](https://github.com/Nouman13388/gym_bite)
-- API integration: Refer to endpoint documentation above
-- Latest changes: See [Recent Changes](#-recent-changes-v300) section

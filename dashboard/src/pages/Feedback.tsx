@@ -158,7 +158,6 @@ export default function Feedback() {
         <div className="p-6 space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold text-gray-900">Feedback & Reviews</h1>
                 <button
                     onClick={fetchFeedbacks}
                     disabled={loading}
@@ -234,10 +233,10 @@ export default function Feedback() {
             </div>
 
             {/* Filters */}
-            <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
+            <div className="bg-dark-card p-6 rounded-lg shadow-md space-y-4">
                 <div className="flex items-center gap-2 mb-4">
-                    <Filter size={20} className="text-gray-600" />
-                    <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+                    <Filter size={20} className="text-gray-400" />
+                    <h2 className="text-lg font-semibold text-white">Filters</h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -252,7 +251,7 @@ export default function Feedback() {
                             placeholder="Search trainer or client..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className="w-full pl-10 pr-4 py-2 bg-dark-input border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
                     </div>
 
@@ -262,7 +261,7 @@ export default function Feedback() {
                         onChange={(e) =>
                             setSelectedTrainerId(e.target.value ? Number(e.target.value) : "")
                         }
-                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="px-4 py-2 bg-dark-input border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                         <option value="">All Trainers</option>
                         {trainers.map((trainer) => (
@@ -278,7 +277,7 @@ export default function Feedback() {
                         onChange={(e) =>
                             setSortBy(e.target.value as "recent" | "highest" | "lowest")
                         }
-                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="px-4 py-2 bg-dark-input border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                         <option value="recent">Most Recent</option>
                         <option value="highest">Highest Rating</option>
@@ -292,8 +291,8 @@ export default function Feedback() {
                                 key={rating}
                                 onClick={() => toggleRating(rating)}
                                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${selectedRatings.includes(rating)
-                                        ? "bg-yellow-500 text-white"
-                                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                    ? "bg-yellow-500 text-white"
+                                    : "bg-gray-700 text-white hover:bg-gray-600"
                                     }`}
                             >
                                 {rating}⭐
@@ -304,16 +303,16 @@ export default function Feedback() {
 
                 {/* Active Filters Summary */}
                 {(selectedTrainerId || selectedRatings.length > 0 || searchTerm) && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2 text-sm text-white/60">
                         <span className="font-medium">Active filters:</span>
-                        {searchTerm && <span className="bg-blue-100 px-2 py-1 rounded">Search: {searchTerm}</span>}
+                        {searchTerm && <span className="bg-blue-600/20 text-blue-400 px-2 py-1 rounded">Search: {searchTerm}</span>}
                         {selectedTrainerId && (
-                            <span className="bg-green-100 px-2 py-1 rounded">
+                            <span className="bg-green-600/20 text-green-400 px-2 py-1 rounded">
                                 Trainer: {trainers.find((t) => t.id === selectedTrainerId)?.name}
                             </span>
                         )}
                         {selectedRatings.length > 0 && (
-                            <span className="bg-yellow-100 px-2 py-1 rounded">
+                            <span className="bg-yellow-600/20 text-yellow-400 px-2 py-1 rounded">
                                 Ratings: {selectedRatings.join(", ")}⭐
                             </span>
                         )}
@@ -323,7 +322,7 @@ export default function Feedback() {
                                 setSelectedTrainerId("");
                                 setSelectedRatings([]);
                             }}
-                            className="text-red-600 hover:text-red-700 font-medium ml-2"
+                            className="text-red-400 hover:text-red-300 font-medium ml-2"
                         >
                             Clear all
                         </button>
@@ -332,59 +331,59 @@ export default function Feedback() {
             </div>
 
             {/* Feedback Table */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div className="bg-dark-card rounded-lg shadow-md overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                    <table className="min-w-full divide-y divide-gray-700/30">
+                        <thead className="bg-gray-800/40">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">
                                     Client
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">
                                     Trainer
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">
                                     Rating
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">
                                     Comment
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">
                                     Date
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">
                                     Actions
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-dark-card divide-y divide-gray-700/30">
                             {loading ? (
                                 <tr>
                                     <td colSpan={6} className="px-6 py-12 text-center">
                                         <RefreshCw className="animate-spin mx-auto text-gray-400" size={32} />
-                                        <p className="text-gray-500 mt-2">Loading feedback...</p>
+                                        <p className="text-white/60 mt-2">Loading feedback...</p>
                                     </td>
                                 </tr>
                             ) : filteredFeedbacks.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                                    <td colSpan={6} className="px-6 py-12 text-center text-white/60">
                                         No feedback found
                                     </td>
                                 </tr>
                             ) : (
                                 filteredFeedbacks.map((feedback) => (
-                                    <tr key={feedback.id} className="hover:bg-gray-50 transition-colors">
+                                    <tr key={feedback.id} className="hover:bg-gray-700/20 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div>
-                                                <p className="font-medium text-gray-900">{feedback.user.name}</p>
-                                                <p className="text-sm text-gray-500">{feedback.user.email}</p>
+                                                <p className="font-medium text-white">{feedback.user.name}</p>
+                                                <p className="text-sm text-white/60">{feedback.user.email}</p>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div>
-                                                <p className="font-medium text-gray-900">{feedback.trainer.name}</p>
+                                                <p className="font-medium text-white">{feedback.trainer.name}</p>
                                                 {feedback.trainer.specialization && (
-                                                    <p className="text-sm text-gray-500">
+                                                    <p className="text-sm text-white/60">
                                                         {feedback.trainer.specialization}
                                                     </p>
                                                 )}
@@ -394,20 +393,20 @@ export default function Feedback() {
                                             <StarRating rating={feedback.rating} size="sm" />
                                         </td>
                                         <td className="px-6 py-4">
-                                            <p className="text-gray-700 truncate max-w-xs">
+                                            <p className="text-white truncate max-w-xs">
                                                 {feedback.comments || (
                                                     <span className="text-gray-400 italic">No comment</span>
                                                 )}
                                             </p>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-white/60">
                                             {format(new Date(feedback.createdAt), "MMM dd, yyyy")}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center gap-2">
                                                 <button
                                                     onClick={() => setSelectedFeedback(feedback)}
-                                                    className="text-blue-600 hover:text-blue-800 transition-colors"
+                                                    className="text-blue-400 hover:text-blue-300 transition-colors"
                                                     title="View Details"
                                                 >
                                                     <Eye size={18} />
@@ -422,7 +421,7 @@ export default function Feedback() {
                                                         </button>
                                                         <button
                                                             onClick={() => setDeleteConfirm(null)}
-                                                            className="px-2 py-1 bg-gray-300 text-gray-700 text-xs rounded hover:bg-gray-400"
+                                                            className="px-2 py-1 bg-gray-600 text-white text-xs rounded hover:bg-gray-700"
                                                         >
                                                             Cancel
                                                         </button>
@@ -430,7 +429,7 @@ export default function Feedback() {
                                                 ) : (
                                                     <button
                                                         onClick={() => setDeleteConfirm(feedback.id)}
-                                                        className="text-red-600 hover:text-red-800 transition-colors"
+                                                        className="text-red-400 hover:text-red-300 transition-colors"
                                                         title="Delete"
                                                     >
                                                         <Trash2 size={18} />

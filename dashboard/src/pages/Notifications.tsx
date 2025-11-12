@@ -148,12 +148,11 @@ export default function Notifications() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="p-6 space-y-6">
             {/* Header */}
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
-                    <p className="text-gray-500 mt-1">Send and manage push notifications</p>
+                    <p className="text-white/60 mt-1">Send and manage push notifications</p>
                 </div>
                 <button
                     onClick={() => setShowForm(!showForm)}
@@ -178,15 +177,15 @@ export default function Notifications() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="bg-dark-card rounded-lg shadow-md p-6">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm font-medium text-gray-600">Sent Today</p>
-                            <p className="text-2xl font-bold text-gray-900 mt-2">{stats.today}</p>
+                            <p className="text-sm font-medium text-white/60">Sent Today</p>
+                            <p className="text-2xl font-bold text-white mt-2">{stats.today}</p>
                         </div>
-                        <div className="bg-blue-100 p-3 rounded-full">
+                        <div className="bg-blue-600/20 p-3 rounded-full">
                             <svg
-                                className="w-6 h-6 text-blue-600"
+                                className="w-6 h-6 text-blue-400"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -202,15 +201,15 @@ export default function Notifications() {
                     </div>
                 </div>
 
-                <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="bg-dark-card rounded-lg shadow-md p-6">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm font-medium text-gray-600">This Week</p>
-                            <p className="text-2xl font-bold text-gray-900 mt-2">{stats.thisWeek}</p>
+                            <p className="text-sm font-medium text-white/60">This Week</p>
+                            <p className="text-2xl font-bold text-white mt-2">{stats.thisWeek}</p>
                         </div>
-                        <div className="bg-green-100 p-3 rounded-full">
+                        <div className="bg-green-600/20 p-3 rounded-full">
                             <svg
-                                className="w-6 h-6 text-green-600"
+                                className="w-6 h-6 text-green-400"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -226,15 +225,15 @@ export default function Notifications() {
                     </div>
                 </div>
 
-                <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="bg-dark-card rounded-lg shadow-md p-6">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm font-medium text-gray-600">Total Sent</p>
-                            <p className="text-2xl font-bold text-gray-900 mt-2">{stats.total}</p>
+                            <p className="text-sm font-medium text-white/60">Total Sent</p>
+                            <p className="text-2xl font-bold text-white mt-2">{stats.total}</p>
                         </div>
-                        <div className="bg-purple-100 p-3 rounded-full">
+                        <div className="bg-purple-600/20 p-3 rounded-full">
                             <svg
-                                className="w-6 h-6 text-purple-600"
+                                className="w-6 h-6 text-purple-400"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -250,15 +249,15 @@ export default function Notifications() {
                     </div>
                 </div>
 
-                <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="bg-dark-card rounded-lg shadow-md p-6">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm font-medium text-gray-600">Read Rate</p>
-                            <p className="text-2xl font-bold text-gray-900 mt-2">{stats.readRate}%</p>
+                            <p className="text-sm font-medium text-white/60">Read Rate</p>
+                            <p className="text-2xl font-bold text-white mt-2">{stats.readRate}%</p>
                         </div>
-                        <div className="bg-orange-100 p-3 rounded-full">
+                        <div className="bg-orange-600/20 p-3 rounded-full">
                             <svg
-                                className="w-6 h-6 text-orange-600"
+                                className="w-6 h-6 text-orange-400"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -277,11 +276,12 @@ export default function Notifications() {
 
             {/* Send Notification Form */}
             {showForm && (
-                <div className="bg-white rounded-lg shadow-md p-6">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                <div className="bg-dark-card rounded-lg shadow-md p-6">
+                    <h2 className="text-xl font-semibold text-white mb-4">
                         {selectedTemplate ? `Send ${selectedTemplate.name}` : "Send New Notification"}
                     </h2>
                     <NotificationForm
+                        selectedTemplate={selectedTemplate}
                         onSuccess={handleFormSuccess}
                         onCancel={() => {
                             setShowForm(false);
@@ -294,7 +294,7 @@ export default function Notifications() {
             {/* Quick Templates */}
             {!showForm && (
                 <div>
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Templates</h2>
+                    <h2 className="text-lg font-semibold text-white/80 mb-4">Quick Templates</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {notificationTemplates.map((template) => (
                             <button
@@ -316,19 +316,19 @@ export default function Notifications() {
             )}
 
             {/* Filters and Search */}
-            <div className="bg-white rounded-lg shadow-md p-4">
+            <div className="bg-dark-card rounded-lg shadow-md p-4">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <input
                         type="text"
                         placeholder="Search notifications..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="px-4 py-2 bg-dark-input border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                     <select
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
-                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="px-4 py-2 bg-dark-input border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                         <option value="all">All Status</option>
                         <option value="UNREAD">Unread</option>
@@ -337,7 +337,7 @@ export default function Notifications() {
                     <select
                         value={filterType}
                         onChange={(e) => setFilterType(e.target.value)}
-                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="px-4 py-2 bg-dark-input border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                         <option value="all">All Types</option>
                         <option value="WORKOUT">Workout</option>
@@ -352,7 +352,7 @@ export default function Notifications() {
                     </select>
                     <button
                         onClick={fetchNotifications}
-                        className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+                        className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors flex items-center justify-center gap-2"
                     >
                         <svg
                             className="w-4 h-4"
@@ -373,47 +373,47 @@ export default function Notifications() {
             </div>
 
             {/* Notifications List */}
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div className="bg-dark-card rounded-lg shadow-md overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                    <table className="min-w-full divide-y divide-gray-700/30">
+                        <thead className="bg-gray-800/40">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">
                                     Type
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">
                                     Recipient
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">
                                     Message
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">
                                     Status
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">
                                     Sent At
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">
                                     Actions
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-dark-card divide-y divide-gray-700/30">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                                    <td colSpan={6} className="px-6 py-12 text-center text-white/60">
                                         Loading notifications...
                                     </td>
                                 </tr>
                             ) : filteredNotifications.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                                    <td colSpan={6} className="px-6 py-12 text-center text-white/60">
                                         No notifications found
                                     </td>
                                 </tr>
                             ) : (
                                 filteredNotifications.map((notification) => (
-                                    <tr key={notification.id} className="hover:bg-gray-50">
+                                    <tr key={notification.id} className="hover:bg-gray-700/20">
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getTypeColor(notification.notificationType)}`}>
                                                 {getTypeIcon(notification.notificationType)} {notification.notificationType}
@@ -421,33 +421,33 @@ export default function Notifications() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="text-sm">
-                                                <div className="font-medium text-gray-900">
+                                                <div className="font-medium text-white">
                                                     {notification.user.firstName} {notification.user.lastName}
                                                 </div>
-                                                <div className="text-gray-500">{notification.user.email}</div>
-                                                <div className="text-xs text-gray-400">{notification.user.role}</div>
+                                                <div className="text-white/60">{notification.user.email}</div>
+                                                <div className="text-xs text-white/40">{notification.user.role}</div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="text-sm text-gray-900 max-w-md">
+                                            <div className="text-sm text-white max-w-md">
                                                 {notification.message}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${notification.status === "READ"
-                                                    ? "bg-green-100 text-green-800"
-                                                    : "bg-yellow-100 text-yellow-800"
+                                                ? "bg-green-600/20 text-green-400"
+                                                : "bg-yellow-600/20 text-yellow-400"
                                                 }`}>
                                                 {notification.status}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-white/60">
                                             {new Date(notification.createdAt).toLocaleString()}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                                             <button
                                                 onClick={() => handleDelete(notification.id)}
-                                                className="text-red-600 hover:text-red-900 font-medium"
+                                                className="text-red-400 hover:text-red-300 font-medium"
                                             >
                                                 Delete
                                             </button>

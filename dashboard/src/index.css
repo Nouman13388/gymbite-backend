@@ -10,12 +10,18 @@ html {
 }
 
 @theme {
+  /* EXISTING - Core theme colors */
   --color-primary-blue: #1173d4;
   --color-dark-bg: #111418;
   --color-dark-card: #181c22;
   --color-dark-input: #283039;
 
   --font-family-inter: Inter, "Noto Sans", sans-serif;
+
+  /* NEW - Essential semantic colors */
+  --color-text-primary: rgba(255, 255, 255, 0.95);
+  --color-text-secondary: rgba(255, 255, 255, 0.8);
+  --color-border-default: rgba(255, 255, 255, 0.15);
 }
 
 /* Custom styles */

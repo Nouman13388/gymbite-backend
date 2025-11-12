@@ -40,7 +40,7 @@ export function EditClientModal({ client, onClose, onSuccess }: EditClientModalP
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="bg-dark-card rounded-lg shadow-xl max-w-md w-full">
                 {/* Header */}
                 <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-6 rounded-t-lg relative">
                     <button
@@ -63,15 +63,15 @@ export function EditClientModal({ client, onClose, onSuccess }: EditClientModalP
                 {/* Content */}
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     {error && (
-                        <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
-                            <AlertCircle size={18} className="text-red-600 flex-shrink-0 mt-0.5" />
-                            <p className="text-sm text-red-800">{error}</p>
+                        <div className="bg-red-600/20 border border-red-700/50 rounded-lg p-3 flex items-start gap-2">
+                            <AlertCircle size={18} className="text-red-400 flex-shrink-0 mt-0.5" />
+                            <p className="text-sm text-red-400">{error}</p>
                         </div>
                     )}
 
                     {/* Goals */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-white/80 mb-2">
                             Fitness Goals
                         </label>
                         <textarea
@@ -80,22 +80,22 @@ export function EditClientModal({ client, onClose, onSuccess }: EditClientModalP
                             maxLength={1000}
                             rows={4}
                             placeholder="What are your fitness goals?"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                            className="w-full px-4 py-2 bg-dark-input border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
                         />
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-white/40 mt-1">
                             {goals.length}/1000 characters
                         </p>
                     </div>
 
                     {/* Activity Level */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-white/80 mb-2">
                             Activity Level
                         </label>
                         <select
                             value={activityLevel}
                             onChange={(e) => setActivityLevel(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="w-full px-4 py-2 bg-dark-input border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         >
                             <option value="">Select activity level...</option>
                             {ACTIVITY_LEVELS.map((level) => (
@@ -104,7 +104,7 @@ export function EditClientModal({ client, onClose, onSuccess }: EditClientModalP
                                 </option>
                             ))}
                         </select>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-white/40 mt-1">
                             How active are you on a daily basis?
                         </p>
                     </div>
@@ -114,7 +114,7 @@ export function EditClientModal({ client, onClose, onSuccess }: EditClientModalP
                         <button
                             type="submit"
                             disabled={submitting}
-                            className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors font-medium"
+                            className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors font-medium"
                         >
                             {submitting ? "Updating..." : "Update Client"}
                         </button>
@@ -122,7 +122,7 @@ export function EditClientModal({ client, onClose, onSuccess }: EditClientModalP
                             type="button"
                             onClick={onClose}
                             disabled={submitting}
-                            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:bg-gray-100 transition-colors font-medium"
+                            className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:bg-gray-500 transition-colors font-medium"
                         >
                             Cancel
                         </button>
